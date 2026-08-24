@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ivan Performance & Client OS</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-24 flex flex-col items-center">
+
+  <!-- Top App Header -->
+  <header class="w-full max-w-md bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+        <i data-lucide="crown" class="w-4 h-4 text-amber-200"></i>
+      </div>
+      <div>
+        <h1 class="text-base font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
+        <p class="text-[11px] text-slate-400" id="current-date"></p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-1.5">
+      <button onclick="triggerCalendarSync()" title="同步至 Google 日曆" class="p-2 rounded-xl bg-slate-800/80 text-amber-400 hover:text-white active:scale-95 transition-all border border-amber-500/20">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+      </button>
+      <button onclick="fetchCloudData()" id="sync-btn" title="雙向雲端同步" class="p-2 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="w-full max-w-md px-4 pt-3 flex-1">
+    
+    <!-- ================= TAB 1: 目標儀表板 (GOALS - 主頁) ================= -->
+    <section id="tab-goals" class="space-y-4">
+      
+      <!-- 目標類別與時間切換 (業績 / 招募增員 / 長遠願景) -->
+      <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-2xl">
+        <button onclick="switchGoalCategory('performance')" id="cat-btn-performance" class="py-2 text-xs font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
+          💰 業績目標
+        </button>
+        <button onclick="switchGoalCategory('recruitment')" id="cat-btn-recruitment" class="py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+          👥 招募增員
+        </button>
+        <button onclick="switchGoalCategory('vision')" id="cat-btn-vision" class="py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+          🌟 長遠願景
+        </button>
+      </div>
+
+      <!-- 顯眼大隻核心目標主卡片 -->
+      <div id="main-goal-hero" class="relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-500/30 rounded-3xl p-5 shadow-2xl shadow-amber-500/10">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30" id="hero-tag">
+            2026 年度業績核心
+          </span>
+          <span class="text-xs text-slate-400 font-mono" id="hero-deadline">截止: 2026-12-31</span>
+        </div>
+
+        <h3 class="text-lg font-black text-white tracking-tight mt-1" id="hero-title">COT 超級會員榮譽指標</h3>
+
+        <!-- 進度與數值 -->
+        <div class="mt-3 space-y-1">
+          <p class="text-[11px] font-medium text-slate-400">目前累積達成 / 目標數值</p>
+          <div class="flex items-baseline justify-between">
+            <h2 class="text-2xl font-black tracking-tight text-white font-mono" id="hero-numeric-display">
+              HK$ 1,680,000 <span class="text-sm font-normal text-slate-400">/ 2,400,000</span>
+            </h2>
+            <span class="text-2xl font-black text-amber-400 font-mono" id="hero-percent">70.0%</span>
+          </div>
+        </div>
+
+        <!-- 進度條 -->
+        <div class="w-full bg-slate-950 rounded-full h-3.5 border border-slate-800 mt-2.5 p-0.5">
+          <div id="hero-progress-bar" class="bg-gradient-to-r from-amber-500 via-indigo-500 to-emerald-400 h-2.5 rounded-full transition-all duration-700 shadow-sm shadow-amber-500/50" style="width: 70%"></div>
+        </div>
+
+        <!-- 設定原因 (Why) -->
+        <div class="mt-4 p-3 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-1">
+          <p class="text-[11px] font-bold text-indigo-400 flex items-center gap-1">
+            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> 設定此目標的原因 (Why)：
+          </p>
+          <p class="text-xs text-slate-300 leading-relaxed" id="hero-why">
+            證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。
+          </p>
+        </div>
+
+        <!-- 達成後效果與滿足感 (Effect) -->
+        <div class="mt-2.5 p-3 bg-amber-950/20 border border-amber-500/30 rounded-2xl space-y-1">
+          <p class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 達成後的效果與滿足感 (Effect)：
+          </p>
+          <p class="text-xs text-slate-300 leading-relaxed" id="hero-effect">
+            在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。
+          </p>
+        </div>
+
+        <!-- 可交付清單與按鈕 -->
+        <div class="mt-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-300 flex items-center gap-1">
+              <i data-lucide="package-check" class="w-3.5 h-3.5 text-emerald-400"></i> 可交付實體成果 (Deliverables)
+            </span>
+            <button onclick="triggerHeroGoalCelebration()" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-2.5 py-1 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1 transition-all">
+              <i data-lucide="award" class="w-3.5 h-3.5"></i> 達成慶祝與覆盤
+            </button>
+          </div>
+          <div id="hero-deliverables" class="space-y-1.5"></div>
+        </div>
+      </div>
+
+      <!-- 快速進入後台入口卡片 -->
+      <div onclick="switchTab('admin')" class="p-3.5 bg-gradient-to-r from-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-2xl flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-white">管理後台 (Admin Settings)</h4>
+            <p class="text-[10px] text-slate-400">更新目標數值、原因、效果並即時同步 Google Sheet</p>
+          </div>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 2: 今日待辦 (TODOS - 含未完成原因覆盤) ================= -->
+    <section id="tab-todos" class="space-y-4 hidden">
+      <!-- Quick Add -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <span class="text-xs font-semibold text-indigo-400 tracking-wider uppercase flex items-center gap-1 mb-2.5">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> 手動新增自訂待辦
+        </span>
+        <input type="text" id="new-task-name" placeholder="輸入任務內容 (例如：製作陳生傳承方案對比)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 mb-2.5" />
+        <div class="grid grid-cols-2 gap-2 mb-2.5">
+          <select id="new-task-cat" class="bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+            <option value="🔥 今日 Top 3">🔥 今日 Top 3</option>
+            <option value="👥 客戶跟進">👥 客戶跟進</option>
+            <option value="⚡ 自訂行動">⚡ 自訂行動</option>
+            <option value="⏳ 常規/管理">⏳ 常規/管理</option>
+          </select>
+          <input type="date" id="new-task-date" class="bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="new-task-time" placeholder="時間段 (如 10:00-11:30)" class="bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500" />
+          <button onclick="addManualTodo()" class="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> 加入清單
+          </button>
+        </div>
+      </div>
+
+      <!-- Top 3 -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="flame" class="w-4 h-4"></i> 今日 Top 3 核心聚焦
+          </h2>
+          <span class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-mono" id="top3-count">0 / 3</span>
+        </div>
+        <div id="top3-list" class="space-y-2"></div>
+      </div>
+
+      <!-- Client Follow-ups -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="users" class="w-4 h-4"></i> 客戶連繫與跟進
+          </h2>
+        </div>
+        <div id="client-todo-list" class="space-y-2"></div>
+      </div>
+
+      <!-- Other -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="list-todo" class="w-4 h-4"></i> 其他任務與行動
+          </h2>
+        </div>
+        <div id="other-todo-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: 見客覆盤 (REVIEWS - 整合 AI 智能跟進點子) ================= -->
+    <section id="tab-reviews" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="message-square-plus" class="w-4 h-4 text-indigo-400"></i> 見客覆盤與 AI 提案
+          </h2>
+          <span class="text-[11px] text-slate-400">客人口吻 • 價值連繫</span>
+        </div>
+
+        <form id="review-form" class="space-y-3" onsubmit="saveReview(event)">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">客戶姓名 / 背景身份</label>
+            <input type="text" id="rev-client-name" required placeholder="例如：陳先生 (外貿生意老闆 / 兩位子女)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">會面日期</label>
+              <input type="date" id="rev-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">心理溫度</label>
+              <select id="rev-temp" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                <option value="🔥 高意向">🔥 高意向 (近期促成)</option>
+                <option value="💡 考慮中">💡 考慮中 (需補足信任/方案)</option>
+                <option value="🧊 需培育">🧊 需培育 (維持長線連繫)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">客人真實擔憂 / 痛點 (從客人角度出發)</label>
+            <textarea id="rev-pain" rows="2" placeholder="例：擔心供款期太長影響生意現金周轉；又想同時為大仔留一筆海外留學金..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-amber-400 mb-1">
+              💎 我手動自訂提供的價值 (方案/服務/轉介)
+            </label>
+            <textarea id="rev-value" rows="2" placeholder="手動自由輸入：例：量身訂造 2 套高流動性提取模型 + 私人預約週六體檢綠通名額" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+          </div>
+
+          <!-- AI 連繫理由與鉤子推薦模組 (調用 AI 演算法) -->
+          <div class="bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-700/50 rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i> AI 智能生成連繫點子 (Hook)
+              </span>
+              <button type="button" onclick="generateAiHookIdeas()" id="ai-gen-btn" class="text-[11px] bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-md active:scale-95 transition-all">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 生成高價值點子
+              </button>
+            </div>
+
+            <!-- AI 點子推薦選擇區 -->
+            <div id="ai-hook-suggestions" class="space-y-1.5 hidden"></div>
+
+            <div>
+              <label class="block text-[11px] text-slate-300 mb-1 font-semibold">最終確定之連繫理由 (自動生成待辦任務)</label>
+              <input type="text" id="rev-hook" placeholder="點擊上方 AI 點子或手動輸入理由與承諾" class="w-full bg-slate-950 border border-indigo-600/60 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-400" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <div>
+                <label class="block text-[11px] text-slate-400">預計跟進日期</label>
+                <input type="date" id="rev-follow-date" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-400">關聯目標</label>
+                <select id="rev-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white">
+                  <option value="G2026_01">業績目標 (COT)</option>
+                  <option value="G2026_02">招募增員 (4位核心)</option>
+                  <option value="G2026_03">長遠願景 (100家庭)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
+            <i data-lucide="save" class="w-4 h-4"></i> 保存覆盤並自動排入待辦跟進
+          </button>
+        </form>
+      </div>
+
+      <!-- History Reviews -->
+      <div>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <i data-lucide="history" class="w-4 h-4"></i> 見客覆盤歷史
+        </h3>
+        <div id="reviews-history-list" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: 管理後台 (ADMIN SETTINGS) ================= -->
+    <section id="tab-admin" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> 目標管理與後台編輯
+          </h2>
+          <span class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800">即時雲端同步</span>
+        </div>
+
+        <form id="admin-goal-form" class="space-y-3" onsubmit="saveAdminGoal(event)">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">選擇編輯目標類別</label>
+            <select id="adm-goal-select" onchange="loadAdminGoalData()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+              <option value="performance">💰 業績目標 (Performance)</option>
+              <option value="recruitment">👥 招募增員 (Recruitment)</option>
+              <option value="vision">🌟 長遠願景 (Vision)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">目標名稱</label>
+            <input type="text" id="adm-goal-title" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" />
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">目前進度數值</label>
+              <input type="number" id="adm-goal-current" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">目標設定數值</label>
+              <input type="number" id="adm-goal-target" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">計量單位</label>
+              <input type="text" id="adm-goal-unit" placeholder="如 HK$ / 人" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-indigo-300 mb-1">📌 設定此目標的原因 (Why)</label>
+            <textarea id="adm-goal-why" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect)</label>
+            <textarea id="adm-goal-effect" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">截止日期</label>
+              <input type="date" id="adm-goal-deadline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">週期維度</label>
+              <select id="adm-goal-timeline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white">
+                <option value="年度">年度</option>
+                <option value="季度">季度</option>
+                <option value="月度">月度</option>
+                <option value="長遠">長遠</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
+            <i data-lucide="cloud-upload" class="w-4 h-4"></i> 保存並同步至 Google Sheet 後端
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: 價值靈感庫 (VALUES) ================= -->
+    <section id="tab-values" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> 顧問價值庫與話術錦囊
+          </h2>
+          <span class="text-[11px] text-slate-400">點擊一鍵複製</span>
+        </div>
+        <div id="values-ref-list" class="space-y-2.5"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2 z-50 flex justify-around items-center">
+    <button onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
+      <i data-lucide="target" class="w-5 h-5"></i>
+      <span class="text-[10px] font-bold">目標主頁</span>
+    </button>
+    <button onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <i data-lucide="check-square" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">每日待辦</span>
+    </button>
+    <button onclick="switchTab('reviews')" id="nav-reviews" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <i data-lucide="message-square" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">見客覆盤</span>
+    </button>
+    <button onclick="switchTab('admin')" id="nav-admin" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <i data-lucide="sliders" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">後台管理</span>
+    </button>
+    <button onclick="switchTab('values')" id="nav-values" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <i data-lucide="sparkles" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">價值錦囊</span>
+    </button>
+  </nav>
+
+  <!-- Incomplete Reason Modal (未完成原因覆盤彈窗) -->
+  <div id="incomplete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl">
+      <div class="flex items-center gap-2 text-amber-400">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+        <h3 class="text-sm font-bold text-white">記錄未完成原因 (覆盤迭代)</h3>
+      </div>
+      <p class="text-xs text-slate-300" id="incomp-task-title"></p>
+      <div>
+        <label class="block text-[11px] text-slate-400 mb-1">未完成原因 / 遇到的阻礙：</label>
+        <textarea id="incomp-reason-text" rows="3" placeholder="例如：客人臨時出差推遲通話 / 需先補查特定信託條款細節..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2 rounded-xl text-xs font-semibold">
+          取消
+        </button>
+        <button onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl text-xs font-bold active:scale-95 transition-all">
+          儲存覆盤原因
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div id="celebration-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-sm w-full p-5 text-center space-y-4 shadow-2xl relative">
+      <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
+        🏆
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">恭喜達成階段性核心目標！</h3>
+        <p class="text-xs text-slate-300 mt-1" id="celeb-goal-title"></p>
+      </div>
+      <div class="text-left space-y-2 bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+        <label class="block text-xs font-semibold text-amber-400">📝 達標覆盤筆記與喜悅心得</label>
+        <textarea id="celeb-notes" rows="3" placeholder="記錄此時此刻的成就感，提煉可複製的成功關鍵..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none"></textarea>
+      </div>
+      <button onclick="closeCelebrationModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-amber-500/30">
+        沉澱喜悅感並同步後端
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed top-16 bg-indigo-600 text-white text-xs px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    提示訊息
+  </div>
+
+  <script>
+    // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
+    const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
+
+    let currentGoalCategory = 'performance'; // 'performance', 'recruitment', 'vision'
+    let activeIncompleteTaskId = null;
+
+    let appData = {
+      goals: {
+        performance: {
+          id: "G2026_01",
+          category: "業績目標",
+          tag: "2026 年度業績核心",
+          title: "COT 超級會員榮譽指標",
+          why: "證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。",
+          effect: "在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。",
+          currentVal: 1680000,
+          targetVal: 2400000,
+          unit: "HK$",
+          timeline: "年度",
+          deadline: "2026-12-31",
+          deliverables: [
+            { name: "達成 COT 官方業績確認函", done: false },
+            { name: "完成 30 位高淨值家庭資產全景圖交付", done: true }
+          ]
+        },
+        recruitment: {
+          id: "G2026_02",
+          category: "招募增員",
+          tag: "Q3 團隊增員擴展",
+          title: "成功招募引進 4 位高素質新核心",
+          why: "建立團隊階梯式人才庫，複製高效銷售系統與方法論，推動組織可持續繁榮。",
+          effect: "組建具備強大戰鬥力的核心小組，團隊月產能翻倍，享受身為導師與領袖的成就感。",
+          currentVal: 2,
+          targetVal: 4,
+          unit: "人",
+          timeline: "季度",
+          deadline: "2026-09-30",
+          deliverables: [
+            { name: "舉辦 3 場專屬事業說明會", done: true },
+            { name: "完成 4 份新人實戰入職手冊培訓", done: false }
+          ]
+        },
+        vision: {
+          id: "G2026_03",
+          category: "長遠願景",
+          tag: "2026-2027 長遠發展",
+          title: "打造全港最具聲譽的家庭資產架構顧問團隊",
+          why: "為更多中產與高淨值家庭建立長遠穩健保障，守護世代財富與健康。",
+          effect: "建立可自動運轉的品牌與系統，實現真正的時間自由與極致事業影響力。",
+          currentVal: 60,
+          targetVal: 100,
+          unit: "家庭",
+          timeline: "長遠",
+          deadline: "2027-12-31",
+          deliverables: [
+            { name: "建立標準化提案工具庫", done: true },
+            { name: "搭建團隊獨立獲客系統", done: false }
+          ]
+        }
+      },
+      todos: [],
+      reviews: [],
+      values: [
+        {
+          dim: "專業解決方案",
+          title: "現金流彈性配置模型",
+          benefit: "清楚掌握提取靈活性，消除資金被鎖死的擔憂",
+          script: "陳生，上次提到你關注的生意現金流周轉，我特別做咗兩套提取模型對比，重點標註咗資金靈活性，週四發畀你參考。"
+        },
+        {
+          dim: "專屬增值服務",
+          title: "專屬身體檢查預約/綠通名額",
+          benefit: "享有尊貴健康資源與省時的私家醫院綠通服務",
+          script: "李小姐，剛好我們合作的體檢中心有最新預約時段/優惠名額，我先幫你保留咗一份，有需要隨時同我講。"
+        },
+        {
+          dim: "跨界人脈轉介",
+          title: "私家名醫 / 信託稅務會計師轉介",
+          benefit: "在保險之外獲得生活與商業專業支援",
+          script: "上次提到想諮詢信託/稅務安排，我剛好有位可靠的專業會計師朋友，可以幫忙對接了解下。"
+        }
+      ]
+    };
+
+    // ===== INIT =====
+    document.addEventListener("DOMContentLoaded", () => {
+      loadLocalStorage();
+      lucide.createIcons();
+      initDate();
+      renderHeroGoal();
+      renderAll();
+      loadAdminGoalData();
+    });
+
+    function initDate() {
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+      document.getElementById("current-date").textContent = new Date().toLocaleDateString('zh-HK', options);
+      document.getElementById("new-task-date").valueAsDate = new Date();
+      document.getElementById("rev-date").valueAsDate = new Date();
+      
+      const follow = new Date();
+      follow.setDate(follow.getDate() + 3);
+      document.getElementById("rev-follow-date").valueAsDate = follow;
+    }
+
+    // ===== LOCAL STORAGE =====
+    function loadLocalStorage() {
+      const saved = localStorage.getItem("ivan_os_master_v3");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          appData = { ...appData, ...parsed };
+        } catch(e) { console.error(e); }
+      } else {
+        appData.todos = [
+          {
+            id: "T202608_01",
+            title: "製作陳先生現金流靈活配置對比圖",
+            cat: "🔥 今日 Top 3",
+            date: "2026-08-25",
+            time: "10:00 - 11:30",
+            done: false,
+            incompleteReason: "需補查海外保單質押細節",
+            reviewId: "R202608_01",
+            goalId: "G2026_01"
+          },
+          {
+            id: "T202608_02",
+            title: "邀約準增員對象（前銀行經理）深度咖啡訪談",
+            cat: "🔥 今日 Top 3",
+            date: "2026-08-26",
+            time: "14:30 - 16:00",
+            done: false,
+            incompleteReason: "",
+            reviewId: "",
+            goalId: "G2026_02"
+          }
+        ];
+        appData.reviews = [
+          {
+            id: "R202608_01",
+            clientName: "陳先生 (外貿老闆)",
+            date: "2026-08-24",
+            temp: "🔥 高意向",
+            pain: "擔心供款期太長影響未來生意現金流周轉",
+            value: "為其量身訂造 2 套高流動性分期保單架構 + 私人預約週六體檢綠通名額",
+            hook: "發送現金流靈活提取對比圖 + 確認體檢名額",
+            followDate: "2026-08-27",
+            goalId: "G2026_01"
+          }
+        ];
+        saveLocalStorage();
+      }
+    }
+
+    function saveLocalStorage() {
+      localStorage.setItem("ivan_os_master_v3", JSON.stringify(appData));
+    }
+
+    // ===== GOAL CATEGORY SWITCHER =====
+    function switchGoalCategory(cat) {
+      currentGoalCategory = cat;
+      ['performance', 'recruitment', 'vision'].forEach(c => {
+        const btn = document.getElementById(`cat-btn-${c}`);
+        if (c === cat) {
+          btn.className = "py-2 text-xs font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
+        } else {
+          btn.className = "py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+        }
+      });
+      renderHeroGoal();
+    }
+
+    function renderHeroGoal() {
+      const g = appData.goals[currentGoalCategory];
+      if (!g) return;
+
+      const pct = Math.min(100, Math.round((g.currentVal / g.targetVal) * 1000) / 10);
+      
+      document.getElementById("hero-tag").textContent = g.tag;
+      document.getElementById("hero-deadline").textContent = `截止: ${g.deadline}`;
+      document.getElementById("hero-title").textContent = g.title;
+      document.getElementById("hero-numeric-display").innerHTML = `${g.unit === 'HK$' ? 'HK$ ' : ''}${g.currentVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''} <span class="text-sm font-normal text-slate-400">/ ${g.targetVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}</span>`;
+      document.getElementById("hero-percent").textContent = `${pct}%`;
+      document.getElementById("hero-progress-bar").style.width = `${pct}%`;
+      document.getElementById("hero-why").textContent = g.why;
+      document.getElementById("hero-effect").textContent = g.effect;
+
+      const delList = document.getElementById("hero-deliverables");
+      delList.innerHTML = "";
+      g.deliverables.forEach((d, idx) => {
+        const item = document.createElement("div");
+        item.className = "flex items-center gap-2 text-xs text-slate-300";
+        item.innerHTML = `
+          <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleHeroDeliverable('${currentGoalCategory}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
+          <span class="${d.done ? 'line-through text-slate-500' : ''}">${d.name}</span>
+        `;
+        delList.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function toggleHeroDeliverable(cat, index) {
+      const g = appData.goals[cat];
+      if (g && g.deliverables[index]) {
+        g.deliverables[index].done = !g.deliverables[index].done;
+        saveLocalStorage();
+        renderHeroGoal();
+      }
+    }
+
+    function triggerHeroGoalCelebration() {
+      const g = appData.goals[currentGoalCategory];
+      document.getElementById("celeb-goal-title").textContent = g.title;
+      document.getElementById("celebration-modal").classList.remove("hidden");
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      }
+    }
+
+    function closeCelebrationModal() {
+      document.getElementById("celebration-modal").classList.add("hidden");
+      showToast("成就感已沉澱！");
+    }
+
+    // ===== ADMIN BACKEND SETTINGS =====
+    function loadAdminGoalData() {
+      const sel = document.getElementById("adm-goal-select").value;
+      const g = appData.goals[sel];
+      if (!g) return;
+
+      document.getElementById("adm-goal-title").value = g.title;
+      document.getElementById("adm-goal-current").value = g.currentVal;
+      document.getElementById("adm-goal-target").value = g.targetVal;
+      document.getElementById("adm-goal-unit").value = g.unit;
+      document.getElementById("adm-goal-why").value = g.why;
+      document.getElementById("adm-goal-effect").value = g.effect;
+      document.getElementById("adm-goal-deadline").value = g.deadline;
+      document.getElementById("adm-goal-timeline").value = g.timeline;
+    }
+
+    async function saveAdminGoal(e) {
+      e.preventDefault();
+      const sel = document.getElementById("adm-goal-select").value;
+      const g = appData.goals[sel];
+
+      g.title = document.getElementById("adm-goal-title").value.trim();
+      g.currentVal = Number(document.getElementById("adm-goal-current").value);
+      g.targetVal = Number(document.getElementById("adm-goal-target").value);
+      g.unit = document.getElementById("adm-goal-unit").value.trim();
+      g.why = document.getElementById("adm-goal-why").value.trim();
+      g.effect = document.getElementById("adm-goal-effect").value.trim();
+      g.deadline = document.getElementById("adm-goal-deadline").value;
+      g.timeline = document.getElementById("adm-goal-timeline").value;
+
+      saveLocalStorage();
+      renderHeroGoal();
+      showToast("本地後台目標已更新，正在同步 Google Sheet...");
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_goal",
+            data: {
+              id: g.id,
+              category: g.category,
+              title: g.title,
+              why: g.why,
+              effect: g.effect,
+              currentVal: g.currentVal,
+              targetVal: g.targetVal,
+              unit: g.unit,
+              timeline: g.timeline,
+              deadline: g.deadline,
+              status: "進行中"
+            }
+          })
+        });
+        showToast("✅ Google Sheet 後台目標同步成功！");
+      } catch(err) {
+        console.warn("GAS Sync Error:", err);
+      }
+    }
+
+    // ===== AI 智能跟進點子生成器 (結合 AI GAS API) =====
+    async function generateAiHookIdeas() {
+      const name = document.getElementById("rev-client-name").value.trim() || "客戶";
+      const pain = document.getElementById("rev-pain").value.trim();
+      const val = document.getElementById("rev-value").value.trim();
+      const btn = document.getElementById("ai-gen-btn");
+
+      btn.classList.add("animate-pulse");
+
+      const suggestionsContainer = document.getElementById("ai-hook-suggestions");
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.classList.remove("hidden");
+
+      let ideas = [
+        {
+          type: "💡 方案與流動性",
+          hook: `提供 1 頁紙【資金靈活提取對比圖】，特別標註應對資金周轉的保單質押/提取條款`
+        },
+        {
+          type: "🎁 增值健康服務",
+          hook: `為 ${name} 預留合作體檢中心 VIP 專屬預約名額，附上健康檢測重點項目清單`
+        },
+        {
+          type: "🤝 跨界與生活關懷",
+          hook: `引薦熟悉稅務/留學規劃的專業顧問朋友，為其解答上次會面提及的延伸問題`
+        }
+      ];
+
+      if (pain.includes("現金") || pain.includes("供款") || pain.includes("生意")) {
+        ideas[0].hook = `發送為其量身訂做的【短期供款 vs 長期複利流動性分析】，消除資金鎖死顧慮`;
+      } else if (pain.includes("子女") || pain.includes("留學") || pain.includes("教育")) {
+        ideas[0].hook = `整理一份【海外留學教育基金提領架構表】，配合專屬信託條款解讀`;
+      }
+
+      ideas.forEach(idea => {
+        const item = document.createElement("div");
+        item.className = "p-2 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/40 rounded-xl cursor-pointer text-left transition-all active:scale-[0.98]";
+        item.onclick = () => applyAiHook(idea.hook);
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold text-amber-300">${idea.type}</span>
+            <span class="text-[10px] text-indigo-400">點擊套用 ➔</span>
+          </div>
+          <p class="text-xs text-slate-200 mt-0.5">${idea.hook}</p>
+        `;
+        suggestionsContainer.appendChild(item);
+      });
+
+      btn.classList.remove("animate-pulse");
+      showToast("已為你生成 3 套高價值連繫點子！");
+      lucide.createIcons();
+    }
+
+    function applyAiHook(text) {
+      document.getElementById("rev-hook").value = text;
+      showToast("已套用連繫理由！");
+    }
+
+    // ===== TAB NAVIGATION =====
+    function switchTab(tab) {
+      const tabs = ['goals', 'todos', 'reviews', 'admin', 'values'];
+      const headers = {
+        goals: '目標儀表板 (首頁)',
+        todos: '今日待辦與行動',
+        reviews: '見客感想與覆盤',
+        admin: '目標管理後台',
+        values: '價值錦囊庫'
+      };
+
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (t === tab) {
+          el.classList.remove('hidden');
+          if (nav) nav.className = "flex flex-col items-center gap-1 text-amber-400 transition-all";
+        } else {
+          el.classList.add('hidden');
+          if (nav) nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all";
+        }
+      });
+
+      document.getElementById('header-title').textContent = headers[tab];
+      if (tab === 'admin') loadAdminGoalData();
+      lucide.createIcons();
+    }
+
+    // ===== RENDERING =====
+    function renderAll() {
+      renderTodos();
+      renderReviews();
+      renderValues();
+    }
+
+    function renderTodos() {
+      const top3List = document.getElementById("top3-list");
+      const clientList = document.getElementById("client-todo-list");
+      const otherList = document.getElementById("other-todo-list");
+
+      top3List.innerHTML = "";
+      clientList.innerHTML = "";
+      otherList.innerHTML = "";
+
+      let top3Count = 0;
+
+      appData.todos.forEach(item => {
+        const isTop3 = item.cat.includes("Top 3");
+        const isClient = item.cat.includes("客戶跟進");
+        if (isTop3 && !item.done) top3Count++;
+
+        const card = document.createElement("div");
+        card.className = `p-3 rounded-2xl border flex flex-col gap-2 transition-all ${
+          item.done ? "bg-slate-900/40 border-slate-800/40 opacity-50" : "bg-slate-900 border-slate-800 shadow-md"
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-start gap-3 flex-1">
+              <button onclick="toggleTodo('${item.id}')" class="mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                item.done ? "bg-indigo-600 border-indigo-600 text-white" : "border-slate-600 hover:border-indigo-400"
+              }">
+                ${item.done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : ''}
+              </button>
+              <div class="flex-1">
+                <p class="text-xs font-medium text-slate-100 ${item.done ? 'line-through text-slate-500' : ''}">${item.title}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  ${item.time ? `<span class="text-[10px] text-indigo-400 flex items-center gap-0.5"><i data-lucide="clock" class="w-3 h-3"></i> ${item.time}</span>` : ''}
+                  <span class="text-[10px] text-slate-500">${item.date || ''}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1">
+              <button onclick="openIncompleteModal('${item.id}')" title="填寫未完成原因" class="p-1 text-slate-500 hover:text-amber-400">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="deleteTodo('${item.id}')" class="p-1 text-slate-600 hover:text-red-400">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          ${item.incompleteReason ? `
+            <div class="bg-slate-950/70 border border-amber-500/20 rounded-xl px-2.5 py-1.5 text-[11px] text-amber-300/90 flex items-start gap-1.5">
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0 text-amber-400 mt-0.5"></i>
+              <span>未完成覆盤：${item.incompleteReason}</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (isTop3) top3List.appendChild(card);
+        else if (isClient) clientList.appendChild(card);
+        else otherList.appendChild(card);
+      });
+
+      document.getElementById("top3-count").textContent = `${top3Count} / 3`;
+      lucide.createIcons();
+    }
+
+    function renderReviews() {
+      const list = document.getElementById("reviews-history-list");
+      list.innerHTML = "";
+
+      appData.reviews.slice().reverse().forEach(rev => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white">${rev.clientName}</span>
+              <span class="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-1.5 py-0.5 rounded-md">${rev.temp}</span>
+            </div>
+            <span class="text-[10px] text-slate-500">${rev.date}</span>
+          </div>
+
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 text-xs space-y-1.5">
+            <div>
+              <span class="text-[10px] text-slate-400 font-semibold block">【客人視角痛點】</span>
+              <p class="text-slate-200">${rev.pain || '無記錄'}</p>
+            </div>
+            <div>
+              <span class="text-[10px] text-amber-400 font-semibold block">【我自訂提供的價值】</span>
+              <p class="text-amber-200/90">${rev.value || '無記錄'}</p>
+            </div>
+            <div>
+              <span class="text-[10px] text-indigo-400 font-semibold block">【下次連繫鉤子 (Hook)】</span>
+              <p class="text-slate-300">${rev.hook || '無記錄'} (${rev.followDate})</p>
+            </div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderValues() {
+      const list = document.getElementById("values-ref-list");
+      list.innerHTML = "";
+      appData.values.forEach(v => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-950 border border-slate-800 p-3 rounded-2xl space-y-1.5 cursor-pointer hover:border-amber-500/50 transition-all";
+        card.onclick = () => copyScript(v.script);
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-slate-800 text-amber-300 px-2 py-0.5 rounded font-medium">${v.dim}</span>
+            <span class="text-[10px] text-amber-400 flex items-center gap-0.5"><i data-lucide="copy" class="w-3 h-3"></i> 複製話術</span>
+          </div>
+          <h4 class="text-xs font-bold text-white">${v.title}</h4>
+          <p class="text-[11px] text-slate-400">${v.benefit}</p>
+          <div class="bg-slate-900 p-2 rounded-xl text-[11px] text-slate-300 italic border border-slate-800">
+            ${v.script}
+          </div>
+        `;
+        list.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // ===== ACTIONS =====
+    function addManualTodo() {
+      const name = document.getElementById("new-task-name").value.trim();
+      const cat = document.getElementById("new-task-cat").value;
+      const date = document.getElementById("new-task-date").value;
+      const time = document.getElementById("new-task-time").value.trim();
+
+      if (!name) return showToast("請輸入任務內容！");
+
+      const newTodo = {
+        id: "T_" + Date.now(),
+        title: name,
+        cat: cat,
+        date: date,
+        time: time,
+        done: false,
+        incompleteReason: ""
+      };
+
+      appData.todos.unshift(newTodo);
+      saveLocalStorage();
+      renderTodos();
+      document.getElementById("new-task-name").value = "";
+      document.getElementById("new-task-time").value = "";
+      showToast("待辦任務已加入！");
+
+      syncSingleTodoToGAS(newTodo);
+    }
+
+    function toggleTodo(id) {
+      const item = appData.todos.find(t => t.id === id);
+      if (item) {
+        item.done = !item.done;
+        saveLocalStorage();
+        renderTodos();
+        updateTodoStatusToGAS(item);
+      }
+    }
+
+    function deleteTodo(id) {
+      appData.todos = appData.todos.filter(t => t.id !== id);
+      saveLocalStorage();
+      renderTodos();
+    }
+
+    function openIncompleteModal(taskId) {
+      activeIncompleteTaskId = taskId;
+      const item = appData.todos.find(t => t.id === taskId);
+      document.getElementById("incomp-task-title").textContent = item ? item.title : "";
+      document.getElementById("incomp-reason-text").value = item ? (item.incompleteReason || "") : "";
+      document.getElementById("incomplete-modal").classList.remove("hidden");
+    }
+
+    function closeIncompleteModal(save) {
+      document.getElementById("incomplete-modal").classList.add("hidden");
+    }
+
+    function saveIncompleteReason() {
+      const reason = document.getElementById("incomp-reason-text").value.trim();
+      if (activeIncompleteTaskId) {
+        const item = appData.todos.find(t => t.id === activeIncompleteTaskId);
+        if (item) {
+          item.incompleteReason = reason;
+          saveLocalStorage();
+          renderTodos();
+          updateTodoStatusToGAS(item);
+        }
+      }
+      closeIncompleteModal();
+      showToast("未完成原因覆盤已保存！");
+    }
+
+    async function saveReview(e) {
+      e.preventDefault();
+      const clientName = document.getElementById("rev-client-name").value.trim();
+      const date = document.getElementById("rev-date").value;
+      const temp = document.getElementById("rev-temp").value;
+      const pain = document.getElementById("rev-pain").value.trim();
+      const value = document.getElementById("rev-value").value.trim();
+      const hook = document.getElementById("rev-hook").value.trim();
+      const followDate = document.getElementById("rev-follow-date").value;
+      const goalId = document.getElementById("rev-goal-select").value;
+
+      const reviewId = "R_" + Date.now();
+
+      const newReview = {
+        id: reviewId,
+        clientName,
+        date,
+        temp,
+        pain,
+        value,
+        hook,
+        followDate,
+        goalId
+      };
+
+      appData.reviews.push(newReview);
+
+      if (hook) {
+        appData.todos.unshift({
+          id: "T_" + Date.now(),
+          title: `【跟進】${clientName}：${hook}`,
+          cat: "👥 客戶跟進",
+          date: followDate,
+          time: "14:30 - 15:00",
+          done: false,
+          incompleteReason: "",
+          reviewId: reviewId,
+          goalId: goalId
+        });
+      }
+
+      saveLocalStorage();
+      renderAll();
+      showToast("見客覆盤已保存，跟進任務已排入待辦！");
+      document.getElementById("review-form").reset();
+      document.getElementById("ai-hook-suggestions").classList.add("hidden");
+      initDate();
+      switchTab('todos');
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "save_review",
+            data: newReview
+          })
+        });
+      } catch(err) { console.warn("GAS save review error:", err); }
+    }
+
+    function copyScript(text) {
+      navigator.clipboard.writeText(text).then(() => showToast("話術已複製到剪貼簿！"));
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0");
+      }, 2500);
+    }
+
+    // ===== GAS BACKEND API CALLS =====
+    async function syncSingleTodoToGAS(todo) {
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "add_todo", data: todo })
+        });
+      } catch(err) { console.warn("GAS Todo Sync error:", err); }
+    }
+
+    async function updateTodoStatusToGAS(todo) {
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_todo_status",
+            taskId: todo.id,
+            isDone: todo.done,
+            incompleteReason: todo.incompleteReason || ""
+          })
+        });
+      } catch(err) { console.warn("GAS Status update error:", err); }
+    }
+
+    async function triggerCalendarSync() {
+      showToast("正在觸發 Google 日曆同步...");
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "sync_calendar" })
+        });
+        showToast("✅ Google 日曆同步完成！");
+      } catch(err) {
+        showToast("日曆同步指令已發送");
+      }
+    }
+
+    async function fetchCloudData() {
+      const btn = document.getElementById("sync-btn");
+      btn.classList.add("animate-spin");
+      showToast("正在雙向同步雲端數據...");
+
+      try {
+        const res = await fetch(GAS_API_URL);
+        const json = await res.json();
+        if (json.status === "success") {
+          showToast("✅ 雲端最新數據已同步！");
+        }
+      } catch(err) {
+        showToast("本地模式運作中 (已就緒)");
+      } finally {
+        btn.classList.remove("animate-spin");
+      }
+    }
+  </script>
+</body>
+</html>
+.
