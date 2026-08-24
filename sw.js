@@ -1,4 +1,6 @@
-const CACHE_NAME = 'ivan-performance-os-v1';
+const CACHE_NAME = 'ivan-performance-os-v2.4.0';
+const APP_VERSION = 'v2.4.0';
+
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -8,8 +10,9 @@ const STATIC_ASSETS = [
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
-// 1. 安裝階段：預先快取核心資源
+// 安裝階段：快取資源並即時跳過等待
 self.addEventListener('install', (event) => {
+  console.log('[SW] Installing version:', APP_VERSION);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
@@ -18,13 +21,15 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 2. 啟用階段：清理舊快取
+// 啟用階段：清除所有舊版本快取
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating new version:', APP_VERSION);
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', key);
             return caches.delete(key);
           }
         })
@@ -34,10 +39,9 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. 攔截請求：網路優先 (Network-First)，離線時回退至快取
+// 請求攔截：Network-First (API 直接連線，靜態資源網路優先回退快取)
 self.addEventListener('fetch', (event) => {
-  // Google Apps Script API 請求不走快取，直接請求網路
-  if (event.request.url.includes('script.google.com')) {
+  if (event.request.url.includes('script.google.com') || event.request.url.includes('firebasestorage.googleapis.com')) {
     event.respondWith(fetch(event.request));
     return;
   }
