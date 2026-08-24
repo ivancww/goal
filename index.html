@@ -61,7 +61,7 @@
       <div>
         <div class="flex items-center gap-1.5">
           <h1 class="text-base font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
-          <span class="text-[9px] font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.2 rounded-full" id="app-version-badge">v2.4.0</span>
+          <span class="text-[9px] font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.2 rounded-full">v2.5.0</span>
         </div>
         <p class="text-[11px] text-slate-400" id="current-date"></p>
       </div>
@@ -82,112 +82,30 @@
     <!-- ================= TAB 1: 目標儀表板 (GOALS - 主頁) ================= -->
     <section id="tab-goals" class="space-y-4">
       
-      <!-- 目標類別切換 -->
-      <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-2xl">
-        <button onclick="switchGoalCategory('performance')" id="cat-btn-performance" class="py-2 text-xs font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
-          💰 業績目標
-        </button>
-        <button onclick="switchGoalCategory('recruitment')" id="cat-btn-recruitment" class="py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
-          👥 招募增員
-        </button>
-        <button onclick="switchGoalCategory('vision')" id="cat-btn-vision" class="py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
-          🌟 長遠願景
+      <!-- 目標維度過濾與新增按鈕 -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex-1 flex gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-2xl overflow-x-auto hide-scrollbar">
+          <button onclick="switchGoalFilter('all')" id="filter-btn-all" class="px-3 py-1.5 text-xs font-bold rounded-xl transition-all whitespace-nowrap bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
+            全部目標
+          </button>
+          <button onclick="switchGoalFilter('短期')" id="filter-btn-短期" class="px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all whitespace-nowrap">
+            ⚡ 短期衝刺
+          </button>
+          <button onclick="switchGoalFilter('季度')" id="filter-btn-季度" class="px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all whitespace-nowrap">
+            🚀 季度里程碑
+          </button>
+          <button onclick="switchGoalFilter('長遠')" id="filter-btn-長遠" class="px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all whitespace-nowrap">
+            🌟 長遠願景
+          </button>
+        </div>
+
+        <button onclick="openAddGoalModal()" title="新增新目標" class="shrink-0 p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl shadow-lg shadow-indigo-600/30 active:scale-95 transition-all flex items-center justify-center">
+          <i data-lucide="plus" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <!-- 核心目標主卡片：圖片先直接置頂強烈呈現，文字/進度緊隨其後 -->
-      <div id="main-goal-hero" class="bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10">
-        
-        <!-- 1. 置頂強烈視覺圖 (Vision Image Banner) -->
-        <div class="relative w-full h-48 sm:h-52 bg-slate-950 overflow-hidden group">
-          <img id="hero-img-banner" src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000" alt="Goal Vision" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" />
-          
-          <!-- 圖片內懸浮標籤 -->
-          <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/85 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-lg" id="hero-tag">
-              2026 年度業績核心
-            </span>
-            <span class="text-xs text-slate-200 font-mono bg-slate-950/85 px-2.5 py-1 rounded-full border border-slate-700/80 backdrop-blur-md shadow-lg" id="hero-deadline">
-              截止: 2026-12-31
-            </span>
-          </div>
-
-          <!-- 圖片底部微陰影銜接 -->
-          <div class="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-900 to-transparent"></div>
-        </div>
-
-        <!-- 2. 下方具體數值與文字內容 -->
-        <div class="p-5 space-y-4">
-          
-          <!-- 目標標題與業績大字 -->
-          <div>
-            <h3 class="text-xl font-black text-white tracking-tight" id="hero-title">COT 超級會員榮譽指標</h3>
-            
-            <div class="mt-3 space-y-1">
-              <p class="text-[11px] font-medium text-slate-400">目前累積達成 / 目標數值</p>
-              <div class="flex items-baseline justify-between">
-                <h2 class="text-2xl font-black tracking-tight text-white font-mono" id="hero-numeric-display">
-                  HK$ 1,680,000 <span class="text-sm font-normal text-slate-400">/ 2,400,000</span>
-                </h2>
-                <span class="text-2xl font-black text-amber-400 font-mono" id="hero-percent">70.0%</span>
-              </div>
-            </div>
-
-            <!-- 進度條 -->
-            <div class="w-full bg-slate-950 rounded-full h-3 border border-slate-800 mt-2.5 p-0.5">
-              <div id="hero-progress-bar" class="bg-gradient-to-r from-amber-500 via-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-700 shadow-md shadow-amber-500/50" style="width: 70%"></div>
-            </div>
-          </div>
-
-          <!-- 設定原因 (Why) -->
-          <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl space-y-1">
-            <p class="text-[11px] font-bold text-indigo-400 flex items-center gap-1">
-              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> 設定此目標的原因 (Why)：
-            </p>
-            <p class="text-xs text-slate-300 leading-relaxed" id="hero-why">
-              證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。
-            </p>
-          </div>
-
-          <!-- 達成後效果與滿足感 (Effect) -->
-          <div class="p-3.5 bg-amber-950/20 border border-amber-500/30 rounded-2xl space-y-1">
-            <p class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 達成後的效果與滿足感 (Effect)：
-            </p>
-            <p class="text-xs text-slate-300 leading-relaxed" id="hero-effect">
-              在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。
-            </p>
-          </div>
-
-          <!-- 可交付清單與按鈕 -->
-          <div class="space-y-2 pt-1">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-200 flex items-center gap-1">
-                <i data-lucide="package-check" class="w-3.5 h-3.5 text-emerald-400"></i> 可交付成果 (Deliverables)
-              </span>
-              <button onclick="triggerHeroGoalCelebration()" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-2.5 py-1 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1 transition-all">
-                <i data-lucide="award" class="w-3.5 h-3.5"></i> 達成覆盤
-              </button>
-            </div>
-            <div id="hero-deliverables" class="space-y-1.5"></div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- 快速進入後台入口 -->
-      <div onclick="switchTab('admin')" class="p-3.5 bg-gradient-to-r from-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-2xl flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all">
-        <div class="flex items-center gap-2.5">
-          <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl">
-            <i data-lucide="sliders" class="w-4 h-4"></i>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-white">管理後台 (換目標置頂大圖 / 調整數值)</h4>
-            <p class="text-[10px] text-slate-400">自訂願景圖片、更新目標數值並同步 Google Sheet</p>
-          </div>
-        </div>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
-      </div>
+      <!-- 動態目標卡片列表 -->
+      <div id="dynamic-goals-container" class="space-y-4"></div>
 
     </section>
 
@@ -290,7 +208,7 @@
             <textarea id="rev-value" rows="2" placeholder="手動自由輸入：例：量身訂造 2 套高流動性提取模型 + 私人預約週六體檢綠通名額" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
           </div>
 
-          <!-- AI 連繫理由與鉤子推薦模組 -->
+          <!-- AI 連繫理由推薦模組 -->
           <div class="bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-700/50 rounded-2xl p-3.5 space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
@@ -315,11 +233,7 @@
               </div>
               <div>
                 <label class="block text-[11px] text-slate-400">關聯目標</label>
-                <select id="rev-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white">
-                  <option value="G2026_01">業績目標 (COT)</option>
-                  <option value="G2026_02">招募增員 (4位核心)</option>
-                  <option value="G2026_03">長遠願景 (100家庭)</option>
-                </select>
+                <select id="rev-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white"></select>
               </div>
             </div>
           </div>
@@ -344,91 +258,14 @@
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-sm font-bold text-white flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> 目標管理與願景圖片更換
+            <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> 目標庫管理與編輯
           </h2>
-          <span class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800 font-mono">Build v2.4.0</span>
+          <button onclick="openAddGoalModal()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 font-semibold">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增目標
+          </button>
         </div>
 
-        <form id="admin-goal-form" class="space-y-3" onsubmit="saveAdminGoal(event)">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">選擇編輯目標類別</label>
-            <select id="adm-goal-select" onchange="loadAdminGoalData()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-              <option value="performance">💰 業績目標 (Performance)</option>
-              <option value="recruitment">👥 招募增員 (Recruitment)</option>
-              <option value="vision">🌟 長遠願景 (Vision)</option>
-            </select>
-          </div>
-
-          <!-- 圖片上傳與網址設定 -->
-          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-            <label class="block text-xs font-bold text-amber-300 flex items-center gap-1">
-              <i data-lucide="image" class="w-3.5 h-3.5"></i> 目標置頂大圖 (強化視覺直觀效果)
-            </label>
-            
-            <div class="flex items-center gap-2">
-              <input type="file" id="adm-goal-file" accept="image/*" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer" onchange="handleImageUpload(event)" />
-              <span id="upload-status" class="text-[10px] text-slate-500"></span>
-            </div>
-
-            <div>
-              <label class="block text-[10px] text-slate-500 mb-0.5">或直接輸入圖片網址 (URL)</label>
-              <input type="text" id="adm-goal-img-url" placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono" />
-            </div>
-
-            <!-- 預覽圖 -->
-            <div id="adm-img-preview-box" class="h-28 w-full rounded-lg bg-cover bg-center border border-slate-700 mt-1" style="background-image: url('');"></div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">目標名稱</label>
-            <input type="text" id="adm-goal-title" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" />
-          </div>
-
-          <div class="grid grid-cols-3 gap-2">
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">目前進度數值</label>
-              <input type="number" id="adm-goal-current" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-mono" />
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">目標設定數值</label>
-              <input type="number" id="adm-goal-target" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-mono" />
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">計量單位</label>
-              <input type="text" id="adm-goal-unit" placeholder="如 HK$ / 人" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-indigo-300 mb-1">📌 設定此目標的原因 (Why)</label>
-            <textarea id="adm-goal-why" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></textarea>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect)</label>
-            <textarea id="adm-goal-effect" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></textarea>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">截止日期</label>
-              <input type="date" id="adm-goal-deadline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">週期維度</label>
-              <select id="adm-goal-timeline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white">
-                <option value="年度">年度</option>
-                <option value="季度">季度</option>
-                <option value="月度">月度</option>
-                <option value="長遠">長遠</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
-            <i data-lucide="cloud-upload" class="w-4 h-4"></i> 保存並同步至 Google Sheet 後端
-          </button>
-        </form>
+        <div id="admin-goals-list" class="space-y-3"></div>
       </div>
     </section>
 
@@ -471,6 +308,98 @@
     </button>
   </nav>
 
+  <!-- Add / Edit Goal Modal (自訂新增/編輯目標彈窗) -->
+  <div id="goal-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5" id="modal-goal-title">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i> 設定新目標 (長遠/短期)
+        </h3>
+        <button onclick="closeGoalModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <form id="goal-edit-form" class="space-y-3" onsubmit="saveGoalModalForm(event)">
+        <input type="hidden" id="modal-goal-id" value="" />
+
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">目標名稱 (具體成果)</label>
+          <input type="text" id="modal-input-title" required placeholder="例：COT 榮譽指標 / 引進4位核心 / 拓展100家庭" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">目標類型</label>
+            <select id="modal-input-cat" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white">
+              <option value="業績目標">💰 業績目標</option>
+              <option value="招募增員">👥 招募增員</option>
+              <option value="長遠願景">🌟 長遠願景</option>
+              <option value="個人成長">📚 個人成長</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">時間維度</label>
+            <select id="modal-input-timeline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white">
+              <option value="短期">⚡ 短期 (2週~1個月)</option>
+              <option value="季度">🚀 季度 (3個月)</option>
+              <option value="年度">🏆 年度 (1年)</option>
+              <option value="長遠">🌟 長遠 (2~3年)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 圖片上傳 -->
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+          <label class="block text-[11px] font-bold text-amber-300">置頂願景圖片 (強烈視覺感)</label>
+          <input type="file" id="modal-input-file" accept="image/*" class="text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-600 file:text-white cursor-pointer" onchange="handleModalImageUpload(event)" />
+          <input type="text" id="modal-input-img-url" placeholder="或貼上圖片 URL" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-white font-mono" />
+          <div id="modal-img-preview" class="h-20 w-full rounded-lg bg-cover bg-center border border-slate-700 hidden"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">目前進度</label>
+            <input type="number" id="modal-input-current" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">目標數值</label>
+            <input type="number" id="modal-input-target" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">計量單位</label>
+            <input type="text" id="modal-input-unit" placeholder="如 HK$ / 人" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-medium text-indigo-300 mb-1">📌 設定此目標的原因 (Why)</label>
+          <textarea id="modal-input-why" rows="2" placeholder="例：證明團隊專業高度，建立護城河..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect)</label>
+          <textarea id="modal-input-effect" rows="2" placeholder="例：帶全家瑞士深度遊，享受極致成就感..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">截止日期</label>
+          <input type="date" id="modal-input-deadline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white" />
+        </div>
+
+        <div>
+          <label class="block text-[11px] text-emerald-400 mb-1">📦 可交付實體成果 (每行一項)</label>
+          <textarea id="modal-input-deliverables" rows="2" placeholder="1. 完成30份全景圖&#10;2. 官方榮譽憑證" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white"></textarea>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeGoalModal()" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">取消</button>
+          <button type="submit" class="flex-1 bg-gradient-to-r from-amber-500 to-indigo-600 hover:opacity-95 text-white font-bold py-2.5 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
+            確認保存目標
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Incomplete Reason Modal -->
   <div id="incomplete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl">
@@ -484,12 +413,8 @@
         <textarea id="incomp-reason-text" rows="3" placeholder="例如：客人臨時出差推遲通話 / 需先補查特定信託條款細節..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
       </div>
       <div class="flex gap-2">
-        <button onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2 rounded-xl text-xs font-semibold">
-          取消
-        </button>
-        <button onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl text-xs font-bold active:scale-95 transition-all">
-          儲存覆盤原因
-        </button>
+        <button onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2 rounded-xl text-xs font-semibold">取消</button>
+        <button onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl text-xs font-bold active:scale-95 transition-all">儲存覆盤原因</button>
       </div>
     </div>
   </div>
@@ -501,7 +426,7 @@
         🏆
       </div>
       <div>
-        <h3 class="text-lg font-bold text-white">恭喜達成階段性核心目標！</h3>
+        <h3 class="text-lg font-bold text-white">恭喜達成目標里程碑！</h3>
         <p class="text-xs text-slate-300 mt-1" id="celeb-goal-title"></p>
       </div>
       <div class="text-left space-y-2 bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
@@ -521,18 +446,19 @@
 
   <script>
     // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
-    const APP_VERSION = "v2.4.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
-    let currentGoalCategory = 'performance';
+    let currentGoalFilter = 'all'; // 'all', '短期', '季度', '長遠'
+    let celebratingGoalId = null;
     let activeIncompleteTaskId = null;
 
     let appData = {
-      goals: {
-        performance: {
-          id: "G2026_01",
+      goals: [
+        {
+          id: "G_2026_01",
           category: "業績目標",
+          timeline: "年度",
           tag: "2026 年度業績核心",
           title: "COT 超級會員榮譽指標",
           imageUrl: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000",
@@ -541,16 +467,17 @@
           currentVal: 1680000,
           targetVal: 2400000,
           unit: "HK$",
-          timeline: "年度",
           deadline: "2026-12-31",
           deliverables: [
             { name: "達成 COT 官方業績確認函", done: false },
             { name: "完成 30 位高淨值家庭資產全景圖交付", done: true }
-          ]
+          ],
+          status: "進行中"
         },
-        recruitment: {
-          id: "G2026_02",
+        {
+          id: "G_2026_02",
           category: "招募增員",
+          timeline: "季度",
           tag: "Q3 團隊增員擴展",
           title: "成功招募引進 4 位高素質新核心",
           imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000",
@@ -559,16 +486,17 @@
           currentVal: 2,
           targetVal: 4,
           unit: "人",
-          timeline: "季度",
           deadline: "2026-09-30",
           deliverables: [
             { name: "舉辦 3 場專屬事業說明會", done: true },
             { name: "完成 4 份新人實戰入職手冊培訓", done: false }
-          ]
+          ],
+          status: "進行中"
         },
-        vision: {
-          id: "G2026_03",
+        {
+          id: "G_2026_03",
           category: "長遠願景",
+          timeline: "長遠",
           tag: "2026-2027 長遠發展",
           title: "打造全港最具聲譽的家庭資產架構顧問團隊",
           imageUrl: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000",
@@ -577,14 +505,34 @@
           currentVal: 60,
           targetVal: 100,
           unit: "家庭",
-          timeline: "長遠",
           deadline: "2027-12-31",
           deliverables: [
             { name: "建立標準化提案工具庫", done: true },
             { name: "搭建團隊獨立獲客系統", done: false }
-          ]
+          ],
+          status: "進行中"
+        },
+        {
+          id: "G_2026_04",
+          category: "業績目標",
+          timeline: "短期",
+          tag: "8月短期衝刺",
+          title: "本月交付 5 份高額醫療與儲蓄架構書",
+          imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
+          why: "維持本月高強度見客節奏，為季度業績奠定勝局。",
+          effect: "月底零壓力達標，犒賞自己米芝蓮星級晚餐！",
+          currentVal: 3,
+          targetVal: 5,
+          unit: "份",
+          deadline: "2026-08-31",
+          deliverables: [
+            { name: "完成陳先生現金流方案", done: true },
+            { name: "完成李小姐保障缺口方案", done: true },
+            { name: "完成黃醫生家族信託架構", done: false }
+          ],
+          status: "進行中"
         }
-      },
+      ],
       todos: [],
       reviews: [],
       values: [
@@ -614,17 +562,16 @@
       loadLocalStorage();
       lucide.createIcons();
       initDate();
-      renderHeroGoal();
+      renderAllGoals();
       renderAll();
-      loadAdminGoalData();
       registerSW();
     });
 
     function registerSW() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker v2.4.0 註冊成功:', reg.scope))
-          .catch((err) => console.error('Service Worker 註冊失敗:', err));
+          .then((reg) => console.log('SW Registered'))
+          .catch((err) => console.error(err));
       }
     }
 
@@ -641,7 +588,7 @@
 
     // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
-      const saved = localStorage.getItem("ivan_os_master_v24");
+      const saved = localStorage.getItem("ivan_os_master_v25");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -658,7 +605,7 @@
             done: false,
             incompleteReason: "需補查海外保單質押細節",
             reviewId: "R202608_01",
-            goalId: "G2026_01"
+            goalId: "G_2026_01"
           }
         ];
         appData.reviews = [
@@ -671,7 +618,7 @@
             value: "為其量身訂造 2 套高流動性分期保單架構 + 私人預約週六體檢綠通名額",
             hook: "發送現金流靈活提取對比圖 + 確認體檢名額",
             followDate: "2026-08-27",
-            goalId: "G2026_01"
+            goalId: "G_2026_01"
           }
         ];
         saveLocalStorage();
@@ -679,71 +626,369 @@
     }
 
     function saveLocalStorage() {
-      localStorage.setItem("ivan_os_master_v24", JSON.stringify(appData));
+      localStorage.setItem("ivan_os_master_v25", JSON.stringify(appData));
     }
 
-    // ===== GOAL CATEGORY SWITCHER =====
-    function switchGoalCategory(cat) {
-      currentGoalCategory = cat;
-      ['performance', 'recruitment', 'vision'].forEach(c => {
-        const btn = document.getElementById(`cat-btn-${c}`);
-        if (c === cat) {
-          btn.className = "py-2 text-xs font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
+    // ===== GOALS FILTER & RENDER =====
+    function switchGoalFilter(filter) {
+      currentGoalFilter = filter;
+      ['all', '短期', '季度', '長遠'].forEach(f => {
+        const btn = document.getElementById(`filter-btn-${f}`);
+        if (!btn) return;
+        if (f === filter) {
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-xl transition-all whitespace-nowrap bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
         } else {
-          btn.className = "py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition-all whitespace-nowrap";
         }
       });
-      renderHeroGoal();
+      renderAllGoals();
     }
 
-    function renderHeroGoal() {
-      const g = appData.goals[currentGoalCategory];
-      if (!g) return;
+    function renderAllGoals() {
+      const container = document.getElementById("dynamic-goals-container");
+      container.innerHTML = "";
 
-      const pct = Math.min(100, Math.round((g.currentVal / g.targetVal) * 1000) / 10);
-      
-      document.getElementById("hero-tag").textContent = g.tag;
-      document.getElementById("hero-deadline").textContent = `截止: ${g.deadline}`;
-      document.getElementById("hero-title").textContent = g.title;
-      document.getElementById("hero-numeric-display").innerHTML = `${g.unit === 'HK$' ? 'HK$ ' : ''}${g.currentVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''} <span class="text-sm font-normal text-slate-400">/ ${g.targetVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}</span>`;
-      document.getElementById("hero-percent").textContent = `${pct}%`;
-      document.getElementById("hero-progress-bar").style.width = `${pct}%`;
-      document.getElementById("hero-why").textContent = g.why;
-      document.getElementById("hero-effect").textContent = g.effect;
+      const filtered = appData.goals.filter(g => {
+        if (currentGoalFilter === 'all') return true;
+        return g.timeline.includes(currentGoalFilter);
+      });
 
-      // 前台直接置頂顯示圖片
-      const imgEl = document.getElementById("hero-img-banner");
-      if (g.imageUrl) {
-        imgEl.src = g.imageUrl;
-        imgEl.classList.remove("hidden");
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-slate-900/60 border border-slate-800 rounded-3xl space-y-2">
+            <i data-lucide="target" class="w-8 h-8 text-slate-600 mx-auto"></i>
+            <p class="text-xs text-slate-400">目前維度暫無目標</p>
+            <button onclick="openAddGoalModal()" class="text-xs text-indigo-400 font-semibold hover:underline">點此立即新增</button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
       }
 
-      const delList = document.getElementById("hero-deliverables");
-      delList.innerHTML = "";
-      g.deliverables.forEach((d, idx) => {
-        const item = document.createElement("div");
-        item.className = "flex items-center gap-2 text-xs text-slate-300";
-        item.innerHTML = `
-          <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleHeroDeliverable('${currentGoalCategory}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
-          <span class="${d.done ? 'line-through text-slate-500' : ''}">${d.name}</span>
+      filtered.forEach(g => {
+        const pct = Math.min(100, Math.round((g.currentVal / g.targetVal) * 1000) / 10);
+        
+        let deliverablesHtml = "";
+        if (g.deliverables && g.deliverables.length > 0) {
+          deliverablesHtml = g.deliverables.map((d, idx) => `
+            <div class="flex items-center gap-2 text-xs text-slate-300">
+              <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleDeliverableItem('${g.id}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
+              <span class="${d.done ? 'line-through text-slate-500' : ''}">${d.name}</span>
+            </div>
+          `).join('');
+        }
+
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10";
+        card.innerHTML = `
+          <!-- 1. 置頂強烈視覺圖 -->
+          <div class="relative w-full h-44 sm:h-48 bg-slate-950 overflow-hidden">
+            <img src="${g.imageUrl || 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000'}" alt="${g.title}" class="w-full h-full object-cover object-center" />
+            
+            <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/85 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-lg">
+                ${g.category} • ${g.timeline}
+              </span>
+              <span class="text-xs text-slate-200 font-mono bg-slate-950/85 px-2.5 py-1 rounded-full border border-slate-700/80 backdrop-blur-md shadow-lg">
+                截止: ${g.deadline || '未定'}
+              </span>
+            </div>
+            <div class="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-slate-900 to-transparent"></div>
+          </div>
+
+          <!-- 2. 目標具體數值與文字內容 -->
+          <div class="p-5 space-y-3.5">
+            <div class="flex items-start justify-between gap-2">
+              <h3 class="text-lg font-black text-white tracking-tight flex-1">${g.title}</h3>
+              <div class="flex items-center gap-1">
+                <button onclick="editGoalItem('${g.id}')" title="編輯此目標" class="p-1.5 text-slate-400 hover:text-amber-400 bg-slate-950 rounded-lg border border-slate-800">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteGoalItem('${g.id}')" title="刪除此目標" class="p-1.5 text-slate-400 hover:text-red-400 bg-slate-950 rounded-lg border border-slate-800">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 數值與進度 -->
+            <div>
+              <div class="flex items-baseline justify-between">
+                <span class="text-xl font-black text-white font-mono tracking-tight">
+                  ${g.unit === 'HK$' ? 'HK$ ' : ''}${g.currentVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}
+                  <span class="text-xs font-normal text-slate-400">/ ${g.targetVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}</span>
+                </span>
+                <span class="text-xl font-black text-amber-400 font-mono">${pct}%</span>
+              </div>
+              <div class="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800 mt-2 p-0.5">
+                <div class="bg-gradient-to-r from-amber-500 via-indigo-500 to-emerald-400 h-1.5 rounded-full transition-all duration-700 shadow-sm shadow-amber-500/50" style="width: ${pct}%"></div>
+              </div>
+            </div>
+
+            <!-- Why -->
+            ${g.why ? `
+              <div class="p-3 bg-slate-950 border border-slate-800 rounded-2xl space-y-0.5">
+                <p class="text-[10px] font-bold text-indigo-400 flex items-center gap-1">
+                  <i data-lucide="help-circle" class="w-3 h-3"></i> 原因 (Why)：
+                </p>
+                <p class="text-xs text-slate-300 leading-relaxed">${g.why}</p>
+              </div>
+            ` : ''}
+
+            <!-- Effect -->
+            ${g.effect ? `
+              <div class="p-3 bg-amber-950/20 border border-amber-500/30 rounded-2xl space-y-0.5">
+                <p class="text-[10px] font-bold text-amber-300 flex items-center gap-1">
+                  <i data-lucide="sparkles" class="w-3 h-3"></i> 效果與滿足感 (Effect)：
+                </p>
+                <p class="text-xs text-slate-300 leading-relaxed">${g.effect}</p>
+              </div>
+            ` : ''}
+
+            <!-- Deliverables -->
+            ${deliverablesHtml ? `
+              <div class="space-y-1.5 pt-1">
+                <span class="text-[11px] font-bold text-slate-300 flex items-center gap-1">
+                  <i data-lucide="package-check" class="w-3 h-3 text-emerald-400"></i> 可交付項目
+                </span>
+                <div class="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
+                  ${deliverablesHtml}
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="flex justify-end pt-1">
+              <button onclick="triggerCelebration('${g.id}')" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-3 py-1.5 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1 transition-all">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i> 達成覆盤與慶祝
+              </button>
+            </div>
+
+          </div>
         `;
-        delList.appendChild(item);
+        container.appendChild(card);
+      });
+
+      updateReviewGoalDropdown();
+      renderAdminGoalsList();
+      lucide.createIcons();
+    }
+
+    function toggleDeliverableItem(goalId, index) {
+      const g = appData.goals.find(item => item.id === goalId);
+      if (g && g.deliverables && g.deliverables[index]) {
+        g.deliverables[index].done = !g.deliverables[index].done;
+        saveLocalStorage();
+        renderAllGoals();
+      }
+    }
+
+    // ===== GOAL CRUD MODAL =====
+    function openAddGoalModal() {
+      document.getElementById("modal-goal-title").innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i> 新增目標 (長遠/短期)';
+      document.getElementById("goal-edit-form").reset();
+      document.getElementById("modal-goal-id").value = "";
+      document.getElementById("modal-img-preview").classList.add("hidden");
+      document.getElementById("goal-modal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function editGoalItem(goalId) {
+      const g = appData.goals.find(item => item.id === goalId);
+      if (!g) return;
+
+      document.getElementById("modal-goal-title").innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-indigo-400"></i> 編輯目標內容';
+      document.getElementById("modal-goal-id").value = g.id;
+      document.getElementById("modal-input-title").value = g.title || "";
+      document.getElementById("modal-input-cat").value = g.category || "業績目標";
+      document.getElementById("modal-input-timeline").value = g.timeline || "年度";
+      document.getElementById("modal-input-current").value = g.currentVal || 0;
+      document.getElementById("modal-input-target").value = g.targetVal || 0;
+      document.getElementById("modal-input-unit").value = g.unit || "";
+      document.getElementById("modal-input-why").value = g.why || "";
+      document.getElementById("modal-input-effect").value = g.effect || "";
+      document.getElementById("modal-input-deadline").value = g.deadline || "";
+      document.getElementById("modal-input-img-url").value = g.imageUrl || "";
+
+      if (g.deliverables) {
+        document.getElementById("modal-input-deliverables").value = g.deliverables.map(d => d.name).join('\n');
+      } else {
+        document.getElementById("modal-input-deliverables").value = "";
+      }
+
+      if (g.imageUrl) {
+        const prev = document.getElementById("modal-img-preview");
+        prev.style.backgroundImage = `url('${g.imageUrl}')`;
+        prev.classList.remove("hidden");
+      }
+
+      document.getElementById("goal-modal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeGoalModal() {
+      document.getElementById("goal-modal").classList.add("hidden");
+    }
+
+    async function handleModalImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      showToast("正在上傳圖片至 Firebase...");
+      try {
+        if (window.uploadFirebaseImage) {
+          const path = `goals/${Date.now()}_${file.name}`;
+          const downloadUrl = await window.uploadFirebaseImage(file, path);
+          document.getElementById("modal-input-img-url").value = downloadUrl;
+          const prev = document.getElementById("modal-img-preview");
+          prev.style.backgroundImage = `url('${downloadUrl}')`;
+          prev.classList.remove("hidden");
+          showToast("✅ Firebase 圖片上傳成功！");
+        } else {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const base64 = evt.target.result;
+            document.getElementById("modal-input-img-url").value = base64;
+            const prev = document.getElementById("modal-img-preview");
+            prev.style.backgroundImage = `url('${base64}')`;
+            prev.classList.remove("hidden");
+            showToast("✅ 本地預覽已就緒");
+          };
+          reader.readAsDataURL(file);
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+
+    async function saveGoalModalForm(e) {
+      e.preventDefault();
+      const goalId = document.getElementById("modal-goal-id").value;
+      const title = document.getElementById("modal-input-title").value.trim();
+      const category = document.getElementById("modal-input-cat").value;
+      const timeline = document.getElementById("modal-input-timeline").value;
+      const currentVal = Number(document.getElementById("modal-input-current").value);
+      const targetVal = Number(document.getElementById("modal-input-target").value);
+      const unit = document.getElementById("modal-input-unit").value.trim();
+      const why = document.getElementById("modal-input-why").value.trim();
+      const effect = document.getElementById("modal-input-effect").value.trim();
+      const deadline = document.getElementById("modal-input-deadline").value;
+      const imageUrl = document.getElementById("modal-input-img-url").value.trim() || "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000";
+      const delRaw = document.getElementById("modal-input-deliverables").value.trim();
+
+      const deliverables = delRaw.split('\n')
+        .map(s => s.trim())
+        .filter(s => s)
+        .map(name => ({ name, done: false }));
+
+      let goalObj;
+      if (goalId) {
+        goalObj = appData.goals.find(item => item.id === goalId);
+        if (goalObj) {
+          goalObj.title = title;
+          goalObj.category = category;
+          goalObj.timeline = timeline;
+          goalObj.currentVal = currentVal;
+          goalObj.targetVal = targetVal;
+          goalObj.unit = unit;
+          goalObj.why = why;
+          goalObj.effect = effect;
+          goalObj.deadline = deadline;
+          goalObj.imageUrl = imageUrl;
+          goalObj.deliverables = deliverables;
+        }
+      } else {
+        const newId = "G_" + Date.now();
+        goalObj = {
+          id: newId,
+          title,
+          category,
+          timeline,
+          currentVal,
+          targetVal,
+          unit,
+          why,
+          effect,
+          deadline,
+          imageUrl,
+          deliverables,
+          status: "進行中"
+        };
+        appData.goals.unshift(goalObj);
+      }
+
+      saveLocalStorage();
+      renderAllGoals();
+      closeGoalModal();
+      showToast("目標已成功保存！正在同步後端...");
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_goal",
+            data: goalObj
+          })
+        });
+        showToast("✅ Google Sheet 已同步！");
+      } catch(err) {
+        console.warn(err);
+      }
+    }
+
+    async function deleteGoalItem(goalId) {
+      if (!confirm("確定要刪除此目標嗎？")) return;
+
+      appData.goals = appData.goals.filter(item => item.id !== goalId);
+      saveLocalStorage();
+      renderAllGoals();
+      showToast("目標已刪除！");
+    }
+
+    function renderAdminGoalsList() {
+      const container = document.getElementById("admin-goals-list");
+      if (!container) return;
+      container.innerHTML = "";
+
+      appData.goals.forEach(g => {
+        const item = document.createElement("div");
+        item.className = "bg-slate-950 p-3 rounded-2xl border border-slate-800 flex items-center justify-between";
+        item.innerHTML = `
+          <div class="flex items-center gap-2.5 flex-1 pr-2">
+            <img src="${g.imageUrl || 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000'}" class="w-10 h-10 rounded-xl object-cover shrink-0 border border-slate-700" />
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[9px] bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded">${g.timeline}</span>
+                <span class="text-[9px] bg-slate-800 text-indigo-300 px-1.5 py-0.5 rounded">${g.category}</span>
+              </div>
+              <h4 class="text-xs font-bold text-white truncate mt-0.5">${g.title}</h4>
+              <p class="text-[10px] text-slate-400 font-mono">${g.currentVal.toLocaleString()} / ${g.targetVal.toLocaleString()} ${g.unit}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="editGoalItem('${g.id}')" class="p-1.5 text-slate-400 hover:text-indigo-400 bg-slate-900 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+            <button onclick="deleteGoalItem('${g.id}')" class="p-1.5 text-slate-400 hover:text-red-400 bg-slate-900 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
+        `;
+        container.appendChild(item);
       });
       lucide.createIcons();
     }
 
-    function toggleHeroDeliverable(cat, index) {
-      const g = appData.goals[cat];
-      if (g && g.deliverables[index]) {
-        g.deliverables[index].done = !g.deliverables[index].done;
-        saveLocalStorage();
-        renderHeroGoal();
-      }
+    function updateReviewGoalDropdown() {
+      const select = document.getElementById("rev-goal-select");
+      if (!select) return;
+      select.innerHTML = '<option value="">無關聯特定目標</option>';
+      appData.goals.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g.id;
+        opt.textContent = `[${g.timeline}] ${g.title}`;
+        select.appendChild(opt);
+      });
     }
 
-    function triggerHeroGoalCelebration() {
-      const g = appData.goals[currentGoalCategory];
-      document.getElementById("celeb-goal-title").textContent = g.title;
+    function triggerCelebration(goalId) {
+      celebratingGoalId = goalId;
+      const g = appData.goals.find(item => item.id === goalId);
+      document.getElementById("celeb-goal-title").textContent = g ? g.title : "";
       document.getElementById("celebration-modal").classList.remove("hidden");
       if (typeof confetti === "function") {
         confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
@@ -753,166 +998,6 @@
     function closeCelebrationModal() {
       document.getElementById("celebration-modal").classList.add("hidden");
       showToast("成就感已沉澱！");
-    }
-
-    // ===== ADMIN BACKEND SETTINGS =====
-    function loadAdminGoalData() {
-      const sel = document.getElementById("adm-goal-select").value;
-      const g = appData.goals[sel];
-      if (!g) return;
-
-      document.getElementById("adm-goal-title").value = g.title;
-      document.getElementById("adm-goal-current").value = g.currentVal;
-      document.getElementById("adm-goal-target").value = g.targetVal;
-      document.getElementById("adm-goal-unit").value = g.unit;
-      document.getElementById("adm-goal-why").value = g.why;
-      document.getElementById("adm-goal-effect").value = g.effect;
-      document.getElementById("adm-goal-deadline").value = g.deadline;
-      document.getElementById("adm-goal-timeline").value = g.timeline;
-      document.getElementById("adm-goal-img-url").value = g.imageUrl || "";
-      document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${g.imageUrl || ''}')`;
-    }
-
-    async function handleImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const statusEl = document.getElementById("upload-status");
-      statusEl.textContent = "正在上傳至 Firebase...";
-      statusEl.className = "text-[10px] text-amber-400 animate-pulse";
-
-      try {
-        if (window.uploadFirebaseImage) {
-          const path = `goals/${Date.now()}_${file.name}`;
-          const downloadUrl = await window.uploadFirebaseImage(file, path);
-          document.getElementById("adm-goal-img-url").value = downloadUrl;
-          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${downloadUrl}')`;
-          statusEl.textContent = "✅ Firebase 上傳成功！";
-          statusEl.className = "text-[10px] text-emerald-400";
-        } else {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            const base64 = evt.target.result;
-            document.getElementById("adm-goal-img-url").value = base64;
-            document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
-            statusEl.textContent = "✅ 本地預覽已就緒";
-          };
-          reader.readAsDataURL(file);
-        }
-      } catch (err) {
-        console.warn("Firebase upload error, fallback to local:", err);
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const base64 = evt.target.result;
-          document.getElementById("adm-goal-img-url").value = base64;
-          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
-          statusEl.textContent = "⚠️ 本地已儲存 (雲端上傳失敗)";
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    async function saveAdminGoal(e) {
-      e.preventDefault();
-      const sel = document.getElementById("adm-goal-select").value;
-      const g = appData.goals[sel];
-
-      g.title = document.getElementById("adm-goal-title").value.trim();
-      g.currentVal = Number(document.getElementById("adm-goal-current").value);
-      g.targetVal = Number(document.getElementById("adm-goal-target").value);
-      g.unit = document.getElementById("adm-goal-unit").value.trim();
-      g.why = document.getElementById("adm-goal-why").value.trim();
-      g.effect = document.getElementById("adm-goal-effect").value.trim();
-      g.deadline = document.getElementById("adm-goal-deadline").value;
-      g.timeline = document.getElementById("adm-goal-timeline").value;
-      g.imageUrl = document.getElementById("adm-goal-img-url").value.trim();
-
-      saveLocalStorage();
-      renderHeroGoal();
-      showToast("本地後台目標已更新，正在同步 Google Sheet...");
-
-      try {
-        await fetch(GAS_API_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "update_goal",
-            data: {
-              id: g.id,
-              category: g.category,
-              title: g.title,
-              why: g.why,
-              effect: g.effect,
-              currentVal: g.currentVal,
-              targetVal: g.targetVal,
-              unit: g.unit,
-              timeline: g.timeline,
-              deadline: g.deadline,
-              imageUrl: g.imageUrl,
-              status: "進行中"
-            }
-          })
-        });
-        showToast("✅ Google Sheet 後台目標同步成功！");
-      } catch(err) {
-        console.warn("GAS Sync Error:", err);
-      }
-    }
-
-    // ===== AI 智能跟進點子生成器 =====
-    async function generateAiHookIdeas() {
-      const name = document.getElementById("rev-client-name").value.trim() || "客戶";
-      const pain = document.getElementById("rev-pain").value.trim();
-      const btn = document.getElementById("ai-gen-btn");
-
-      btn.classList.add("animate-pulse");
-
-      const suggestionsContainer = document.getElementById("ai-hook-suggestions");
-      suggestionsContainer.innerHTML = "";
-      suggestionsContainer.classList.remove("hidden");
-
-      let ideas = [
-        {
-          type: "💡 方案與流動性",
-          hook: `提供 1 頁紙【資金靈活提取對比圖】，特別標註應對資金周轉的保單質押/提取條款`
-        },
-        {
-          type: "🎁 增值健康服務",
-          hook: `為 ${name} 預留合作體檢中心 VIP 專屬預約名額，附上健康檢測重點項目清單`
-        },
-        {
-          type: "🤝 跨界與生活關懷",
-          hook: `引薦熟悉稅務/留學規劃的專業顧問朋友，為其解答上次會面提及的延伸問題`
-        }
-      ];
-
-      if (pain.includes("現金") || pain.includes("供款") || pain.includes("生意")) {
-        ideas[0].hook = `發送為其量身訂做的【短期供款 vs 長期複利流動性分析】，消除資金鎖死顧慮`;
-      } else if (pain.includes("子女") || pain.includes("留學") || pain.includes("教育")) {
-        ideas[0].hook = `整理一份【海外留學教育基金提領架構表】，配合專屬信託條款解讀`;
-      }
-
-      ideas.forEach(idea => {
-        const item = document.createElement("div");
-        item.className = "p-2 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/40 rounded-xl cursor-pointer text-left transition-all active:scale-[0.98]";
-        item.onclick = () => applyAiHook(idea.hook);
-        item.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-bold text-amber-300">${idea.type}</span>
-            <span class="text-[10px] text-indigo-400">點擊套用 ➔</span>
-          </div>
-          <p class="text-xs text-slate-200 mt-0.5">${idea.hook}</p>
-        `;
-        suggestionsContainer.appendChild(item);
-      });
-
-      btn.classList.remove("animate-pulse");
-      showToast("已為你生成 3 套高價值連繫點子！");
-      lucide.createIcons();
-    }
-
-    function applyAiHook(text) {
-      document.getElementById("rev-hook").value = text;
-      showToast("已套用連繫理由！");
     }
 
     // ===== TAB NAVIGATION =====
@@ -939,11 +1024,11 @@
       });
 
       document.getElementById('header-title').textContent = headers[tab];
-      if (tab === 'admin') loadAdminGoalData();
+      if (tab === 'admin') renderAdminGoalsList();
       lucide.createIcons();
     }
 
-    // ===== RENDERING =====
+    // ===== RENDERING TODOS & REVIEWS =====
     function renderAll() {
       renderTodos();
       renderReviews();
@@ -1202,7 +1287,7 @@
             data: newReview
           })
         });
-      } catch(err) { console.warn("GAS save review error:", err); }
+      } catch(err) { console.warn(err); }
     }
 
     function copyScript(text) {
@@ -1220,6 +1305,63 @@
       }, 2500);
     }
 
+    // ===== AI 智能跟進點子生成器 =====
+    async function generateAiHookIdeas() {
+      const name = document.getElementById("rev-client-name").value.trim() || "客戶";
+      const pain = document.getElementById("rev-pain").value.trim();
+      const btn = document.getElementById("ai-gen-btn");
+
+      btn.classList.add("animate-pulse");
+
+      const suggestionsContainer = document.getElementById("ai-hook-suggestions");
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.classList.remove("hidden");
+
+      let ideas = [
+        {
+          type: "💡 方案與流動性",
+          hook: `提供 1 頁紙【資金靈活提取對比圖】，特別標註應對資金周轉的保單質押/提取條款`
+        },
+        {
+          type: "🎁 增值健康服務",
+          hook: `為 ${name} 預留合作體檢中心 VIP 專屬預約名額，附上健康檢測重點項目清單`
+        },
+        {
+          type: "🤝 跨界與生活關懷",
+          hook: `引薦熟悉稅務/留學規劃的專業顧問朋友，為其解答上次會面提及的延伸問題`
+        }
+      ];
+
+      if (pain.includes("現金") || pain.includes("供款") || pain.includes("生意")) {
+        ideas[0].hook = `發送為其量身訂做的【短期供款 vs 長期複利流動性分析】，消除資金鎖死顧慮`;
+      } else if (pain.includes("子女") || pain.includes("留學") || pain.includes("教育")) {
+        ideas[0].hook = `整理一份【海外留學教育基金提領架構表】，配合專屬信託條款解讀`;
+      }
+
+      ideas.forEach(idea => {
+        const item = document.createElement("div");
+        item.className = "p-2 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/40 rounded-xl cursor-pointer text-left transition-all active:scale-[0.98]";
+        item.onclick = () => applyAiHook(idea.hook);
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold text-amber-300">${idea.type}</span>
+            <span class="text-[10px] text-indigo-400">點擊套用 ➔</span>
+          </div>
+          <p class="text-xs text-slate-200 mt-0.5">${idea.hook}</p>
+        `;
+        suggestionsContainer.appendChild(item);
+      });
+
+      btn.classList.remove("animate-pulse");
+      showToast("已為你生成 3 套高價值連繫點子！");
+      lucide.createIcons();
+    }
+
+    function applyAiHook(text) {
+      document.getElementById("rev-hook").value = text;
+      showToast("已套用連繫理由！");
+    }
+
     // ===== GAS BACKEND API CALLS =====
     async function syncSingleTodoToGAS(todo) {
       try {
@@ -1227,7 +1369,7 @@
           method: "POST",
           body: JSON.stringify({ action: "add_todo", data: todo })
         });
-      } catch(err) { console.warn("GAS Todo Sync error:", err); }
+      } catch(err) { console.warn(err); }
     }
 
     async function updateTodoStatusToGAS(todo) {
@@ -1241,7 +1383,7 @@
             incompleteReason: todo.incompleteReason || ""
           })
         });
-      } catch(err) { console.warn("GAS Status update error:", err); }
+      } catch(err) { console.warn(err); }
     }
 
     async function triggerCalendarSync() {
