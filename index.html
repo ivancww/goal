@@ -48,21 +48,21 @@
     }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .hero-img-overlay {
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(9, 13, 22, 0.95) 85%);
-    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-24 flex flex-col items-center">
 
   <!-- Top App Header -->
-  <header class="w-full max-w-md bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+  <header class="w-full max-w-md bg-slate-900/95 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-2">
       <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
         <i data-lucide="crown" class="w-4 h-4 text-amber-200"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
+          <span class="text-[9px] font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.2 rounded-full" id="app-version-badge">v2.4.0</span>
+        </div>
         <p class="text-[11px] text-slate-400" id="current-date"></p>
       </div>
     </div>
@@ -95,72 +95,83 @@
         </button>
       </div>
 
-      <!-- 顯眼大隻核心目標主卡片 (支援視覺化圖片背景) -->
-      <div id="main-goal-hero" class="relative overflow-hidden border border-amber-500/30 rounded-3xl p-5 shadow-2xl shadow-amber-500/10 min-h-[360px] flex flex-col justify-between">
+      <!-- 核心目標主卡片：圖片先直接置頂強烈呈現，文字/進度緊隨其後 -->
+      <div id="main-goal-hero" class="bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10">
         
-        <!-- 背景圖片與漸變層 -->
-        <div id="hero-bg-img" class="absolute inset-0 bg-cover bg-center transition-all duration-700 opacity-35" style="background-image: url('https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000');"></div>
-        <div class="absolute inset-0 hero-img-overlay"></div>
+        <!-- 1. 置頂強烈視覺圖 (Vision Image Banner) -->
+        <div class="relative w-full h-48 sm:h-52 bg-slate-950 overflow-hidden group">
+          <img id="hero-img-banner" src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000" alt="Goal Vision" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" />
+          
+          <!-- 圖片內懸浮標籤 -->
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/85 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-lg" id="hero-tag">
+              2026 年度業績核心
+            </span>
+            <span class="text-xs text-slate-200 font-mono bg-slate-950/85 px-2.5 py-1 rounded-full border border-slate-700/80 backdrop-blur-md shadow-lg" id="hero-deadline">
+              截止: 2026-12-31
+            </span>
+          </div>
 
-        <!-- 頂部標籤 -->
-        <div class="relative z-10 flex items-center justify-between mb-2">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40 backdrop-blur-md" id="hero-tag">
-            2026 年度業績核心
-          </span>
-          <span class="text-xs text-slate-300 font-mono bg-slate-950/60 px-2 py-0.5 rounded-lg border border-slate-800" id="hero-deadline">截止: 2026-12-31</span>
+          <!-- 圖片底部微陰影銜接 -->
+          <div class="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-900 to-transparent"></div>
         </div>
 
-        <!-- 標題與業績數值 -->
-        <div class="relative z-10 space-y-2 mt-1">
-          <h3 class="text-xl font-black text-white tracking-tight drop-shadow-md" id="hero-title">COT 超級會員榮譽指標</h3>
+        <!-- 2. 下方具體數值與文字內容 -->
+        <div class="p-5 space-y-4">
           
-          <div class="space-y-1">
-            <p class="text-[11px] font-medium text-slate-300">目前累積達成 / 目標數值</p>
-            <div class="flex items-baseline justify-between">
-              <h2 class="text-2xl font-black tracking-tight text-white font-mono drop-shadow" id="hero-numeric-display">
-                HK$ 1,680,000 <span class="text-sm font-normal text-slate-400">/ 2,400,000</span>
-              </h2>
-              <span class="text-2xl font-black text-amber-400 font-mono drop-shadow" id="hero-percent">70.0%</span>
+          <!-- 目標標題與業績大字 -->
+          <div>
+            <h3 class="text-xl font-black text-white tracking-tight" id="hero-title">COT 超級會員榮譽指標</h3>
+            
+            <div class="mt-3 space-y-1">
+              <p class="text-[11px] font-medium text-slate-400">目前累積達成 / 目標數值</p>
+              <div class="flex items-baseline justify-between">
+                <h2 class="text-2xl font-black tracking-tight text-white font-mono" id="hero-numeric-display">
+                  HK$ 1,680,000 <span class="text-sm font-normal text-slate-400">/ 2,400,000</span>
+                </h2>
+                <span class="text-2xl font-black text-amber-400 font-mono" id="hero-percent">70.0%</span>
+              </div>
+            </div>
+
+            <!-- 進度條 -->
+            <div class="w-full bg-slate-950 rounded-full h-3 border border-slate-800 mt-2.5 p-0.5">
+              <div id="hero-progress-bar" class="bg-gradient-to-r from-amber-500 via-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-700 shadow-md shadow-amber-500/50" style="width: 70%"></div>
             </div>
           </div>
 
-          <!-- 進度條 -->
-          <div class="w-full bg-slate-950/80 rounded-full h-3 border border-slate-700/80 p-0.5 backdrop-blur-sm">
-            <div id="hero-progress-bar" class="bg-gradient-to-r from-amber-500 via-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-700 shadow-md shadow-amber-500/50" style="width: 70%"></div>
+          <!-- 設定原因 (Why) -->
+          <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl space-y-1">
+            <p class="text-[11px] font-bold text-indigo-400 flex items-center gap-1">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> 設定此目標的原因 (Why)：
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed" id="hero-why">
+              證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。
+            </p>
           </div>
-        </div>
 
-        <!-- 設定原因 (Why) -->
-        <div class="relative z-10 mt-3 p-3 bg-slate-950/85 backdrop-blur-md border border-slate-800/90 rounded-2xl space-y-1">
-          <p class="text-[11px] font-bold text-indigo-400 flex items-center gap-1">
-            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> 設定此目標的原因 (Why)：
-          </p>
-          <p class="text-xs text-slate-200 leading-relaxed" id="hero-why">
-            證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。
-          </p>
-        </div>
-
-        <!-- 達成後效果與滿足感 (Effect) -->
-        <div class="relative z-10 mt-2 p-3 bg-amber-950/40 backdrop-blur-md border border-amber-500/40 rounded-2xl space-y-1">
-          <p class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 達成後的效果與滿足感 (Effect)：
-          </p>
-          <p class="text-xs text-slate-200 leading-relaxed" id="hero-effect">
-            在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。
-          </p>
-        </div>
-
-        <!-- 可交付清單與按鈕 -->
-        <div class="relative z-10 mt-3 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-200 flex items-center gap-1">
-              <i data-lucide="package-check" class="w-3.5 h-3.5 text-emerald-400"></i> 可交付成果 (Deliverables)
-            </span>
-            <button onclick="triggerHeroGoalCelebration()" class="text-xs bg-amber-500/30 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-2.5 py-1 rounded-xl border border-amber-500/40 font-semibold flex items-center gap-1 transition-all backdrop-blur-sm">
-              <i data-lucide="award" class="w-3.5 h-3.5"></i> 達成覆盤
-            </button>
+          <!-- 達成後效果與滿足感 (Effect) -->
+          <div class="p-3.5 bg-amber-950/20 border border-amber-500/30 rounded-2xl space-y-1">
+            <p class="text-[11px] font-bold text-amber-300 flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 達成後的效果與滿足感 (Effect)：
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed" id="hero-effect">
+              在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。
+            </p>
           </div>
-          <div id="hero-deliverables" class="space-y-1.5"></div>
+
+          <!-- 可交付清單與按鈕 -->
+          <div class="space-y-2 pt-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200 flex items-center gap-1">
+                <i data-lucide="package-check" class="w-3.5 h-3.5 text-emerald-400"></i> 可交付成果 (Deliverables)
+              </span>
+              <button onclick="triggerHeroGoalCelebration()" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-2.5 py-1 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1 transition-all">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i> 達成覆盤
+              </button>
+            </div>
+            <div id="hero-deliverables" class="space-y-1.5"></div>
+          </div>
+
         </div>
       </div>
 
@@ -171,7 +182,7 @@
             <i data-lucide="sliders" class="w-4 h-4"></i>
           </div>
           <div>
-            <h4 class="text-xs font-bold text-white">管理後台 (換目標圖片 / 調整數值)</h4>
+            <h4 class="text-xs font-bold text-white">管理後台 (換目標置頂大圖 / 調整數值)</h4>
             <p class="text-[10px] text-slate-400">自訂願景圖片、更新目標數值並同步 Google Sheet</p>
           </div>
         </div>
@@ -290,7 +301,6 @@
               </button>
             </div>
 
-            <!-- AI 點子推薦選擇區 -->
             <div id="ai-hook-suggestions" class="space-y-1.5 hidden"></div>
 
             <div>
@@ -329,14 +339,14 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: 管理後台 (ADMIN SETTINGS - 支援圖片上傳與更換) ================= -->
+    <!-- ================= TAB 4: 管理後台 (ADMIN SETTINGS) ================= -->
     <section id="tab-admin" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-sm font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> 目標管理與願景圖片更換
           </h2>
-          <span class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800">Firebase & GAS</span>
+          <span class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800 font-mono">Build v2.4.0</span>
         </div>
 
         <form id="admin-goal-form" class="space-y-3" onsubmit="saveAdminGoal(event)">
@@ -352,7 +362,7 @@
           <!-- 圖片上傳與網址設定 -->
           <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
             <label class="block text-xs font-bold text-amber-300 flex items-center gap-1">
-              <i data-lucide="image" class="w-3.5 h-3.5"></i> 目標願景圖片 (強化視覺驅動力)
+              <i data-lucide="image" class="w-3.5 h-3.5"></i> 目標置頂大圖 (強化視覺直觀效果)
             </label>
             
             <div class="flex items-center gap-2">
@@ -366,7 +376,7 @@
             </div>
 
             <!-- 預覽圖 -->
-            <div id="adm-img-preview-box" class="h-24 w-full rounded-lg bg-cover bg-center border border-slate-700 mt-1" style="background-image: url('');"></div>
+            <div id="adm-img-preview-box" class="h-28 w-full rounded-lg bg-cover bg-center border border-slate-700 mt-1" style="background-image: url('');"></div>
           </div>
 
           <div>
@@ -511,6 +521,7 @@
 
   <script>
     // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
+    const APP_VERSION = "v2.4.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
@@ -606,7 +617,16 @@
       renderHeroGoal();
       renderAll();
       loadAdminGoalData();
+      registerSW();
     });
+
+    function registerSW() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker v2.4.0 註冊成功:', reg.scope))
+          .catch((err) => console.error('Service Worker 註冊失敗:', err));
+      }
+    }
 
     function initDate() {
       const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
@@ -621,7 +641,7 @@
 
     // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
-      const saved = localStorage.getItem("ivan_os_master_v4");
+      const saved = localStorage.getItem("ivan_os_master_v24");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -639,17 +659,6 @@
             incompleteReason: "需補查海外保單質押細節",
             reviewId: "R202608_01",
             goalId: "G2026_01"
-          },
-          {
-            id: "T202608_02",
-            title: "邀約準增員對象（前銀行經理）深度咖啡訪談",
-            cat: "🔥 今日 Top 3",
-            date: "2026-08-26",
-            time: "14:30 - 16:00",
-            done: false,
-            incompleteReason: "",
-            reviewId: "",
-            goalId: "G2026_02"
           }
         ];
         appData.reviews = [
@@ -670,7 +679,7 @@
     }
 
     function saveLocalStorage() {
-      localStorage.setItem("ivan_os_master_v4", JSON.stringify(appData));
+      localStorage.setItem("ivan_os_master_v24", JSON.stringify(appData));
     }
 
     // ===== GOAL CATEGORY SWITCHER =====
@@ -702,18 +711,21 @@
       document.getElementById("hero-why").textContent = g.why;
       document.getElementById("hero-effect").textContent = g.effect;
 
+      // 前台直接置頂顯示圖片
+      const imgEl = document.getElementById("hero-img-banner");
       if (g.imageUrl) {
-        document.getElementById("hero-bg-img").style.backgroundImage = `url('${g.imageUrl}')`;
+        imgEl.src = g.imageUrl;
+        imgEl.classList.remove("hidden");
       }
 
       const delList = document.getElementById("hero-deliverables");
       delList.innerHTML = "";
       g.deliverables.forEach((d, idx) => {
         const item = document.createElement("div");
-        item.className = "flex items-center gap-2 text-xs text-slate-200";
+        item.className = "flex items-center gap-2 text-xs text-slate-300";
         item.innerHTML = `
           <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleHeroDeliverable('${currentGoalCategory}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
-          <span class="${d.done ? 'line-through text-slate-400' : ''}">${d.name}</span>
+          <span class="${d.done ? 'line-through text-slate-500' : ''}">${d.name}</span>
         `;
         delList.appendChild(item);
       });
@@ -743,7 +755,7 @@
       showToast("成就感已沉澱！");
     }
 
-    // ===== ADMIN BACKEND SETTINGS & IMAGE UPLOAD =====
+    // ===== ADMIN BACKEND SETTINGS =====
     function loadAdminGoalData() {
       const sel = document.getElementById("adm-goal-select").value;
       const g = appData.goals[sel];
@@ -788,7 +800,7 @@
           reader.readAsDataURL(file);
         }
       } catch (err) {
-        console.warn("Firebase upload error, using local fallback:", err);
+        console.warn("Firebase upload error, fallback to local:", err);
         const reader = new FileReader();
         reader.onload = (evt) => {
           const base64 = evt.target.result;
