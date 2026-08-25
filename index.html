@@ -330,7 +330,7 @@
         </form>
       </div>
 
-      <!-- 客戶銷售歷史卡片庫 (支援刪除) -->
+      <!-- 客戶銷售歷史卡片庫 (支援刪除功能) -->
       <div class="space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-2">
@@ -458,6 +458,7 @@
         </form>
       </div>
 
+      <!-- 準增員人才訪談歷史卡片庫 (支援刪除功能) -->
       <div class="space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-2">
@@ -554,7 +555,7 @@
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與自訂交付成果
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.4.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.4.0</span>
         </div>
 
         <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
@@ -596,10 +597,10 @@
 
           <div>
             <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">自設截止時間點 (日期)</label>
-            <input type="date" id="adm-goal-deadline" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
+            <input type="date" id="adm-goal-deadline" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white" />
           </div>
 
-          <!-- 可交付成果自訂編輯器 -->
+          <!-- 可交付成果 (Deliverables) 自訂編輯區 -->
           <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
               <label class="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
@@ -655,7 +656,143 @@
 
   </main>
 
+  <!-- Bottom Navigation Bar -->
+  <nav class="fixed bottom-0 left-0 right-0 w-full bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2.5 z-50 flex justify-center">
+    <div class="w-full max-w-md md:max-w-2xl flex justify-around items-center">
+      <button type="button" onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
+        <i data-lucide="target" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-bold">目標主頁</span>
+      </button>
+      <button type="button" onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="check-square" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">每日待辦</span>
+      </button>
+      <button type="button" onclick="switchTab('reviews')" id="nav-reviews" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="briefcase" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">客戶銷售</span>
+      </button>
+      <button type="button" onclick="switchTab('recruitment')" id="nav-recruitment" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="user-plus" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">招募增員</span>
+      </button>
+      <button type="button" onclick="switchTab('contacts')" id="nav-contacts" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="contact-2" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">人物檔案</span>
+      </button>
+      <button type="button" onclick="switchTab('deals')" id="nav-deals" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="badge-check" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">成功簽單</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 簽單成功登記彈窗 -->
+  <div id="deal-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="flex items-center gap-2.5 text-emerald-400">
+        <div class="p-2 bg-emerald-500/20 rounded-xl">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">🎉 恭喜簽單成功！</h3>
+          <p class="text-[11px] text-slate-400">自動歸檔至「成功簽單」並推算第11個月保單週年檢視</p>
+        </div>
+      </div>
+
+      <form id="deal-form" onsubmit="confirmDealSuccess(event)" class="space-y-3 pt-1">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">客戶姓名</label>
+          <input type="text" id="deal-client-name" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">簽單金額 / FYP (HK$)</label>
+            <input type="number" id="deal-amount" placeholder="例如：120000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">簽約生效日期</label>
+            <input type="date" id="deal-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">投保方案 / 險種與核心架構</label>
+          <input type="text" id="deal-plan" placeholder="例如：高端醫療 + 5年期傳承儲蓄計劃" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">簽單覆盤筆記 (客戶核心促成關鍵)</label>
+          <textarea id="deal-notes" rows="2" placeholder="記錄客人最終拍板的原因，沉澱成交心法..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500 auto-expand"></textarea>
+        </div>
+
+        <div class="p-3 bg-emerald-950/30 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300/90 flex items-center gap-2">
+          <i data-lucide="bell-ring" class="w-4 h-4 shrink-0 text-emerald-400"></i>
+          <span>系統將於第 11 個月（<span id="deal-review-preview" class="font-bold text-white"></span>）自動標註提醒週年檢視</span>
+        </div>
+
+        <div class="flex gap-2.5 pt-2">
+          <button type="button" onclick="closeDealModal()" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+            取消
+          </button>
+          <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all shadow-lg shadow-emerald-500/30">
+            確認簽單並歸檔
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Incomplete Reason Modal -->
+  <div id="incomplete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl">
+      <div class="flex items-center gap-2 text-amber-400">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+        <h3 class="text-sm font-bold text-white">記錄未完成原因 (覆盤迭代)</h3>
+      </div>
+      <p class="text-xs text-slate-300" id="incomp-task-title"></p>
+      <div>
+        <label class="block text-[11px] text-slate-400 mb-1">未完成原因 / 遇到的阻礙：</label>
+        <textarea id="incomp-reason-text" rows="3" placeholder="例如：客人臨時出差推遲通話 / 需先補查特定信託條款細節..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+          取消
+        </button>
+        <button type="button" onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all">
+          儲存覆盤原因
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div id="celebration-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-sm w-full p-5 text-center space-y-4 shadow-2xl relative">
+      <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
+        🏆
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">恭喜達成階段性核心目標！</h3>
+        <p class="text-xs text-slate-300 mt-1" id="celeb-goal-title"></p>
+      </div>
+      <div class="text-left space-y-2 bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+        <label class="block text-xs font-semibold text-amber-400">📝 達標覆盤筆記與喜悅心得</label>
+        <textarea id="celeb-notes" rows="3" placeholder="記錄此時此刻的成就感，提煉可複製的成功關鍵..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none auto-expand"></textarea>
+      </div>
+      <button type="button" onclick="closeCelebrationModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-amber-500/30">
+        沉澱喜悅感並同步後端
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed top-16 bg-indigo-600 text-white text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    提示訊息
+  </div>
+
   <script>
+    // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
     const APP_VERSION = "v3.4.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
@@ -687,6 +824,38 @@
             { name: "達成 COT 官方業績確認函", done: false },
             { name: "完成 30 位高淨值家庭資產全景圖交付", done: true }
           ]
+        },
+        recruitment: {
+          id: "G2026_02",
+          category: "👥 招募增員",
+          currentVal: 2,
+          targetVal: 4,
+          unit: "人",
+          timeline: "Q3 季度目標",
+          deadline: "2026-09-30",
+          why: "建立團隊階梯式人才庫，複製高效銷售系統與方法論，推動組織可持續繁榮。",
+          effect: "組建具備強大戰鬥力的核心小組，團隊月產能翻倍，享受身為導師與領袖的成就感。",
+          imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000",
+          deliverables: [
+            { name: "舉辦 3 場專屬事業說明會", done: true },
+            { name: "完成 4 份新人實戰入職手冊培訓", done: false }
+          ]
+        },
+        vision: {
+          id: "G2026_03",
+          category: "🌟 長遠願景",
+          currentVal: 60,
+          targetVal: 100,
+          unit: "家庭",
+          timeline: "3年長遠願景",
+          deadline: "2027-12-31",
+          why: "為更多中產與高淨值家庭建立長遠穩健保障，守護世代財富與健康。",
+          effect: "建立可自動運轉的品牌與系統，實現真正的時間自由與極致事業影響力。",
+          imageUrl: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000",
+          deliverables: [
+            { name: "建立標準化提案工具庫", done: true },
+            { name: "搭建團隊獨立獲客系統", done: false }
+          ]
         }
       },
       todos: [],
@@ -696,6 +865,7 @@
       contacts: []
     };
 
+    // ===== INIT =====
     document.addEventListener("DOMContentLoaded", () => {
       loadLocalStorage();
       lucide.createIcons();
@@ -709,20 +879,20 @@
       setupAutoExpandTextareas();
       setupDealDateListener();
       renderManualContactTagCheckboxes();
+      
+      // 開啟時自動向 Google Sheet 雲端拉取最新目標與數據
       fetchCloudData(false);
     });
 
     function setupDealDateListener() {
       const dealDateInput = document.getElementById("deal-date");
-      if(dealDateInput) {
-        dealDateInput.addEventListener("change", () => {
-          const val = dealDateInput.value;
-          if (val) {
-            const revDate = calculate11thMonthDate(val);
-            document.getElementById("deal-review-preview").textContent = revDate;
-          }
-        });
-      }
+      dealDateInput.addEventListener("change", () => {
+        const val = dealDateInput.value;
+        if (val) {
+          const revDate = calculate11thMonthDate(val);
+          document.getElementById("deal-review-preview").textContent = revDate;
+        }
+      });
     }
 
     function calculate11thMonthDate(dateStr) {
@@ -757,20 +927,29 @@
 
     function registerSW() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.error(err));
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker v3.4.0 註冊成功:', reg.scope))
+          .catch((err) => console.error('Service Worker 註冊失敗:', err));
       }
     }
 
     function initDate() {
       const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-      const dateEl = document.getElementById("current-date");
-      if(dateEl) dateEl.textContent = new Date().toLocaleDateString('zh-HK', options);
-      ['new-task-date', 'rev-date', 'rec-date', 'deal-date'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.valueAsDate = new Date();
-      });
+      document.getElementById("current-date").textContent = new Date().toLocaleDateString('zh-HK', options);
+      document.getElementById("new-task-date").valueAsDate = new Date();
+      document.getElementById("rev-date").valueAsDate = new Date();
+      document.getElementById("rec-date").valueAsDate = new Date();
+      document.getElementById("deal-date").valueAsDate = new Date();
+      
+      const follow = new Date();
+      follow.setDate(follow.getDate() + 3);
+      document.getElementById("rev-follow-date").valueAsDate = follow;
+      document.getElementById("rec-follow-date").valueAsDate = follow;
+      
+      document.getElementById("deal-review-preview").textContent = calculate11thMonthDate(new Date().toISOString().split("T")[0]);
     }
 
+    // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
       const saved = localStorage.getItem("ivan_os_master_v34");
       if (saved) {
@@ -778,6 +957,8 @@
           const parsed = JSON.parse(saved);
           appData = { ...appData, ...parsed };
         } catch(e) { console.error(e); }
+      } else {
+        saveLocalStorage();
       }
     }
 
@@ -785,9 +966,9 @@
       localStorage.setItem("ivan_os_master_v34", JSON.stringify(appData));
     }
 
+    // ===== DYNAMIC GOAL TABS =====
     function renderGoalTabs() {
       const container = document.getElementById("goal-tabs-container");
-      if (!container) return;
       container.innerHTML = "";
       const goalKeys = Object.keys(appData.goals);
 
@@ -1635,6 +1816,7 @@
       }
     }
 
+    // ===== 銷售歷史卡片渲染 (支援刪除) =====
     function filterReviewsList() {
       renderReviews();
     }
@@ -2137,6 +2319,43 @@
         toast.classList.remove("opacity-100");
         toast.classList.add("opacity-0");
       }, 2500);
+    }
+
+    // ===== GAS BACKEND API CALLS =====
+    async function syncSingleTodoToGAS(todo) {
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "add_todo", data: todo })
+        });
+      } catch(err) { console.warn("GAS Todo Sync error:", err); }
+    }
+
+    async function updateTodoStatusToGAS(todo) {
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_todo_status",
+            taskId: todo.id,
+            isDone: todo.done,
+            incompleteReason: todo.incompleteReason || ""
+          })
+        });
+      } catch(err) { console.warn("GAS Status update error:", err); }
+    }
+
+    async function triggerCalendarSync() {
+      showToast("正在批次同步所有待辦至 Google 日曆...");
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "sync_calendar" })
+        });
+        showToast("✅ Google 日曆同步完成 (已套用分類顏色)！");
+      } catch(err) {
+        showToast("日曆同步指令已發送");
+      }
     }
 
     async function fetchCloudData(showFeedback = true) {
