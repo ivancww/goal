@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ivan-performance-os-v2.4.0';
-const APP_VERSION = 'v2.4.0';
+const CACHE_NAME = 'ivan-performance-os-v2.5.0';
+const APP_VERSION = 'v2.5.0';
 
 const STATIC_ASSETS = [
   './',
@@ -10,7 +10,7 @@ const STATIC_ASSETS = [
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
-// 安裝階段：快取資源並即時跳過等待
+// 安裝階段：快取核心資源
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing version:', APP_VERSION);
   event.waitUntil(
@@ -21,7 +21,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 啟用階段：清除所有舊版本快取
+// 啟用階段：清除舊快取版本
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating new version:', APP_VERSION);
   event.waitUntil(
