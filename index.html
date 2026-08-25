@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Ivan Performance & Client OS v3.1.0</title>
+  <title>Ivan Performance & Client OS v3.2.0</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#090d16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -69,7 +69,7 @@
         <div>
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-xs sm:text-sm font-black text-amber-400 tracking-wider font-mono">Ivan Performance & Client OS</span>
-            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.1.0</span>
+            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.2.0</span>
           </div>
           <div class="flex items-center gap-2 mt-0.5">
             <h1 class="text-sm font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
@@ -79,13 +79,13 @@
         </div>
       </div>
       <div class="flex items-center space-x-2">
-        <button onclick="switchTab('admin')" title="後台管理" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
+        <button type="button" onclick="switchTab('admin')" title="後台管理" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
           <i data-lucide="sliders" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
-        <button onclick="triggerCalendarSync()" title="同步至 Google 日曆" class="p-2.5 rounded-xl bg-slate-800/80 text-amber-400 hover:text-white active:scale-95 transition-all border border-amber-500/20">
+        <button type="button" onclick="triggerCalendarSync()" title="全部批次同步至 Google 日曆" class="p-2.5 rounded-xl bg-slate-800/80 text-amber-400 hover:text-white active:scale-95 transition-all border border-amber-500/20">
           <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
-        <button onclick="fetchCloudData()" id="sync-btn" title="雙向雲端同步" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
+        <button type="button" onclick="fetchCloudData()" id="sync-btn" title="雙向雲端同步" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
           <i data-lucide="refresh-cw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
       </div>
@@ -156,7 +156,7 @@
                 <span class="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-1.5">
                   <i data-lucide="package-check" class="w-4 h-4 text-emerald-400"></i> 可交付成果 (Deliverables)
                 </span>
-                <button onclick="triggerHeroGoalCelebration()" class="text-xs sm:text-sm bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-3 py-1 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1.5 transition-all">
+                <button type="button" onclick="triggerHeroGoalCelebration()" class="text-xs sm:text-sm bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-3 py-1 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1.5 transition-all">
                   <i data-lucide="award" class="w-4 h-4"></i> 達成覆盤
                 </button>
               </div>
@@ -173,7 +173,7 @@
         <span class="text-xs sm:text-sm font-semibold text-indigo-400 tracking-wider uppercase flex items-center gap-1.5 mb-3">
           <i data-lucide="plus-circle" class="w-4 h-4"></i> 手動新增自訂待辦
         </span>
-        <input type="text" id="new-task-name" placeholder="輸入任務內容 (例如：約見陳生確認保單簽約細節 / 邀約前銀行經理咖啡面談)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 mb-3" />
+        <input type="text" id="new-task-name" placeholder="輸入任務內容 (例如：Anges 保費跟進 b342302893 差額)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 mb-3" />
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mb-3">
           <select id="new-task-cat" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500">
             <option value="🔥 今日 Top 3">🔥 今日 Top 3</option>
@@ -184,12 +184,14 @@
           <input type="date" id="new-task-date" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500" />
           <input type="text" id="new-task-time" placeholder="時間段 (如 10:00-11:30)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500" />
         </div>
-        <button onclick="addManualTodo()" class="w-full sm:w-auto px-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-md shadow-indigo-600/20">
+        
+        <button type="button" id="btn-add-todo" onclick="addManualTodo()" class="w-full sm:w-auto px-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-md shadow-indigo-600/30 cursor-pointer">
           <i data-lucide="check" class="w-4 h-4"></i> 加入清單
         </button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Top 3 -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <h2 class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -200,6 +202,7 @@
           <div id="top3-list" class="space-y-2.5"></div>
         </div>
 
+        <!-- Client Sales & Recruitment Followups -->
         <div class="space-y-4">
           <div>
             <div class="flex items-center justify-between mb-2">
@@ -222,9 +225,8 @@
       </div>
     </section>
 
-    <!-- ================= TAB 3: 客戶銷售（見客覆盤 + AI痛點價值深度融合） ================= -->
+    <!-- ================= TAB 3: 客戶銷售 ================= -->
     <section id="tab-reviews" class="space-y-4 hidden">
-      
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
           <div class="flex items-center gap-2">
@@ -271,7 +273,6 @@
             <textarea id="rev-value" rows="2" placeholder="例如：量身訂造 2 套高流動性提取模型 + 私人預約週六體檢綠通名額" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
           </div>
 
-          <!-- AI 智能深度融合推導器 -->
           <div class="bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-700/50 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <div>
@@ -330,7 +331,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: 招募增員（人才訪談 + AI痛點賦能融合） ================= -->
+    <!-- ================= TAB 4: 招募增員 ================= -->
     <section id="tab-recruitment" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
@@ -379,7 +380,6 @@
             <textarea id="rec-value" rows="2" placeholder="例如：提供標準化獲客系統、前 3 個月實戰陪訪 10 場、安排對接同背景轉型成功的 COT 師兄交流" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 auto-expand"></textarea>
           </div>
 
-          <!-- 招募 AI 智能深度融合推導器 -->
           <div class="bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-700/50 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <div>
@@ -418,7 +418,6 @@
         </form>
       </div>
 
-      <!-- 準增員人才訪談歷史卡片庫 -->
       <div class="space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-2">
@@ -469,7 +468,7 @@
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理 (純手動輸入)
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.1.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.2.0</span>
         </div>
 
         <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
@@ -560,23 +559,23 @@
   <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-0 right-0 w-full bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2.5 z-50 flex justify-center">
     <div class="w-full max-w-md md:max-w-2xl flex justify-around items-center">
-      <button onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
+      <button type="button" onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
         <i data-lucide="target" class="w-5 h-5"></i>
         <span class="text-[10px] sm:text-xs font-bold">目標主頁</span>
       </button>
-      <button onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <button type="button" onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
         <i data-lucide="check-square" class="w-5 h-5"></i>
         <span class="text-[10px] sm:text-xs font-medium">每日待辦</span>
       </button>
-      <button onclick="switchTab('reviews')" id="nav-reviews" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <button type="button" onclick="switchTab('reviews')" id="nav-reviews" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
         <i data-lucide="briefcase" class="w-5 h-5"></i>
         <span class="text-[10px] sm:text-xs font-medium">客戶銷售</span>
       </button>
-      <button onclick="switchTab('recruitment')" id="nav-recruitment" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <button type="button" onclick="switchTab('recruitment')" id="nav-recruitment" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
         <i data-lucide="user-plus" class="w-5 h-5"></i>
         <span class="text-[10px] sm:text-xs font-medium">招募增員</span>
       </button>
-      <button onclick="switchTab('deals')" id="nav-deals" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+      <button type="button" onclick="switchTab('deals')" id="nav-deals" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
         <i data-lucide="badge-check" class="w-5 h-5"></i>
         <span class="text-[10px] sm:text-xs font-medium">成功簽單</span>
       </button>
@@ -653,10 +652,10 @@
         <textarea id="incomp-reason-text" rows="3" placeholder="例如：客人臨時出差推遲通話 / 需先補查特定信託條款細節..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
       </div>
       <div class="flex gap-2">
-        <button onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+        <button type="button" onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
           取消
         </button>
-        <button onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all">
+        <button type="button" onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all">
           儲存覆盤原因
         </button>
       </div>
@@ -677,7 +676,7 @@
         <label class="block text-xs font-semibold text-amber-400">📝 達標覆盤筆記與喜悅心得</label>
         <textarea id="celeb-notes" rows="3" placeholder="記錄此時此刻的成就感，提煉可複製的成功關鍵..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none auto-expand"></textarea>
       </div>
-      <button onclick="closeCelebrationModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-amber-500/30">
+      <button type="button" onclick="closeCelebrationModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-amber-500/30">
         沉澱喜悅感並同步後端
       </button>
     </div>
@@ -690,7 +689,7 @@
 
   <script>
     // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
-    const APP_VERSION = "v3.1.0";
+    const APP_VERSION = "v3.2.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
@@ -815,7 +814,7 @@
     function registerSW() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker v3.1.0 註冊成功:', reg.scope))
+          .then((reg) => console.log('Service Worker v3.2.0 註冊成功:', reg.scope))
           .catch((err) => console.error('Service Worker 註冊失敗:', err));
       }
     }
@@ -838,7 +837,7 @@
 
     // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
-      const saved = localStorage.getItem("ivan_os_master_v31");
+      const saved = localStorage.getItem("ivan_os_master_v32");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -855,6 +854,17 @@
             done: false,
             incompleteReason: "",
             reviewId: "R202608_01",
+            goalId: "G2026_01"
+          },
+          {
+            id: "T202608_02",
+            title: "Anges 保費跟進 b342302893 差額",
+            cat: "👥 客戶銷售跟進",
+            date: "2026-08-25",
+            time: "14:00 - 15:00",
+            done: false,
+            incompleteReason: "",
+            reviewId: "",
             goalId: "G2026_01"
           }
         ];
@@ -901,7 +911,7 @@
     }
 
     function saveLocalStorage() {
-      localStorage.setItem("ivan_os_master_v31", JSON.stringify(appData));
+      localStorage.setItem("ivan_os_master_v32", JSON.stringify(appData));
     }
 
     // ===== DYNAMIC GOAL TABS =====
@@ -918,6 +928,7 @@
         const g = appData.goals[key];
         const isActive = (key === currentGoalKey);
         const btn = document.createElement("button");
+        btn.type = "button";
         btn.onclick = () => switchGoalTab(key);
         btn.className = `px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all whitespace-nowrap ${
           isActive 
@@ -1022,7 +1033,7 @@
       showToast("成就感已沉澱！");
     }
 
-    // ===== ADMIN BACKEND (純手動目標管理) =====
+    // ===== ADMIN BACKEND =====
     function loadAdminGoalSelectOptions() {
       const sel = document.getElementById("adm-goal-select");
       sel.innerHTML = "";
@@ -1545,8 +1556,9 @@
       let top3Count = 0;
 
       appData.todos.forEach(item => {
-        const isTop3 = item.cat.includes("Top 3");
-        const isClientOrRecruit = item.cat.includes("客戶") || item.cat.includes("招募") || item.cat.includes("跟進");
+        const isTop3 = item.cat && item.cat.indexOf("Top 3") > -1;
+        const isClientOrRecruit = item.cat && (item.cat.indexOf("客戶") > -1 || item.cat.indexOf("招募") > -1 || item.cat.indexOf("跟進") > -1);
+        
         if (isTop3 && !item.done) top3Count++;
 
         const card = document.createElement("div");
@@ -1557,28 +1569,32 @@
         card.innerHTML = `
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-start gap-3 flex-1">
-              <button onclick="toggleTodo('${item.id}')" class="mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+              <button type="button" onclick="toggleTodo('${item.id}')" class="mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
                 item.done ? "bg-indigo-600 border-indigo-600 text-white" : "border-slate-600 hover:border-indigo-400"
               }">
                 ${item.done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : ''}
               </button>
               <div class="flex-1">
                 <p class="text-xs sm:text-sm font-medium text-slate-100 ${item.done ? 'line-through text-slate-500' : ''}">${item.title}</p>
-                <div class="flex items-center gap-2 mt-1">
+                <div class="flex items-center gap-2 mt-1 flex-wrap">
                   ${item.time ? `<span class="text-[10px] sm:text-xs text-indigo-400 flex items-center gap-0.5"><i data-lucide="clock" class="w-3 h-3"></i> ${item.time}</span>` : ''}
                   <span class="text-[10px] sm:text-xs text-slate-500">${item.date || ''}</span>
+                  <span class="text-[9px] bg-slate-950 text-slate-400 px-1.5 py-0.2 rounded border border-slate-800">${item.cat || '自訂'}</span>
                 </div>
               </div>
             </div>
             
             <div class="flex items-center gap-1.5 shrink-0">
-              <button onclick="openDealModalFromTask('${item.id}')" title="簽單成功！自動歸檔並排定11個月檢視" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 rounded-lg text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-all active:scale-95">
+              <button type="button" onclick="addSingleTodoToCalendar('${item.id}')" title="加入 Google 日曆 (自動配對分類顏色)" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 rounded-lg text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-all active:scale-95">
+                <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> 日曆
+              </button>
+              <button type="button" onclick="openDealModalFromTask('${item.id}')" title="簽單成功！自動歸檔並排定11個月檢視" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 rounded-lg text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-all active:scale-95">
                 <i data-lucide="award" class="w-3.5 h-3.5"></i> 簽單
               </button>
-              <button onclick="openIncompleteModal('${item.id}')" title="填寫未完成原因" class="p-1.5 text-slate-500 hover:text-amber-400">
+              <button type="button" onclick="openIncompleteModal('${item.id}')" title="填寫未完成原因" class="p-1.5 text-slate-500 hover:text-amber-400">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
               </button>
-              <button onclick="deleteTodo('${item.id}')" class="p-1.5 text-slate-600 hover:text-red-400">
+              <button type="button" onclick="deleteTodo('${item.id}')" title="刪除任務" class="p-1.5 text-slate-600 hover:text-red-400 active:scale-90">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>
@@ -1592,16 +1608,65 @@
           ` : ''}
         `;
 
-        if (isTop3) top3List.appendChild(card);
-        else if (isClientOrRecruit) clientList.appendChild(card);
-        else otherList.appendChild(card);
+        if (isTop3) {
+          top3List.appendChild(card);
+        } else if (isClientOrRecruit) {
+          clientList.appendChild(card);
+        } else {
+          otherList.appendChild(card);
+        }
       });
 
       document.getElementById("top3-count").textContent = `${top3Count} / 3`;
       lucide.createIcons();
     }
 
-    // ===== 銷售歷史卡片渲染 (專注於痛點、方案與切合點) =====
+    async function addSingleTodoToCalendar(taskId) {
+      const task = appData.todos.find(t => t.id === taskId);
+      if (!task) return showToast("找不到待辦項目！");
+      if (!task.date) return showToast("請先為該任務指定執行日期！");
+
+      showToast("正在加入 Google 日曆 (自動套用專屬色)...");
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "add_single_to_calendar",
+            data: task
+          })
+        });
+        showToast("✅ 已成功加入 Google 日曆！");
+      } catch(err) {
+        showToast("已發送日曆排程指令");
+      }
+    }
+
+    async function addFollowUpToCalendar(clientName, followDate, topic, type) {
+      if (!followDate) return showToast("未指定跟進日期！");
+      
+      const item = {
+        title: `【${type === 'sales' ? '客戶跟進' : '招募訪談'}】${clientName}：${topic || '深入交流'}`,
+        date: followDate,
+        time: "14:30 - 15:30",
+        cat: type === 'sales' ? "👥 客戶銷售跟進" : "🤝 招募增員訪談"
+      };
+
+      showToast(`正在將【${clientName}】跟進加入日曆...`);
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "add_single_to_calendar",
+            data: item
+          })
+        });
+        showToast("✅ 已成功排入 Google 日曆！");
+      } catch(err) {
+        showToast("已發送日曆排程指令");
+      }
+    }
+
+    // ===== 銷售歷史卡片渲染 =====
     function filterReviewsList() {
       renderReviews();
     }
@@ -1669,9 +1734,12 @@
             </div>
           </div>
 
-          <div class="pt-1 flex justify-end">
-            <button onclick="copyWarmupScript('${escapeQuotes(rev.clientName)}', '${escapeQuotes(rev.pain)}', '${escapeQuotes(rev.value)}')" class="px-3 py-1 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 border border-indigo-500/30">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製回溫開場話術
+          <div class="pt-1 flex items-center justify-between gap-2">
+            <button type="button" onclick="addFollowUpToCalendar('${escapeQuotes(rev.clientName)}', '${rev.followDate}', '${escapeQuotes(rev.hook)}', 'sales')" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all active:scale-95 border border-amber-500/30">
+              <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> 加入日曆 (綠色)
+            </button>
+            <button type="button" onclick="copyWarmupScript('${escapeQuotes(rev.clientName)}', '${escapeQuotes(rev.pain)}', '${escapeQuotes(rev.value)}')" class="px-3 py-1 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 border border-indigo-500/30">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製回溫話術
             </button>
           </div>
         `;
@@ -1747,9 +1815,12 @@
             </div>
           </div>
 
-          <div class="pt-1 flex justify-end">
-            <button onclick="copyRecruitWarmupScript('${escapeQuotes(rec.candidateName)}', '${escapeQuotes(rec.pain)}', '${escapeQuotes(rec.value)}')" class="px-3 py-1 bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 border border-purple-500/30">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製增員回溫開場話術
+          <div class="pt-1 flex items-center justify-between gap-2">
+            <button type="button" onclick="addFollowUpToCalendar('${escapeQuotes(rec.candidateName)}', '${rec.followDate}', '${escapeQuotes(rec.hook)}', 'recruit')" class="px-2.5 py-1 bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-slate-950 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all active:scale-95 border border-purple-500/30">
+              <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> 加入日曆 (紫色)
+            </button>
+            <button type="button" onclick="copyRecruitWarmupScript('${escapeQuotes(rec.candidateName)}', '${escapeQuotes(rec.pain)}', '${escapeQuotes(rec.value)}')" class="px-3 py-1 bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 border border-purple-500/30">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製增員話術
             </button>
           </div>
         `;
@@ -1892,7 +1963,7 @@
                 預計檢視日: <span class="font-mono">${deal.reviewDate}</span>
               </span>
 
-              <button onclick="markDealReviewed('${deal.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+              <button type="button" onclick="markDealReviewed('${deal.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                 deal.reviewed 
                   ? "bg-slate-800 text-slate-400 hover:text-white" 
                   : isDue 
@@ -1909,6 +1980,164 @@
       });
 
       lucide.createIcons();
+    }
+
+    // ===== ACTIONS =====
+    function addManualTodo() {
+      const nameInput = document.getElementById("new-task-name");
+      const catInput = document.getElementById("new-task-cat");
+      const dateInput = document.getElementById("new-task-date");
+      const timeInput = document.getElementById("new-task-time");
+
+      const name = nameInput.value.trim();
+      const cat = catInput.value;
+      const date = dateInput.value;
+      const time = timeInput.value.trim();
+
+      if (!name) return showToast("請輸入任務內容！");
+
+      const newTodo = {
+        id: "T_" + Date.now(),
+        title: name,
+        cat: cat,
+        date: date,
+        time: time,
+        done: false,
+        incompleteReason: ""
+      };
+
+      appData.todos.unshift(newTodo);
+      saveLocalStorage();
+      renderTodos();
+      
+      nameInput.value = "";
+      timeInput.value = "";
+      showToast("✅ 待辦任務已加入！");
+
+      syncSingleTodoToGAS(newTodo);
+    }
+
+    function toggleTodo(id) {
+      const item = appData.todos.find(t => t.id === id);
+      if (item) {
+        item.done = !item.done;
+        saveLocalStorage();
+        renderTodos();
+        updateTodoStatusToGAS(item);
+      }
+    }
+
+    function deleteTodo(id) {
+      appData.todos = appData.todos.filter(t => t.id !== id);
+      saveLocalStorage();
+      renderTodos();
+      showToast("任務已刪除");
+
+      try {
+        fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "delete_todo", taskId: id })
+        });
+      } catch(err) { console.warn("GAS delete error:", err); }
+    }
+
+    function openIncompleteModal(taskId) {
+      activeIncompleteTaskId = taskId;
+      const item = appData.todos.find(t => t.id === taskId);
+      document.getElementById("incomp-task-title").textContent = item ? item.title : "";
+      document.getElementById("incomp-reason-text").value = item ? (item.incompleteReason || "") : "";
+      document.getElementById("incomplete-modal").classList.remove("hidden");
+      triggerAllTextareasResize();
+    }
+
+    function closeIncompleteModal(save) {
+      document.getElementById("incomplete-modal").classList.add("hidden");
+    }
+
+    function saveIncompleteReason() {
+      const reason = document.getElementById("incomp-reason-text").value.trim();
+      if (activeIncompleteTaskId) {
+        const item = appData.todos.find(t => t.id === activeIncompleteTaskId);
+        if (item) {
+          item.incompleteReason = reason;
+          saveLocalStorage();
+          renderTodos();
+          updateTodoStatusToGAS(item);
+        }
+      }
+      closeIncompleteModal();
+      showToast("未完成原因覆盤已保存！");
+    }
+
+    async function saveReview(e) {
+      e.preventDefault();
+      const clientName = document.getElementById("rev-client-name").value.trim();
+      const date = document.getElementById("rev-date").value;
+      const temp = document.getElementById("rev-temp").value;
+      const pain = document.getElementById("rev-pain").value.trim();
+      const value = document.getElementById("rev-value").value.trim();
+      const hook = document.getElementById("rev-hook").value.trim();
+      const followDate = document.getElementById("rev-follow-date").value;
+      const goalId = document.getElementById("rev-goal-select").value;
+
+      const reviewId = "R_" + Date.now();
+
+      const newReview = {
+        id: reviewId,
+        clientName,
+        date,
+        temp,
+        pain,
+        value,
+        hook,
+        followDate,
+        goalId
+      };
+
+      appData.reviews.unshift(newReview);
+
+      if (hook) {
+        appData.todos.unshift({
+          id: "T_" + Date.now(),
+          title: `【跟進】${clientName}：${hook}`,
+          cat: "👥 客戶銷售跟進",
+          date: followDate,
+          time: "14:30 - 15:00",
+          done: false,
+          incompleteReason: "",
+          reviewId: reviewId,
+          goalId: goalId
+        });
+      }
+
+      saveLocalStorage();
+      renderAll();
+      showToast("見客覆盤已保存，跟進任務已排入待辦！");
+      document.getElementById("review-form").reset();
+      document.getElementById("ai-sales-hook-suggestions").classList.add("hidden");
+      initDate();
+      switchTab('todos');
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "save_review",
+            data: newReview
+          })
+        });
+      } catch(err) { console.warn("GAS save review error:", err); }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0");
+      }, 2500);
     }
 
     // ===== GAS BACKEND API CALLS =====
@@ -1936,13 +2165,13 @@
     }
 
     async function triggerCalendarSync() {
-      showToast("正在觸發 Google 日曆同步...");
+      showToast("正在批次同步所有待辦至 Google 日曆...");
       try {
         await fetch(GAS_API_URL, {
           method: "POST",
           body: JSON.stringify({ action: "sync_calendar" })
         });
-        showToast("✅ Google 日曆同步完成！");
+        showToast("✅ Google 日曆同步完成 (已套用分類顏色)！");
       } catch(err) {
         showToast("日曆同步指令已發送");
       }
