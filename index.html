@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Ivan Performance & Client OS</title>
+  <title>Ivan Performance & Client OS v2.7.0</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#090d16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -59,7 +59,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-24 flex flex-col items-center">
 
-  <!-- Top App Header: 主題標題旁並排顯示版本號 -->
+  <!-- Top App Header: Ivan Performance & Client OS 旁並排加入 v2.7.0 -->
   <header class="w-full bg-slate-900/95 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-center">
     <div class="w-full max-w-md md:max-w-4xl lg:max-w-6xl flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
@@ -67,11 +67,15 @@
           <i data-lucide="crown" class="w-5 h-5 text-amber-200"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
-            <span class="text-[10px] font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full" id="app-version-badge">v2.6.0</span>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-xs sm:text-sm font-black text-amber-400 tracking-wider font-mono">Ivan Performance & Client OS</span>
+            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v2.7.0</span>
           </div>
-          <p class="text-[11px] text-slate-400" id="current-date"></p>
+          <div class="flex items-center gap-2 mt-0.5">
+            <h1 class="text-sm font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
+            <span class="text-slate-600 text-xs">•</span>
+            <p class="text-[11px] text-slate-400" id="current-date"></p>
+          </div>
         </div>
       </div>
       <div class="flex items-center space-x-2">
@@ -234,7 +238,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 3: 客戶銷售（見客覆盤 - 獨立頁） ================= -->
+    <!-- ================= TAB 3: 客戶銷售（見客覆盤） ================= -->
     <section id="tab-reviews" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
@@ -328,7 +332,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: 招募增員（人才訪談與團隊擴展 - 獨立頁） ================= -->
+    <!-- ================= TAB 4: 招募增員（人才訪談） ================= -->
     <section id="tab-recruitment" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 sm:p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
@@ -412,7 +416,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 5: 成功簽單客戶 (DEALS - 按月歸檔 + 第11個月自動提醒Review) ================= -->
+    <!-- ================= TAB 5: 成功簽單客戶 (DEALS) ================= -->
     <section id="tab-deals" class="space-y-4 hidden">
       <div class="bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/40 rounded-3xl p-5 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="space-y-1">
@@ -444,7 +448,7 @@
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與願景圖片更換
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v2.6.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v2.7.0</span>
         </div>
 
         <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
@@ -498,12 +502,12 @@
 
           <div>
             <label class="block text-xs font-medium text-indigo-300 mb-1">📌 設定此目標的原因 (Why)</label>
-            <textarea id="adm-goal-why" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white auto-expand"></textarea>
+            <textarea id="adm-goal-why" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white auto-expand"></textarea>
           </div>
 
           <div>
             <label class="block text-xs font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect)</label>
-            <textarea id="adm-goal-effect" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white auto-expand"></textarea>
+            <textarea id="adm-goal-effect" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white auto-expand"></textarea>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -531,7 +535,7 @@
 
   </main>
 
-  <!-- Bottom Navigation Bar (5 大核心分頁) -->
+  <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-0 right-0 w-full bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2.5 z-50 flex justify-center">
     <div class="w-full max-w-md md:max-w-2xl flex justify-around items-center">
       <button onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
@@ -664,7 +668,7 @@
 
   <script>
     // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
-    const APP_VERSION = "v2.6.0";
+    const APP_VERSION = "v2.7.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
@@ -792,7 +796,7 @@
     function registerSW() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker v2.6.0 註冊成功:', reg.scope))
+          .then((reg) => console.log('Service Worker v2.7.0 註冊成功:', reg.scope))
           .catch((err) => console.error('Service Worker 註冊失敗:', err));
       }
     }
@@ -815,7 +819,7 @@
 
     // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
-      const saved = localStorage.getItem("ivan_os_master_v26");
+      const saved = localStorage.getItem("ivan_os_master_v27");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -889,7 +893,7 @@
     }
 
     function saveLocalStorage() {
-      localStorage.setItem("ivan_os_master_v26", JSON.stringify(appData));
+      localStorage.setItem("ivan_os_master_v27", JSON.stringify(appData));
     }
 
     // ===== GOAL CATEGORY SWITCHER =====
