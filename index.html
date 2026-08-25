@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Ivan Performance & Client OS v3.2.0</title>
+  <title>Ivan Performance & Client OS v3.3.0</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#090d16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -59,7 +59,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-24 flex flex-col items-center">
 
-  <!-- Top App Header -->
+  <!-- Top App Header: Ivan Performance & Client OS 旁並排加入 v3.3.0 -->
   <header class="w-full bg-slate-900/95 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-center">
     <div class="w-full max-w-md md:max-w-4xl lg:max-w-6xl flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
@@ -69,7 +69,7 @@
         <div>
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-xs sm:text-sm font-black text-amber-400 tracking-wider font-mono">Ivan Performance & Client OS</span>
-            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.2.0</span>
+            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.3.0</span>
           </div>
           <div class="flex items-center gap-2 mt-0.5">
             <h1 class="text-sm font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
@@ -85,7 +85,7 @@
         <button type="button" onclick="triggerCalendarSync()" title="全部批次同步至 Google 日曆" class="p-2.5 rounded-xl bg-slate-800/80 text-amber-400 hover:text-white active:scale-95 transition-all border border-amber-500/20">
           <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
-        <button type="button" onclick="fetchCloudData()" id="sync-btn" title="雙向雲端同步" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
+        <button type="button" onclick="fetchCloudData(true)" id="sync-btn" title="雙向雲端同步" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
           <i data-lucide="refresh-cw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
       </div>
@@ -100,9 +100,9 @@
       <div class="flex items-center gap-1.5 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl overflow-x-auto hide-scrollbar" id="goal-tabs-container"></div>
 
       <div id="main-goal-hero" class="bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10">
-        <div class="grid grid-cols-1 md:grid-cols-12">
-          <div class="md:col-span-5 relative w-full h-52 md:h-full min-h-[240px] bg-slate-950 overflow-hidden group">
-            <img id="hero-img-banner" src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000" alt="Goal Vision" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" />
+        <div class="grid grid-cols-1 md:grid-cols-12 items-center">
+          <div class="md:col-span-5 relative w-full bg-slate-950 flex items-center justify-center overflow-hidden group min-h-[220px] max-h-[340px] md:max-h-[440px]">
+            <img id="hero-img-banner" src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000" alt="Goal Vision" class="w-full h-full object-cover sm:object-contain transition-transform duration-700 group-hover:scale-105" />
             <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/85 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-lg" id="hero-tag">
                 自訂目標
@@ -111,7 +111,6 @@
                 截止: 2026-12-31
               </span>
             </div>
-            <div class="absolute inset-x-0 bottom-0 h-8 md:hidden bg-gradient-to-t from-slate-900 to-transparent"></div>
           </div>
 
           <div class="md:col-span-7 p-5 sm:p-6 space-y-4 flex flex-col justify-between">
@@ -191,7 +190,6 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Top 3 -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <h2 class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -202,7 +200,6 @@
           <div id="top3-list" class="space-y-2.5"></div>
         </div>
 
-        <!-- Client Sales & Recruitment Followups -->
         <div class="space-y-4">
           <div>
             <div class="flex items-center justify-between mb-2">
@@ -235,7 +232,7 @@
             </div>
             <div>
               <h2 class="text-sm sm:text-base font-bold text-white">客戶銷售 • 見客覆盤</h2>
-              <p class="text-[11px] text-slate-400">痛點＋價值雙向融合推導，產出自然再見面邀約理由</p>
+              <p class="text-[11px] text-slate-400">儲存後自動連動新增至「人物頁」並建立標籤檔案</p>
             </div>
           </div>
           <span class="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full">銷售專用</span>
@@ -261,6 +258,31 @@
             </div>
           </div>
 
+          <!-- 銷售人物標籤勾選 -->
+          <div>
+            <label class="block text-xs font-semibold text-indigo-300 mb-1.5">🏷️ 客戶畫像標籤 (自動連動人物庫)</label>
+            <div class="flex items-center gap-2 flex-wrap" id="rev-tags-box">
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-indigo-500">
+                <input type="checkbox" name="sales_tag" value="高收入" class="rounded text-indigo-600 focus:ring-0"> 高收入
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-indigo-500">
+                <input type="checkbox" name="sales_tag" value="潛力" class="rounded text-indigo-600 focus:ring-0"> 潛力
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-indigo-500">
+                <input type="checkbox" name="sales_tag" value="單身" class="rounded text-indigo-600 focus:ring-0"> 單身
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-indigo-500">
+                <input type="checkbox" name="sales_tag" value="家庭" class="rounded text-indigo-600 focus:ring-0"> 家庭
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-indigo-500">
+                <input type="checkbox" name="sales_tag" value="退休想法" class="rounded text-indigo-600 focus:ring-0"> 退休想法
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-indigo-500">
+                <input type="checkbox" name="sales_tag" value="退休醫保" class="rounded text-indigo-600 focus:ring-0"> 退休醫保
+              </label>
+            </div>
+          </div>
+
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1">1. 客人真實想法 / 擔憂 / 痛點 (從客人角度出發)</label>
             <textarea id="rev-pain" rows="2" placeholder="例如：擔心內地外貿回款慢，5年供款會否綁死現金流；另外大女打算讀英國寄宿中學..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500 auto-expand"></textarea>
@@ -273,6 +295,7 @@
             <textarea id="rev-value" rows="2" placeholder="例如：量身訂造 2 套高流動性提取模型 + 私人預約週六體檢綠通名額" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
           </div>
 
+          <!-- AI 智能深度融合推導器 -->
           <div class="bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-700/50 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <div>
@@ -306,7 +329,7 @@
           </div>
 
           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
-            <i data-lucide="save" class="w-4 h-4"></i> 保存銷售覆盤並自動排入待辦跟進
+            <i data-lucide="save" class="w-4 h-4"></i> 保存銷售覆盤並連動至人物頁
           </button>
         </form>
       </div>
@@ -341,7 +364,7 @@
             </div>
             <div>
               <h2 class="text-sm sm:text-base font-bold text-white">招募增員 • 人才深度訪談</h2>
-              <p class="text-[11px] text-slate-400">轉型痛點＋導師賦能深度融合，產出高吸引力再次邀約理由</p>
+              <p class="text-[11px] text-slate-400">儲存後自動連動新增至「人物頁」並建立招募人才檔案</p>
             </div>
           </div>
           <span class="text-[10px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full">增員專用</span>
@@ -368,6 +391,28 @@
             </div>
           </div>
 
+          <!-- 招募人物標籤勾選 -->
+          <div>
+            <label class="block text-xs font-semibold text-purple-300 mb-1.5">🏷️ 轉型需求標籤 (自動連動招募人物庫)</label>
+            <div class="flex items-center gap-2 flex-wrap" id="rec-tags-box">
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-purple-500">
+                <input type="checkbox" name="recruit_tag" value="時間彈性" class="rounded text-purple-600 focus:ring-0"> 時間彈性
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-purple-500">
+                <input type="checkbox" name="recruit_tag" value="收入" class="rounded text-purple-600 focus:ring-0"> 收入
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-purple-500">
+                <input type="checkbox" name="recruit_tag" value="升職" class="rounded text-purple-600 focus:ring-0"> 升職
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-purple-500">
+                <input type="checkbox" name="recruit_tag" value="part time" class="rounded text-purple-600 focus:ring-0"> part time
+              </label>
+              <label class="inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-purple-500">
+                <input type="checkbox" name="recruit_tag" value="自由" class="rounded text-purple-600 focus:ring-0"> 自由
+              </label>
+            </div>
+          </div>
+
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1">1. 對方真實痛點 / 轉型原動力 (Why Change)</label>
             <textarea id="rec-pain" rows="2" placeholder="例如：現職銀行指標壓力極大且晉升見頂，想擁有時間自由並挑戰年薪百萬..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 auto-expand"></textarea>
@@ -380,6 +425,7 @@
             <textarea id="rec-value" rows="2" placeholder="例如：提供標準化獲客系統、前 3 個月實戰陪訪 10 場、安排對接同背景轉型成功的 COT 師兄交流" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 auto-expand"></textarea>
           </div>
 
+          <!-- 招募 AI 智能深度融合推導器 -->
           <div class="bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-700/50 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <div>
@@ -413,7 +459,7 @@
           </div>
 
           <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-purple-600/30">
-            <i data-lucide="user-check" class="w-4 h-4"></i> 保存招募紀錄並自動排入待辦
+            <i data-lucide="user-check" class="w-4 h-4"></i> 保存招募紀錄並連動至人物頁
           </button>
         </form>
       </div>
@@ -436,7 +482,59 @@
       </div>
     </section>
 
-    <!-- ================= TAB 5: 成功簽單客戶 (DEALS) ================= -->
+    <!-- ================= TAB 5: 人物頁 (CONTACTS - 銷售/招募 + 標籤Filter) ================= -->
+    <section id="tab-contacts" class="space-y-4 hidden">
+      
+      <!-- 人物類別切換：銷售人物 vs 招募人才 -->
+      <div class="grid grid-cols-2 gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl">
+        <button type="button" onclick="switchContactView('sales')" id="contact-tab-sales" class="py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
+          👥 銷售客戶庫
+        </button>
+        <button type="button" onclick="switchContactView('recruit')" id="contact-tab-recruit" class="py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+          🤝 招募人才庫
+        </button>
+      </div>
+
+      <!-- 手動新增人物卡片折疊面板 -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+            <i data-lucide="user-plus" class="w-4 h-4"></i> 手動建立人物卡片
+          </span>
+          <span class="text-[10px] text-slate-500" id="contact-type-label">銷售客戶</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <input type="text" id="manual-contact-name" placeholder="姓名 (如：張小姐 / 陳總)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500" />
+          <input type="text" id="manual-contact-bg" placeholder="身份背景 (如：外貿老闆 / 銀行經理)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500" />
+          <button type="button" onclick="addManualContact()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl py-2 text-xs font-bold flex items-center justify-center gap-1 active:scale-95 transition-all">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> 建立人物檔案
+          </button>
+        </div>
+
+        <!-- 手動標籤勾選區域 -->
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">為此人物附加特徵標籤：</label>
+          <div class="flex items-center gap-1.5 flex-wrap" id="manual-tags-container"></div>
+        </div>
+      </div>
+
+      <!-- 標籤篩選器 (Filter) 專區 -->
+      <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-2xl space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 flex items-center gap-1">
+            <i data-lucide="filter" class="w-3.5 h-3.5 text-indigo-400"></i> 特徵標籤快速篩選
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono" id="contacts-count-display">0 位</span>
+        </div>
+        <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1" id="contact-filter-tags"></div>
+      </div>
+
+      <!-- 人物檔案列表 -->
+      <div id="contacts-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
+    </section>
+
+    <!-- ================= TAB 6: 成功簽單客戶 (DEALS) ================= -->
     <section id="tab-deals" class="space-y-4 hidden">
       <div class="bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/40 rounded-3xl p-5 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="space-y-1">
@@ -461,14 +559,14 @@
       <div id="deals-by-month-container" class="space-y-6"></div>
     </section>
 
-    <!-- ================= TAB 6: 管理後台 (ADMIN SETTINGS) ================= -->
+    <!-- ================= TAB 7: 管理後台 (ADMIN SETTINGS) ================= -->
     <section id="tab-admin" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理 (純手動輸入)
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.2.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.3.0</span>
         </div>
 
         <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
@@ -528,7 +626,7 @@
                 </div>
               </div>
 
-              <div id="adm-img-preview-box" class="h-32 w-full rounded-xl bg-cover bg-center border border-slate-700" style="background-image: url('');"></div>
+              <div id="adm-img-preview-box" class="aspect-video w-full rounded-xl bg-cover bg-center border border-slate-700" style="background-image: url('');"></div>
             </div>
           </div>
 
@@ -574,6 +672,10 @@
       <button type="button" onclick="switchTab('recruitment')" id="nav-recruitment" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
         <i data-lucide="user-plus" class="w-5 h-5"></i>
         <span class="text-[10px] sm:text-xs font-medium">招募增員</span>
+      </button>
+      <button type="button" onclick="switchTab('contacts')" id="nav-contacts" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="contact-2" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">人物檔案</span>
       </button>
       <button type="button" onclick="switchTab('deals')" id="nav-deals" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
         <i data-lucide="badge-check" class="w-5 h-5"></i>
@@ -689,7 +791,7 @@
 
   <script>
     // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
-    const APP_VERSION = "v3.2.0";
+    const APP_VERSION = "v3.3.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
@@ -697,6 +799,11 @@
     let isCreatingNewGoal = false;
     let activeIncompleteTaskId = null;
     let activeDealSourceTask = null;
+    let currentContactView = 'sales'; // 'sales' or 'recruit'
+    let selectedContactTagFilter = 'ALL';
+
+    const SALES_TAG_OPTIONS = ["高收入", "潛力", "單身", "家庭", "退休想法", "退休醫保"];
+    const RECRUIT_TAG_OPTIONS = ["時間彈性", "收入", "升職", "part time", "自由"];
 
     let appData = {
       goals: {
@@ -752,7 +859,8 @@
       todos: [],
       reviews: [],
       recruits: [],
-      deals: []
+      deals: [],
+      contacts: []
     };
 
     // ===== INIT =====
@@ -768,6 +876,10 @@
       registerSW();
       setupAutoExpandTextareas();
       setupDealDateListener();
+      renderManualContactTagCheckboxes();
+      
+      // 開啟 App 時自動後台靜默同步雲端數據 (跨裝置目標同步修復)
+      fetchCloudData(false);
     });
 
     function setupDealDateListener() {
@@ -814,7 +926,7 @@
     function registerSW() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker v3.2.0 註冊成功:', reg.scope))
+          .then((reg) => console.log('Service Worker v3.3.0 註冊成功:', reg.scope))
           .catch((err) => console.error('Service Worker 註冊失敗:', err));
       }
     }
@@ -837,7 +949,7 @@
 
     // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
-      const saved = localStorage.getItem("ivan_os_master_v32");
+      const saved = localStorage.getItem("ivan_os_master_v33");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -894,16 +1006,24 @@
             goalId: "G2026_02"
           }
         ];
-        appData.deals = [
+        appData.contacts = [
           {
-            id: "D_202509_01",
-            clientName: "黃太 (全職媽媽/中產家庭)",
-            amount: 80000,
-            signDate: "2025-09-15",
-            reviewDate: "2026-08-15",
-            plan: "家庭危疾尊尚計劃 + 子女海外教育年金",
-            notes: "重視子女未來保障與靈活領取",
-            reviewed: false
+            id: "C_01",
+            name: "陳先生",
+            bg: "外貿生意老闆 / 兩子女",
+            type: "sales", // 'sales' or 'recruit'
+            tags: ["高收入", "家庭", "退休想法"],
+            lastContact: "2026-08-24",
+            notes: "重視資金提取彈性與英國留學學費儲蓄"
+          },
+          {
+            id: "C_02",
+            name: "張小姐",
+            bg: "銀行客戶經理 4年",
+            type: "recruit",
+            tags: ["時間彈性", "收入", "升職"],
+            lastContact: "2026-08-24",
+            notes: "現職晉升見頂，尋求導師系統支援"
           }
         ];
         saveLocalStorage();
@@ -911,7 +1031,7 @@
     }
 
     function saveLocalStorage() {
-      localStorage.setItem("ivan_os_master_v32", JSON.stringify(appData));
+      localStorage.setItem("ivan_os_master_v33", JSON.stringify(appData));
     }
 
     // ===== DYNAMIC GOAL TABS =====
@@ -1031,6 +1151,165 @@
     function closeCelebrationModal() {
       document.getElementById("celebration-modal").classList.add("hidden");
       showToast("成就感已沉澱！");
+    }
+
+    // ===== 人物頁 (CONTACTS HUB - 銷售/招募 + 標籤 FILTER) =====
+    function switchContactView(viewType) {
+      currentContactView = viewType;
+      selectedContactTagFilter = 'ALL';
+
+      const sBtn = document.getElementById("contact-tab-sales");
+      const rBtn = document.getElementById("contact-tab-recruit");
+      const lbl = document.getElementById("contact-type-label");
+
+      if (viewType === 'sales') {
+        sBtn.className = "py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
+        rBtn.className = "py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+        lbl.textContent = "銷售客戶";
+      } else {
+        rBtn.className = "py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md";
+        sBtn.className = "py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+        lbl.textContent = "招募人才";
+      }
+
+      renderManualContactTagCheckboxes();
+      renderContactFilterTagButtons();
+      renderContacts();
+    }
+
+    function renderManualContactTagCheckboxes() {
+      const box = document.getElementById("manual-tags-container");
+      if (!box) return;
+      box.innerHTML = "";
+
+      const options = currentContactView === 'sales' ? SALES_TAG_OPTIONS : RECRUIT_TAG_OPTIONS;
+      options.forEach(tag => {
+        const label = document.createElement("label");
+        label.className = "inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-amber-500";
+        label.innerHTML = `
+          <input type="checkbox" name="manual_contact_tag" value="${tag}" class="rounded text-amber-500 focus:ring-0"> ${tag}
+        `;
+        box.appendChild(label);
+      });
+    }
+
+    function renderContactFilterTagButtons() {
+      const box = document.getElementById("contact-filter-tags");
+      if (!box) return;
+      box.innerHTML = "";
+
+      const options = currentContactView === 'sales' ? ['ALL', ...SALES_TAG_OPTIONS] : ['ALL', ...RECRUIT_TAG_OPTIONS];
+
+      options.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => {
+          selectedContactTagFilter = tag;
+          renderContactFilterTagButtons();
+          renderContacts();
+        };
+        const isActive = (selectedContactTagFilter === tag);
+        btn.className = `px-3 py-1 rounded-xl text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+          isActive 
+            ? "bg-amber-500 text-slate-950 shadow-md" 
+            : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+        }`;
+        btn.textContent = tag === 'ALL' ? '全部人物' : tag;
+        box.appendChild(btn);
+      });
+    }
+
+    function addManualContact() {
+      const name = document.getElementById("manual-contact-name").value.trim();
+      const bg = document.getElementById("manual-contact-bg").value.trim();
+
+      if (!name) return showToast("請輸入姓名！");
+
+      const checkedTags = Array.from(document.querySelectorAll("input[name='manual_contact_tag']:checked")).map(c => c.value);
+
+      const newContact = {
+        id: "C_" + Date.now(),
+        name,
+        bg: bg || "無備註背景",
+        type: currentContactView,
+        tags: checkedTags,
+        lastContact: new Date().toISOString().split("T")[0],
+        notes: "手動建立檔案"
+      };
+
+      if (!appData.contacts) appData.contacts = [];
+      appData.contacts.unshift(newContact);
+      saveLocalStorage();
+
+      document.getElementById("manual-contact-name").value = "";
+      document.getElementById("manual-contact-bg").value = "";
+      renderManualContactTagCheckboxes();
+      renderContacts();
+      showToast("✅ 人物檔案已建立！");
+    }
+
+    function renderContacts() {
+      const list = document.getElementById("contacts-list");
+      if (!list) return;
+      list.innerHTML = "";
+
+      const contacts = appData.contacts || [];
+      const filtered = contacts.filter(c => {
+        const matchesType = c.type === currentContactView;
+        const matchesTag = selectedContactTagFilter === 'ALL' || (c.tags && c.tags.includes(selectedContactTagFilter));
+        return matchesType && matchesTag;
+      });
+
+      document.getElementById("contacts-count-display").textContent = `${filtered.length} 位`;
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="col-span-full bg-slate-900/40 border border-slate-800 rounded-2xl p-6 text-center text-slate-500 text-xs">
+            此標籤篩選條件下暫無人物資料
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(c => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5 transition-all hover:border-amber-500/40";
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm sm:text-base font-bold text-white">${c.name}</h4>
+                <span class="text-[10px] bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800">${c.bg}</span>
+              </div>
+              <p class="text-[10px] text-slate-500 font-mono mt-0.5">最近連繫：${c.lastContact || '無紀錄'}</p>
+            </div>
+            <button type="button" onclick="deleteContact('${c.id}')" title="刪除人物" class="p-1 text-slate-600 hover:text-red-400">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- 標籤流 -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            ${(c.tags && c.tags.length > 0) 
+              ? c.tags.map(t => `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${c.type === 'sales' ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">${t}</span>`).join('')
+              : '<span class="text-[10px] text-slate-600">無標籤</span>'
+            }
+          </div>
+
+          ${c.notes ? `<p class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 leading-relaxed">${c.notes}</p>` : ''}
+        `;
+        list.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function deleteContact(id) {
+      if (confirm("確定要刪除此人物檔案嗎？")) {
+        appData.contacts = (appData.contacts || []).filter(c => c.id !== id);
+        saveLocalStorage();
+        renderContacts();
+        showToast("人物已刪除");
+      }
     }
 
     // ===== ADMIN BACKEND =====
@@ -1453,6 +1732,8 @@
       const followDate = document.getElementById("rec-follow-date").value;
       const goalId = document.getElementById("rec-goal-select").value;
 
+      const checkedTags = Array.from(document.querySelectorAll("input[name='recruit_tag']:checked")).map(c => c.value);
+
       const recruitId = "REC_" + Date.now();
 
       const newRecruit = {
@@ -1468,6 +1749,25 @@
       };
 
       appData.recruits.unshift(newRecruit);
+
+      // 自動連動新增/更新至招募人物庫
+      if (!appData.contacts) appData.contacts = [];
+      const existingContact = appData.contacts.find(c => c.name === candidateName && c.type === 'recruit');
+      if (existingContact) {
+        existingContact.lastContact = date;
+        existingContact.tags = Array.from(new Set([...(existingContact.tags || []), ...checkedTags]));
+        existingContact.notes = `最新訪談：${status}。痛點：${pain.slice(0, 30)}`;
+      } else {
+        appData.contacts.unshift({
+          id: "C_" + Date.now(),
+          name: candidateName,
+          bg: status,
+          type: "recruit",
+          tags: checkedTags.length > 0 ? checkedTags : ["時間彈性", "自由"],
+          lastContact: date,
+          notes: `轉型痛點：${pain.slice(0, 30)}`
+        });
+      }
 
       if (hook) {
         appData.todos.unshift({
@@ -1485,7 +1785,7 @@
 
       saveLocalStorage();
       renderAll();
-      showToast("招募訪談紀錄已保存，跟進任務已排入待辦！");
+      showToast("招募訪談已保存，並自動連動至人物頁！");
       document.getElementById("recruit-form").reset();
       document.getElementById("ai-recruit-hook-suggestions").classList.add("hidden");
       initDate();
@@ -1504,12 +1804,13 @@
 
     // ===== TAB NAVIGATION =====
     function switchTab(tab) {
-      const tabs = ['goals', 'todos', 'reviews', 'recruitment', 'deals', 'admin'];
+      const tabs = ['goals', 'todos', 'reviews', 'recruitment', 'contacts', 'deals', 'admin'];
       const headers = {
         goals: '目標儀表板 (首頁)',
         todos: '今日待辦與行動',
         reviews: '客戶銷售 • 見客覆盤',
         recruitment: '招募增員 • 人才訪談',
+        contacts: '人物檔案庫 (標籤篩選)',
         deals: '成功簽單客戶庫',
         admin: '目標管理後台'
       };
@@ -1531,6 +1832,7 @@
       if (tab === 'deals') renderDeals();
       if (tab === 'recruitment') renderRecruits();
       if (tab === 'reviews') renderReviews();
+      if (tab === 'contacts') switchContactView(currentContactView);
       
       triggerAllTextareasResize();
       lucide.createIcons();
@@ -1542,6 +1844,7 @@
       renderReviews();
       renderRecruits();
       renderDeals();
+      renderContacts();
     }
 
     function renderTodos() {
@@ -1585,9 +1888,11 @@
             </div>
             
             <div class="flex items-center gap-1.5 shrink-0">
+              <!-- 單筆直接加入日曆按鈕 (附帶分類顏色) -->
               <button type="button" onclick="addSingleTodoToCalendar('${item.id}')" title="加入 Google 日曆 (自動配對分類顏色)" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 rounded-lg text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-all active:scale-95">
                 <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> 日曆
               </button>
+              <!-- 簽單成功按鈕 -->
               <button type="button" onclick="openDealModalFromTask('${item.id}')" title="簽單成功！自動歸檔並排定11個月檢視" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 rounded-lg text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-all active:scale-95">
                 <i data-lucide="award" class="w-3.5 h-3.5"></i> 簽單
               </button>
@@ -1834,7 +2139,7 @@
     }
 
     function copyWarmupScript(name, pain, value) {
-      const cleanName = (name.split(' ')[0] || '客戶').replace(/\(.*?\)/g, '').trim();
+      const cleanName = (name.split(' ')[0] || '客戶').replace(/\\(.*?\\)/g, '').trim();
       const script = `${cleanName}，上次傾過你最關注「${pain || '資產配置細節'}」，這段時間我一直將這點放在心上，特別準備咗相應嘅「${value || '量身定造方案'}」，想一齊睇睇係咪最符合你上次嘅想法。`;
       navigator.clipboard.writeText(script).then(() => {
         showToast(`已複製【${cleanName}】專屬回溫開場話術！`);
@@ -1842,7 +2147,7 @@
     }
 
     function copyRecruitWarmupScript(name, pain, value) {
-      const cleanName = (name.split(' ')[0] || '準增員對象').replace(/\(.*?\)/g, '').trim();
+      const cleanName = (name.split(' ')[0] || '準增員對象').replace(/\\(.*?\\)/g, '').trim();
       const script = `${cleanName}，上次聽你提過現時「${pain || '職涯發展遇到的瓶頸'}」，我特別結合咗團隊嘅「${value || '導師支援與培訓系統'}」做咗套轉型落地路徑，想約杯咖啡一齊傾傾係咪幫到你。`;
       navigator.clipboard.writeText(script).then(() => {
         showToast(`已複製【${cleanName}】專屬增員回溫話術！`);
@@ -2080,6 +2385,8 @@
       const followDate = document.getElementById("rev-follow-date").value;
       const goalId = document.getElementById("rev-goal-select").value;
 
+      const checkedTags = Array.from(document.querySelectorAll("input[name='sales_tag']:checked")).map(c => c.value);
+
       const reviewId = "R_" + Date.now();
 
       const newReview = {
@@ -2095,6 +2402,26 @@
       };
 
       appData.reviews.unshift(newReview);
+
+      // 自動連動至銷售人物庫
+      if (!appData.contacts) appData.contacts = [];
+      const cleanName = clientName.split(' ')[0].replace(/\\(.*?\\)/g, '').trim();
+      const existingContact = appData.contacts.find(c => c.name.includes(cleanName) && c.type === 'sales');
+      if (existingContact) {
+        existingContact.lastContact = date;
+        existingContact.tags = Array.from(new Set([...(existingContact.tags || []), ...checkedTags]));
+        existingContact.notes = `最新見客：${temp}。痛點：${pain.slice(0, 30)}`;
+      } else {
+        appData.contacts.unshift({
+          id: "C_" + Date.now(),
+          name: cleanName,
+          bg: clientName.includes('(') ? clientName.match(/\\((.*?)\\)/)?.[1] || "客戶" : "客戶",
+          type: "sales",
+          tags: checkedTags.length > 0 ? checkedTags : ["潛力", "家庭"],
+          lastContact: date,
+          notes: `客人想法：${pain.slice(0, 30)}`
+        });
+      }
 
       if (hook) {
         appData.todos.unshift({
@@ -2112,7 +2439,7 @@
 
       saveLocalStorage();
       renderAll();
-      showToast("見客覆盤已保存，跟進任務已排入待辦！");
+      showToast("見客覆盤已保存，並自動連動至人物頁！");
       document.getElementById("review-form").reset();
       document.getElementById("ai-sales-hook-suggestions").classList.add("hidden");
       initDate();
@@ -2177,21 +2504,48 @@
       }
     }
 
-    async function fetchCloudData() {
+    // 雙向雲端同步 (支援跨裝置開機自動讀取目標與數據)
+    async function fetchCloudData(showFeedback = true) {
       const btn = document.getElementById("sync-btn");
-      btn.classList.add("animate-spin");
-      showToast("正在雙向同步雲端數據...");
+      if (btn) btn.classList.add("animate-spin");
+      if (showFeedback) showToast("正在雙向同步雲端數據...");
 
       try {
         const res = await fetch(GAS_API_URL);
         const json = await res.json();
         if (json.status === "success") {
-          showToast("✅ 雲端最新數據已同步！");
+          
+          // 將雲端目標與各分頁資料合併寫入本地 appData (跨裝置同步修復)
+          if (json.goals && Array.isArray(json.goals) && json.goals.length > 0) {
+            json.goals.forEach(g => {
+              const key = g["目標編號"] || g.id || ("G_" + Math.random());
+              appData.goals[key] = {
+                id: key,
+                category: g["目標名稱 (具體成果)"] || g.title || "💰 業績目標",
+                timeline: g["時間維度"] || g.timeline || "年度",
+                currentVal: appData.goals[key]?.currentVal || 0,
+                targetVal: appData.goals[key]?.targetVal || 100000,
+                unit: appData.goals[key]?.unit || "HK$",
+                deadline: g["截止日期"] || g.deadline || "2026-12-31",
+                why: g["成效檢視與改進空間"] || g.why || "",
+                effect: g["願景畫面與成就感 (感受)"] || g.effect || "",
+                imageUrl: appData.goals[key]?.imageUrl || "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000"
+              };
+            });
+          }
+
+          saveLocalStorage();
+          renderGoalTabs();
+          renderHeroGoal();
+          renderAll();
+          loadAdminGoalSelectOptions();
+
+          if (showFeedback) showToast("✅ 雲端最新數據已同步！");
         }
       } catch(err) {
-        showToast("本地模式運作中 (已就緒)");
+        console.warn("Cloud sync fallback:", err);
       } finally {
-        btn.classList.remove("animate-spin");
+        if (btn) btn.classList.remove("animate-spin");
       }
     }
   </script>
