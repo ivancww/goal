@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ivan-performance-os-v2.5.0';
-const APP_VERSION = 'v2.5.0';
+const CACHE_NAME = 'ivan-performance-os-v2.6.0';
+const APP_VERSION = 'v2.6.0';
 
 const STATIC_ASSETS = [
   './',
@@ -10,18 +10,14 @@ const STATIC_ASSETS = [
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
-// 安裝階段：快取核心資源
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing version:', APP_VERSION);
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
-// 啟用階段：清除舊快取版本
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating new version:', APP_VERSION);
   event.waitUntil(
@@ -39,7 +35,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 請求攔截：Network-First (API 直接連線，靜態資源網路優先回退快取)
 self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('script.google.com') || event.request.url.includes('firebasestorage.googleapis.com')) {
     event.respondWith(fetch(event.request));
@@ -59,12 +54,8 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => {
         return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
+          if (cachedResponse) return cachedResponse;
+          if (event.request.mode === 'navigate') return caches.match('./index.html');
         });
       })
   );
