@@ -1,62 +1,1788 @@
-const CACHE_NAME = 'ivan-performance-os-v2.6.0';
-const APP_VERSION = 'v2.6.0';
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Ivan Performance & Client OS</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-const STATIC_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://unpkg.com/lucide@latest',
-  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
-];
+  <!-- Firebase App & Storage SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-self.addEventListener('install', (event) => {
-  console.log('[SW] Installing version:', APP_VERSION);
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
-  self.skipWaiting();
-});
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkrnaRrWodQvgorLFFIFU1HbFXSit37Lg",
+      authDomain: "ava-system-85611.firebaseapp.com",
+      projectId: "ava-system-85611",
+      storageBucket: "ava-system-85611.firebasestorage.app",
+      messagingSenderId: "739887121662",
+      appId: "1:739887121662:web:a878238a237f0a595211af"
+    };
 
-self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating new version:', APP_VERSION);
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', key);
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
-});
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    window.firebaseStorage = storage;
+    window.uploadFirebaseImage = async function(file, path) {
+      const storageRef = ref(storage, path);
+      const snapshot = await uploadBytes(storageRef, file);
+      return await getDownloadURL(snapshot.ref);
+    };
+  </script>
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('script.google.com') || event.request.url.includes('firebasestorage.googleapis.com')) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    textarea {
+      resize: none !important;
+      overflow-y: hidden !important;
+      min-height: 48px;
+      transition: height 0.1s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-24 flex flex-col items-center">
 
-  event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+  <!-- Top App Header -->
+  <header class="w-full bg-slate-900/95 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-center">
+    <div class="w-full max-w-md md:max-w-4xl lg:max-w-6xl flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 shrink-0">
+          <i data-lucide="crown" class="w-5 h-5 text-amber-200"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
+            <span class="text-[10px] font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full" id="app-version-badge">v2.6.0</span>
+          </div>
+          <p class="text-[11px] text-slate-400" id="current-date"></p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="switchTab('admin')" title="後台管理" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
+          <i data-lucide="sliders" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+        <button onclick="triggerCalendarSync()" title="同步至 Google 日曆" class="p-2.5 rounded-xl bg-slate-800/80 text-amber-400 hover:text-white active:scale-95 transition-all border border-amber-500/20">
+          <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+        <button onclick="fetchCloudData()" id="sync-btn" title="雙向雲端同步" class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white active:scale-95 transition-all border border-slate-700/50">
+          <i data-lucide="refresh-cw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container (Honor V5 展開自動升級 iPad 寬屏雙欄佈局) -->
+  <main class="w-full max-w-md md:max-w-4xl lg:max-w-6xl px-4 pt-3 flex-1">
+    
+    <!-- ================= TAB 1: 目標儀表板 (GOALS - 主頁) ================= -->
+    <section id="tab-goals" class="space-y-4">
+      
+      <div class="grid grid-cols-3 gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl max-w-lg mx-auto md:max-w-none">
+        <button onclick="switchGoalCategory('performance')" id="cat-btn-performance" class="py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
+          💰 業績目標
+        </button>
+        <button onclick="switchGoalCategory('recruitment')" id="cat-btn-recruitment" class="py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+          👥 招募增員
+        </button>
+        <button onclick="switchGoalCategory('vision')" id="cat-btn-vision" class="py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
+          🌟 長遠願景
+        </button>
+      </div>
+
+      <div id="main-goal-hero" class="bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10">
+        <div class="grid grid-cols-1 md:grid-cols-12">
+          
+          <div class="md:col-span-5 relative w-full h-52 md:h-full min-h-[240px] bg-slate-950 overflow-hidden group">
+            <img id="hero-img-banner" src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000" alt="Goal Vision" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" />
+            
+            <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+              <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/85 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-lg" id="hero-tag">
+                2026 年度業績核心
+              </span>
+              <span class="text-xs text-slate-200 font-mono bg-slate-950/85 px-2.5 py-1 rounded-full border border-slate-700/80 backdrop-blur-md shadow-lg" id="hero-deadline">
+                截止: 2026-12-31
+              </span>
+            </div>
+
+            <div class="absolute inset-x-0 bottom-0 h-8 md:hidden bg-gradient-to-t from-slate-900 to-transparent"></div>
+          </div>
+
+          <div class="md:col-span-7 p-5 sm:p-6 space-y-4 flex flex-col justify-between">
+            <div>
+              <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight" id="hero-title">COT 超級會員榮譽指標</h3>
+              
+              <div class="mt-3.5 space-y-1">
+                <p class="text-[11px] sm:text-xs font-medium text-slate-400">目前累積達成 / 目標數值</p>
+                <div class="flex items-baseline justify-between">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white font-mono" id="hero-numeric-display">
+                    HK$ 1,680,000 <span class="text-sm font-normal text-slate-400">/ 2,400,000</span>
+                  </h2>
+                  <span class="text-2xl sm:text-3xl font-black text-amber-400 font-mono" id="hero-percent">70.0%</span>
+                </div>
+              </div>
+
+              <div class="w-full bg-slate-950 rounded-full h-3.5 border border-slate-800 mt-2.5 p-0.5">
+                <div id="hero-progress-bar" class="bg-gradient-to-r from-amber-500 via-indigo-500 to-emerald-400 h-2.5 rounded-full transition-all duration-700 shadow-md shadow-amber-500/50" style="width: 70%"></div>
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl space-y-1">
+              <p class="text-[11px] sm:text-xs font-bold text-indigo-400 flex items-center gap-1.5">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> 設定此目標的原因 (Why)：
+              </p>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed" id="hero-why">
+                證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。
+              </p>
+            </div>
+
+            <div class="p-3.5 bg-amber-950/20 border border-amber-500/30 rounded-2xl space-y-1">
+              <p class="text-[11px] sm:text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 達成後的效果與滿足感 (Effect)：
+              </p>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed" id="hero-effect">
+                在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。
+              </p>
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center justify-between">
+                <span class="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="package-check" class="w-4 h-4 text-emerald-400"></i> 可交付成果 (Deliverables)
+                </span>
+                <button onclick="triggerHeroGoalCelebration()" class="text-xs sm:text-sm bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 px-3 py-1 rounded-xl border border-amber-500/30 font-semibold flex items-center gap-1.5 transition-all">
+                  <i data-lucide="award" class="w-4 h-4"></i> 達成覆盤
+                </button>
+              </div>
+              <div id="hero-deliverables" class="space-y-1.5"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 2: 今日待辦 (TODOS) ================= -->
+    <section id="tab-todos" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <span class="text-xs sm:text-sm font-semibold text-indigo-400 tracking-wider uppercase flex items-center gap-1.5 mb-3">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> 手動新增自訂待辦
+        </span>
+        <input type="text" id="new-task-name" placeholder="輸入任務內容 (例如：約見陳生確認保單簽約細節 / 邀約前銀行經理咖啡面談)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 mb-3" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mb-3">
+          <select id="new-task-cat" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500">
+            <option value="🔥 今日 Top 3">🔥 今日 Top 3</option>
+            <option value="👥 客戶銷售跟進">👥 客戶銷售跟進</option>
+            <option value="🤝 招募增員訪談">🤝 招募增員訪談</option>
+            <option value="⚡ 自訂行動">⚡ 自訂行動</option>
+          </select>
+          <input type="date" id="new-task-date" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500" />
+          <input type="text" id="new-task-time" placeholder="時間段 (如 10:00-11:30)" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-300 focus:outline-none focus:border-indigo-500" />
+        </div>
+        <button onclick="addManualTodo()" class="w-full sm:w-auto px-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-md shadow-indigo-600/20">
+          <i data-lucide="check" class="w-4 h-4"></i> 加入清單
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="flame" class="w-4 h-4"></i> 今日 Top 3 核心聚焦
+            </h2>
+            <span class="text-[10px] sm:text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-mono" id="top3-count">0 / 3</span>
+          </div>
+          <div id="top3-list" class="space-y-2.5"></div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="users" class="w-4 h-4"></i> 客戶銷售與招募跟進
+              </h2>
+            </div>
+            <div id="client-todo-list" class="space-y-2.5"></div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="list-todo" class="w-4 h-4"></i> 其他任務與行動
+              </h2>
+            </div>
+            <div id="other-todo-list" class="space-y-2.5"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: 客戶銷售（見客覆盤 - 獨立頁） ================= -->
+    <section id="tab-reviews" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="p-2 bg-indigo-600/20 rounded-xl text-indigo-400">
+              <i data-lucide="briefcase" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-sm sm:text-base font-bold text-white">客戶銷售 • 見客覆盤</h2>
+              <p class="text-[11px] text-slate-400">專注於家庭保障、資產配置與客戶真實痛點</p>
+            </div>
+          </div>
+          <span class="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full">銷售專用</span>
+        </div>
+
+        <form id="review-form" class="space-y-4" onsubmit="saveReview(event)">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="md:col-span-1">
+              <label class="block text-xs font-medium text-slate-400 mb-1">客戶姓名 / 背景身份</label>
+              <input type="text" id="rev-client-name" required placeholder="例如：陳先生 (外貿生意老闆 / 兩子女)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">會面日期</label>
+              <input type="date" id="rev-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">心理溫度</label>
+              <select id="rev-temp" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500">
+                <option value="🔥 高意向">🔥 高意向 (近期促成)</option>
+                <option value="💡 考慮中">💡 考慮中 (需補足信任/方案)</option>
+                <option value="🧊 需培育">🧊 需培育 (維持長線連繫)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">客人真實擔憂 / 痛點 (從客人角度出發)</label>
+            <textarea id="rev-pain" rows="2" placeholder="例：擔心供款期太長影響生意現金周轉；想同時為大仔留一筆海外留學金..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500 auto-expand"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-amber-400 mb-1">
+              💎 我手動自訂提供的價值 (方案/服務/轉介)
+            </label>
+            <textarea id="rev-value" rows="2" placeholder="手動自由輸入：例：量身訂造 2 套高流動性提取模型 + 私人預約週六體檢綠通名額" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
+          </div>
+
+          <div class="bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-700/50 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs sm:text-sm font-bold text-indigo-300 flex items-center gap-1.5">
+                <i data-lucide="bot" class="w-4 h-4 sm:w-5 sm:h-5 text-purple-400"></i> AI 智能生成連繫點子 (Hook)
+              </span>
+              <button type="button" onclick="generateAiHookIdeas()" id="ai-gen-btn" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 生成高價值點子
+              </button>
+            </div>
+
+            <div id="ai-hook-suggestions" class="space-y-2 hidden"></div>
+
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-300 mb-1 font-semibold">最終確定之連繫理由 (自動生成待辦任務)</label>
+              <input type="text" id="rev-hook" placeholder="點擊上方 AI 點子或手動輸入理由與承諾" class="w-full bg-slate-950 border border-indigo-600/60 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-400" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">預計跟進日期</label>
+                <input type="date" id="rev-follow-date" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">關聯目標</label>
+                <select id="rev-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
+                  <option value="G2026_01">業績目標 (COT)</option>
+                  <option value="G2026_03">長遠願景 (100家庭)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
+            <i data-lucide="save" class="w-4 h-4"></i> 保存銷售覆盤並自動排入待辦跟進
+          </button>
+        </form>
+      </div>
+
+      <div>
+        <h3 class="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+          <i data-lucide="history" class="w-4 h-4"></i> 客戶銷售覆盤歷史
+        </h3>
+        <div id="reviews-history-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: 招募增員（人才訪談與團隊擴展 - 獨立頁） ================= -->
+    <section id="tab-recruitment" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 sm:p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <div class="p-2 bg-purple-600/20 rounded-xl text-purple-400">
+              <i data-lucide="user-plus" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-sm sm:text-base font-bold text-white">招募增員 • 人才深度訪談</h2>
+              <p class="text-[11px] text-slate-400">專注於事業探索、轉型原動力與導師賦能引路</p>
+            </div>
+          </div>
+          <span class="text-[10px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-full">增員專用</span>
+        </div>
+
+        <form id="recruit-form" class="space-y-4" onsubmit="saveRecruitInterview(event)">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="md:col-span-1">
+              <label class="block text-xs font-medium text-slate-400 mb-1">準增員對象 / 現職背景</label>
+              <input type="text" id="rec-candidate-name" required placeholder="例如：張小姐 (銀行客戶經理 4年)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-purple-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">訪談日期</label>
+              <input type="date" id="rec-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">意向階段 / 溫度</label>
+              <select id="rec-status" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500">
+                <option value="🔥 極高意向 (近期辦入職)">🔥 極高意向 (近期辦入職)</option>
+                <option value="💡 深度評估 (探索團隊優勢)">💡 深度評估 (探索團隊優勢)</option>
+                <option value="☕ 初步破冰 (維持信任交流)">☕ 初步破冰 (維持信任交流)</option>
+                <option value="🌟 已成功簽約入職">🌟 已成功簽約入職</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">對方真實痛點 / 轉型原動力 (Why Change)</label>
+            <textarea id="rec-pain" rows="2" placeholder="例：現職銀行指標壓力極大且晉升見頂，想擁有時間自由並挑戰年薪百萬..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 auto-expand"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-purple-400 mb-1">
+              🚀 我方提供的團隊賦能與價值 (導師支持/系統方法論)
+            </label>
+            <textarea id="rec-value" rows="2" placeholder="例：提供標準化獲客系統、前 3 個月實戰陪訪 10 場、安排對接同背景轉型成功的 COT 師兄交流" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-500 auto-expand"></textarea>
+          </div>
+
+          <div class="bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-700/50 rounded-2xl p-4 space-y-3">
+            <div>
+              <label class="block text-[11px] sm:text-xs text-purple-300 mb-1 font-semibold">下次增員跟進理由與承諾行動 (自動加入待辦)</label>
+              <input type="text" id="rec-hook" placeholder="例如：邀約參加週六團隊精英事業說明會，並發送團隊新人成長手冊" class="w-full bg-slate-950 border border-purple-600/60 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-purple-400" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">預計跟進日期</label>
+                <input type="date" id="rec-follow-date" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">關聯招募目標</label>
+                <select id="rec-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
+                  <option value="G2026_02">招募增員 (引進4位新核心)</option>
+                  <option value="G2026_03">長遠願景 (團隊可持續繁榮)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-purple-600/30">
+            <i data-lucide="user-check" class="w-4 h-4"></i> 保存招募紀錄並自動排入待辦
+          </button>
+        </form>
+      </div>
+
+      <div>
+        <h3 class="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+          <i data-lucide="users" class="w-4 h-4"></i> 準增員人才庫流水
+        </h3>
+        <div id="recruits-history-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: 成功簽單客戶 (DEALS - 按月歸檔 + 第11個月自動提醒Review) ================= -->
+    <section id="tab-deals" class="space-y-4 hidden">
+      <div class="bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/40 rounded-3xl p-5 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            榮譽簽單庫
+          </span>
+          <h2 class="text-lg sm:text-xl font-black text-white">成功簽單客戶與週年檢視</h2>
+          <p class="text-xs text-slate-300">簽單後自動推算第 11 個月，提醒保單週年深入檢視 (Annual Policy Review)</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-2xl text-center min-w-[90px]">
+            <span class="text-[10px] text-slate-400 block">累計簽單</span>
+            <span class="text-lg font-black text-emerald-400 font-mono" id="total-deals-count">0</span>
+          </div>
+          <div class="bg-slate-950/80 border border-amber-500/30 p-3 rounded-2xl text-center min-w-[100px]">
+            <span class="text-[10px] text-amber-300 block">需第11月檢視</span>
+            <span class="text-lg font-black text-amber-400 font-mono" id="pending-reviews-count">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="deals-by-month-container" class="space-y-6"></div>
+    </section>
+
+    <!-- ================= TAB 6: 管理後台 (ADMIN SETTINGS) ================= -->
+    <section id="tab-admin" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與願景圖片更換
+          </h2>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v2.6.0</span>
+        </div>
+
+        <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">選擇編輯目標類別</label>
+            <select id="adm-goal-select" onchange="loadAdminGoalData()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500">
+              <option value="performance">💰 業績目標 (Performance)</option>
+              <option value="recruitment">👥 招募增員 (Recruitment)</option>
+              <option value="vision">🌟 長遠願景 (Vision)</option>
+            </select>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+            <label class="block text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5">
+              <i data-lucide="image" class="w-4 h-4"></i> 目標置頂大圖 (強化視覺直觀效果)
+            </label>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+              <div class="space-y-2">
+                <input type="file" id="adm-goal-file" accept="image/*" class="text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer" onchange="handleImageUpload(event)" />
+                <span id="upload-status" class="block text-[10px] text-slate-500"></span>
+                <div>
+                  <label class="block text-[10px] text-slate-500 mb-1">或直接輸入圖片網址 (URL)</label>
+                  <input type="text" id="adm-goal-img-url" placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono" />
+                </div>
+              </div>
+
+              <div id="adm-img-preview-box" class="h-32 w-full rounded-xl bg-cover bg-center border border-slate-700" style="background-image: url('');"></div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">目標名稱</label>
+            <input type="text" id="adm-goal-title" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white" />
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5">
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">目前進度數值</label>
+              <input type="number" id="adm-goal-current" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">目標設定數值</label>
+              <input type="number" id="adm-goal-target" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">計量單位</label>
+              <input type="text" id="adm-goal-unit" placeholder="如 HK$ / 人" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-indigo-300 mb-1">📌 設定此目標的原因 (Why)</label>
+            <textarea id="adm-goal-why" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white auto-expand"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect)</label>
+            <textarea id="adm-goal-effect" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white auto-expand"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">截止日期</label>
+              <input type="date" id="adm-goal-deadline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">週期維度</label>
+              <select id="adm-goal-timeline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
+                <option value="年度">年度</option>
+                <option value="季度">季度</option>
+                <option value="月度">月度</option>
+                <option value="長遠">長遠</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
+            <i data-lucide="cloud-upload" class="w-4 h-4"></i> 保存並同步至 Google Sheet 後端
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Bar (5 大清晰分頁) -->
+  <nav class="fixed bottom-0 left-0 right-0 w-full bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2.5 z-50 flex justify-center">
+    <div class="w-full max-w-md md:max-w-2xl flex justify-around items-center">
+      <button onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
+        <i data-lucide="target" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-bold">目標主頁</span>
+      </button>
+      <button onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="check-square" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">每日待辦</span>
+      </button>
+      <button onclick="switchTab('reviews')" id="nav-reviews" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="briefcase" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">客戶銷售</span>
+      </button>
+      <button onclick="switchTab('recruitment')" id="nav-recruitment" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="user-plus" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">招募增員</span>
+      </button>
+      <button onclick="switchTab('deals')" id="nav-deals" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="badge-check" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">成功簽單</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 簽單成功登記彈窗 -->
+  <div id="deal-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="flex items-center gap-2.5 text-emerald-400">
+        <div class="p-2 bg-emerald-500/20 rounded-xl">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">🎉 恭喜簽單成功！</h3>
+          <p class="text-[11px] text-slate-400">自動歸檔至「成功簽單」並推算第11個月保單週年檢視</p>
+        </div>
+      </div>
+
+      <form id="deal-form" onsubmit="confirmDealSuccess(event)" class="space-y-3 pt-1">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">客戶姓名</label>
+          <input type="text" id="deal-client-name" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">簽單金額 / FYP (HK$)</label>
+            <input type="number" id="deal-amount" placeholder="例如：120000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">簽約生效日期</label>
+            <input type="date" id="deal-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">投保方案 / 險種與核心架構</label>
+          <input type="text" id="deal-plan" placeholder="例如：高端醫療 + 5年期傳承儲蓄計劃" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">簽單覆盤筆記 (客戶核心促成關鍵)</label>
+          <textarea id="deal-notes" rows="2" placeholder="記錄客人最終拍板的原因，沉澱成交心法..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500 auto-expand"></textarea>
+        </div>
+
+        <div class="p-3 bg-emerald-950/30 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300/90 flex items-center gap-2">
+          <i data-lucide="bell-ring" class="w-4 h-4 shrink-0 text-emerald-400"></i>
+          <span>系統將於第 11 個月（<span id="deal-review-preview" class="font-bold text-white"></span>）自動標註提醒週年檢視</span>
+        </div>
+
+        <div class="flex gap-2.5 pt-2">
+          <button type="button" onclick="closeDealModal()" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+            取消
+          </button>
+          <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all shadow-lg shadow-emerald-500/30">
+            確認簽單並歸檔
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Incomplete Reason Modal -->
+  <div id="incomplete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl">
+      <div class="flex items-center gap-2 text-amber-400">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+        <h3 class="text-sm font-bold text-white">記錄未完成原因 (覆盤迭代)</h3>
+      </div>
+      <p class="text-xs text-slate-300" id="incomp-task-title"></p>
+      <div>
+        <label class="block text-[11px] text-slate-400 mb-1">未完成原因 / 遇到的阻礙：</label>
+        <textarea id="incomp-reason-text" rows="3" placeholder="例如：客人臨時出差推遲通話 / 需先補查特定信託條款細節..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+          取消
+        </button>
+        <button onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all">
+          儲存覆盤原因
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div id="celebration-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-sm w-full p-5 text-center space-y-4 shadow-2xl relative">
+      <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
+        🏆
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">恭喜達成階段性核心目標！</h3>
+        <p class="text-xs text-slate-300 mt-1" id="celeb-goal-title"></p>
+      </div>
+      <div class="text-left space-y-2 bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+        <label class="block text-xs font-semibold text-amber-400">📝 達標覆盤筆記與喜悅心得</label>
+        <textarea id="celeb-notes" rows="3" placeholder="記錄此時此刻的成就感，提煉可複製的成功關鍵..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none auto-expand"></textarea>
+      </div>
+      <button onclick="closeCelebrationModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-amber-500/30">
+        沉澱喜悅感並同步後端
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed top-16 bg-indigo-600 text-white text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    提示訊息
+  </div>
+
+  <script>
+    // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
+    const APP_VERSION = "v2.6.0";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
+    const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
+
+    let currentGoalCategory = 'performance';
+    let activeIncompleteTaskId = null;
+    let activeDealSourceTask = null;
+
+    let appData = {
+      goals: {
+        performance: {
+          id: "G2026_01",
+          category: "業績目標",
+          tag: "2026 年度業績核心",
+          title: "COT 超級會員榮譽指標",
+          imageUrl: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000",
+          why: "證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。",
+          effect: "在年終盛典帶領全組上台接受榮譽嘉許；聖誕節全額自費帶全家人赴瑞士滑雪度假 10 天，享受極致幸福感。",
+          currentVal: 1680000,
+          targetVal: 2400000,
+          unit: "HK$",
+          timeline: "年度",
+          deadline: "2026-12-31",
+          deliverables: [
+            { name: "達成 COT 官方業績確認函", done: false },
+            { name: "完成 30 位高淨值家庭資產全景圖交付", done: true }
+          ]
+        },
+        recruitment: {
+          id: "G2026_02",
+          category: "招募增員",
+          tag: "Q3 團隊增員擴展",
+          title: "成功招募引進 4 位高素質新核心",
+          imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000",
+          why: "建立團隊階梯式人才庫，複製高效銷售系統與方法論，推動組織可持續繁榮。",
+          effect: "組建具備強大戰鬥力的核心小組，團隊月產能翻倍，享受身為導師與領袖的成就感。",
+          currentVal: 2,
+          targetVal: 4,
+          unit: "人",
+          timeline: "季度",
+          deadline: "2026-09-30",
+          deliverables: [
+            { name: "舉辦 3 場專屬事業說明會", done: true },
+            { name: "完成 4 份新人實戰入職手冊培訓", done: false }
+          ]
+        },
+        vision: {
+          id: "G2026_03",
+          category: "長遠願景",
+          tag: "2026-2027 長遠發展",
+          title: "打造全港最具聲譽的家庭資產架構顧問團隊",
+          imageUrl: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000",
+          why: "為更多中產與高淨值家庭建立長遠穩健保障，守護世代財富與健康。",
+          effect: "建立可自動運轉的品牌與系統，實現真正的時間自由與極致事業影響力。",
+          currentVal: 60,
+          targetVal: 100,
+          unit: "家庭",
+          timeline: "長遠",
+          deadline: "2027-12-31",
+          deliverables: [
+            { name: "建立標準化提案工具庫", done: true },
+            { name: "搭建團隊獨立獲客系統", done: false }
+          ]
         }
-        return networkResponse;
-      })
-      .catch(() => {
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) return cachedResponse;
-          if (event.request.mode === 'navigate') return caches.match('./index.html');
+      },
+      todos: [],
+      reviews: [],
+      recruits: [],
+      deals: []
+    };
+
+    // ===== INIT =====
+    document.addEventListener("DOMContentLoaded", () => {
+      loadLocalStorage();
+      lucide.createIcons();
+      initDate();
+      renderHeroGoal();
+      renderAll();
+      loadAdminGoalData();
+      registerSW();
+      setupAutoExpandTextareas();
+      setupDealDateListener();
+    });
+
+    function setupDealDateListener() {
+      const dealDateInput = document.getElementById("deal-date");
+      dealDateInput.addEventListener("change", () => {
+        const val = dealDateInput.value;
+        if (val) {
+          const revDate = calculate11thMonthDate(val);
+          document.getElementById("deal-review-preview").textContent = revDate;
+        }
+      });
+    }
+
+    function calculate11thMonthDate(dateStr) {
+      const d = new Date(dateStr);
+      d.setMonth(d.getMonth() + 11);
+      return d.toISOString().split("T")[0];
+    }
+
+    function isReviewDue(reviewDateStr) {
+      if (!reviewDateStr) return false;
+      const today = new Date().toISOString().split("T")[0];
+      return today >= reviewDateStr;
+    }
+
+    function setupAutoExpandTextareas() {
+      document.querySelectorAll('textarea').forEach(el => {
+        el.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = (this.scrollHeight) + 'px';
         });
-      })
-  );
-});
+      });
+    }
+
+    function triggerAllTextareasResize() {
+      setTimeout(() => {
+        document.querySelectorAll('textarea').forEach(t => {
+          t.style.height = 'auto';
+          t.style.height = (t.scrollHeight) + 'px';
+        });
+      }, 50);
+    }
+
+    function registerSW() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker v2.6.0 註冊成功:', reg.scope))
+          .catch((err) => console.error('Service Worker 註冊失敗:', err));
+      }
+    }
+
+    function initDate() {
+      const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+      document.getElementById("current-date").textContent = new Date().toLocaleDateString('zh-HK', options);
+      document.getElementById("new-task-date").valueAsDate = new Date();
+      document.getElementById("rev-date").valueAsDate = new Date();
+      document.getElementById("rec-date").valueAsDate = new Date();
+      document.getElementById("deal-date").valueAsDate = new Date();
+      
+      const follow = new Date();
+      follow.setDate(follow.getDate() + 3);
+      document.getElementById("rev-follow-date").valueAsDate = follow;
+      document.getElementById("rec-follow-date").valueAsDate = follow;
+      
+      document.getElementById("deal-review-preview").textContent = calculate11thMonthDate(new Date().toISOString().split("T")[0]);
+    }
+
+    // ===== LOCAL STORAGE =====
+    function loadLocalStorage() {
+      const saved = localStorage.getItem("ivan_os_master_v26");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          appData = { ...appData, ...parsed };
+        } catch(e) { console.error(e); }
+      } else {
+        appData.todos = [
+          {
+            id: "T202608_01",
+            title: "【簽約面談】與陳先生簽署家庭傳承信託保單",
+            cat: "🔥 今日 Top 3",
+            date: "2026-08-25",
+            time: "10:00 - 11:30",
+            done: false,
+            incompleteReason: "",
+            reviewId: "R202608_01",
+            goalId: "G2026_01"
+          },
+          {
+            id: "T202608_02",
+            title: "【招募訪談】約見前銀行客戶經理張小姐深度交流",
+            cat: "🤝 招募增員訪談",
+            date: "2026-08-26",
+            time: "15:00 - 16:30",
+            done: false,
+            incompleteReason: "",
+            reviewId: "",
+            goalId: "G2026_02"
+          }
+        ];
+        appData.reviews = [
+          {
+            id: "R202608_01",
+            clientName: "陳先生 (外貿老闆)",
+            date: "2026-08-24",
+            temp: "🔥 高意向",
+            pain: "擔心供款期太長影響未來生意現金流周轉",
+            value: "為其量身訂造 2 套高流動性分期保單架構 + 私人預約週六體檢綠通名額",
+            hook: "發送現金流靈活提取對比圖 + 確認體檢名額",
+            followDate: "2026-08-27",
+            goalId: "G2026_01"
+          }
+        ];
+        appData.recruits = [
+          {
+            id: "REC_202608_01",
+            candidateName: "張小姐 (銀行客戶經理 4年)",
+            date: "2026-08-24",
+            status: "🔥 極高意向 (近期辦入職)",
+            pain: "現職銀行指標壓力極大且晉升見頂，渴望擁有時間自由並挑戰無限收入",
+            value: "提供標準化獲客系統、前 3 個月實戰陪訪 10 場、安排對接同背景轉型成功的 COT 師兄交流",
+            hook: "邀約參加週六團隊精英事業說明會，發送團隊新人成長手冊",
+            followDate: "2026-08-27",
+            goalId: "G2026_02"
+          }
+        ];
+        appData.deals = [
+          {
+            id: "D_202509_01",
+            clientName: "黃太 (全職媽媽/中產家庭)",
+            amount: 80000,
+            signDate: "2025-09-15",
+            reviewDate: "2026-08-15",
+            plan: "家庭危疾尊尚計劃 + 子女海外教育年金",
+            notes: "重視子女未來保障與靈活領取",
+            reviewed: false
+          }
+        ];
+        saveLocalStorage();
+      }
+    }
+
+    function saveLocalStorage() {
+      localStorage.setItem("ivan_os_master_v26", JSON.stringify(appData));
+    }
+
+    // ===== GOAL CATEGORY SWITCHER =====
+    function switchGoalCategory(cat) {
+      currentGoalCategory = cat;
+      ['performance', 'recruitment', 'vision'].forEach(c => {
+        const btn = document.getElementById(`cat-btn-${c}`);
+        if (c === cat) {
+          btn.className = "py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
+        } else {
+          btn.className = "py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+        }
+      });
+      renderHeroGoal();
+    }
+
+    function renderHeroGoal() {
+      const g = appData.goals[currentGoalCategory];
+      if (!g) return;
+
+      const pct = Math.min(100, Math.round((g.currentVal / g.targetVal) * 1000) / 10);
+      
+      document.getElementById("hero-tag").textContent = g.tag;
+      document.getElementById("hero-deadline").textContent = `截止: ${g.deadline}`;
+      document.getElementById("hero-title").textContent = g.title;
+      document.getElementById("hero-numeric-display").innerHTML = `${g.unit === 'HK$' ? 'HK$ ' : ''}${g.currentVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''} <span class="text-sm font-normal text-slate-400">/ ${g.targetVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}</span>`;
+      document.getElementById("hero-percent").textContent = `${pct}%`;
+      document.getElementById("hero-progress-bar").style.width = `${pct}%`;
+      document.getElementById("hero-why").textContent = g.why;
+      document.getElementById("hero-effect").textContent = g.effect;
+
+      const imgEl = document.getElementById("hero-img-banner");
+      if (g.imageUrl) {
+        imgEl.src = g.imageUrl;
+        imgEl.classList.remove("hidden");
+      }
+
+      const delList = document.getElementById("hero-deliverables");
+      delList.innerHTML = "";
+      g.deliverables.forEach((d, idx) => {
+        const item = document.createElement("div");
+        item.className = "flex items-center gap-2 text-xs sm:text-sm text-slate-300";
+        item.innerHTML = `
+          <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleHeroDeliverable('${currentGoalCategory}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
+          <span class="${d.done ? 'line-through text-slate-500' : ''}">${d.name}</span>
+        `;
+        delList.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function toggleHeroDeliverable(cat, index) {
+      const g = appData.goals[cat];
+      if (g && g.deliverables[index]) {
+        g.deliverables[index].done = !g.deliverables[index].done;
+        saveLocalStorage();
+        renderHeroGoal();
+      }
+    }
+
+    function triggerHeroGoalCelebration() {
+      const g = appData.goals[currentGoalCategory];
+      document.getElementById("celeb-goal-title").textContent = g.title;
+      document.getElementById("celebration-modal").classList.remove("hidden");
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      }
+    }
+
+    function closeCelebrationModal() {
+      document.getElementById("celebration-modal").classList.add("hidden");
+      showToast("成就感已沉澱！");
+    }
+
+    // ===== 簽單成功工作流 =====
+    function openDealModalFromTask(taskId) {
+      const task = appData.todos.find(t => t.id === taskId);
+      activeDealSourceTask = task;
+
+      let extractedName = "";
+      if (task) {
+        const match = task.title.match(/【(?:跟進|簽約面談|面談)】\s*([^：:]+)/);
+        if (match) extractedName = match[1].trim();
+        else extractedName = task.title.replace(/【.*】/, '').slice(0, 8);
+      }
+
+      document.getElementById("deal-client-name").value = extractedName;
+      document.getElementById("deal-amount").value = "";
+      document.getElementById("deal-plan").value = "";
+      document.getElementById("deal-notes").value = "";
+      document.getElementById("deal-date").valueAsDate = new Date();
+      document.getElementById("deal-review-preview").textContent = calculate11thMonthDate(new Date().toISOString().split("T")[0]);
+
+      document.getElementById("deal-modal").classList.remove("hidden");
+      triggerAllTextareasResize();
+    }
+
+    function closeDealModal() {
+      document.getElementById("deal-modal").classList.add("hidden");
+    }
+
+    async function confirmDealSuccess(e) {
+      e.preventDefault();
+      const clientName = document.getElementById("deal-client-name").value.trim();
+      const amount = Number(document.getElementById("deal-amount").value) || 0;
+      const signDate = document.getElementById("deal-date").value;
+      const plan = document.getElementById("deal-plan").value.trim();
+      const notes = document.getElementById("deal-notes").value.trim();
+      const reviewDate = calculate11thMonthDate(signDate);
+
+      const newDeal = {
+        id: "D_" + Date.now(),
+        clientName,
+        amount,
+        signDate,
+        reviewDate,
+        plan,
+        notes,
+        reviewed: false
+      };
+
+      appData.deals.unshift(newDeal);
+
+      if (activeDealSourceTask) {
+        activeDealSourceTask.done = true;
+        updateTodoStatusToGAS(activeDealSourceTask);
+      }
+
+      if (amount > 0 && appData.goals.performance) {
+        appData.goals.performance.currentVal += amount;
+      }
+
+      saveLocalStorage();
+      renderAll();
+      closeDealModal();
+
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 160, spread: 100, origin: { y: 0.5 } });
+      }
+
+      showToast("🎉 恭喜成功簽單！已歸檔並自動排定第11個月週年檢視！");
+      switchTab('deals');
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "save_deal",
+            data: newDeal
+          })
+        });
+      } catch(err) { console.warn("GAS Deal sync error:", err); }
+    }
+
+    function markDealReviewed(dealId) {
+      const deal = appData.deals.find(d => d.id === dealId);
+      if (deal) {
+        deal.reviewed = !deal.reviewed;
+        saveLocalStorage();
+        renderDeals();
+        showToast(deal.reviewed ? "✅ 已完成第11個月保單週年檢視！" : "標記為待檢視");
+      }
+    }
+
+    // ===== 招募訪談儲存 =====
+    async function saveRecruitInterview(e) {
+      e.preventDefault();
+      const candidateName = document.getElementById("rec-candidate-name").value.trim();
+      const date = document.getElementById("rec-date").value;
+      const status = document.getElementById("rec-status").value;
+      const pain = document.getElementById("rec-pain").value.trim();
+      const value = document.getElementById("rec-value").value.trim();
+      const hook = document.getElementById("rec-hook").value.trim();
+      const followDate = document.getElementById("rec-follow-date").value;
+      const goalId = document.getElementById("rec-goal-select").value;
+
+      const recruitId = "REC_" + Date.now();
+
+      const newRecruit = {
+        id: recruitId,
+        candidateName,
+        date,
+        status,
+        pain,
+        value,
+        hook,
+        followDate,
+        goalId
+      };
+
+      appData.recruits.unshift(newRecruit);
+
+      if (hook) {
+        appData.todos.unshift({
+          id: "T_" + Date.now(),
+          title: `【招募跟進】${candidateName}：${hook}`,
+          cat: "🤝 招募增員訪談",
+          date: followDate,
+          time: "15:00 - 16:00",
+          done: false,
+          incompleteReason: "",
+          reviewId: recruitId,
+          goalId: goalId
+        });
+      }
+
+      saveLocalStorage();
+      renderAll();
+      showToast("招募訪談紀錄已保存，跟進任務已排入待辦！");
+      document.getElementById("recruit-form").reset();
+      initDate();
+      switchTab('todos');
+    }
+
+    // ===== TAB NAVIGATION =====
+    function switchTab(tab) {
+      const tabs = ['goals', 'todos', 'reviews', 'recruitment', 'deals', 'admin'];
+      const headers = {
+        goals: '目標儀表板 (首頁)',
+        todos: '今日待辦與行動',
+        reviews: '客戶銷售 • 見客覆盤',
+        recruitment: '招募增員 • 人才訪談',
+        deals: '成功簽單客戶庫',
+        admin: '目標管理後台'
+      };
+
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (t === tab) {
+          el.classList.remove('hidden');
+          if (nav) nav.className = "flex flex-col items-center gap-1 text-amber-400 transition-all";
+        } else {
+          el.classList.add('hidden');
+          if (nav) nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all";
+        }
+      });
+
+      document.getElementById('header-title').textContent = headers[tab] || '管理中心';
+      if (tab === 'admin') loadAdminGoalData();
+      if (tab === 'deals') renderDeals();
+      if (tab === 'recruitment') renderRecruits();
+      
+      triggerAllTextareasResize();
+      lucide.createIcons();
+    }
+
+    // ===== RENDERING =====
+    function renderAll() {
+      renderTodos();
+      renderReviews();
+      renderRecruits();
+      renderDeals();
+    }
+
+    function renderTodos() {
+      const top3List = document.getElementById("top3-list");
+      const clientList = document.getElementById("client-todo-list");
+      const otherList = document.getElementById("other-todo-list");
+
+      top3List.innerHTML = "";
+      clientList.innerHTML = "";
+      otherList.innerHTML = "";
+
+      let top3Count = 0;
+
+      appData.todos.forEach(item => {
+        const isTop3 = item.cat.includes("Top 3");
+        const isClientOrRecruit = item.cat.includes("客戶") || item.cat.includes("招募") || item.cat.includes("跟進");
+        if (isTop3 && !item.done) top3Count++;
+
+        const card = document.createElement("div");
+        card.className = `p-3.5 rounded-2xl border flex flex-col gap-2.5 transition-all ${
+          item.done ? "bg-slate-900/40 border-slate-800/40 opacity-50" : "bg-slate-900 border-slate-800 shadow-md"
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-start gap-3 flex-1">
+              <button onclick="toggleTodo('${item.id}')" class="mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                item.done ? "bg-indigo-600 border-indigo-600 text-white" : "border-slate-600 hover:border-indigo-400"
+              }">
+                ${item.done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : ''}
+              </button>
+              <div class="flex-1">
+                <p class="text-xs sm:text-sm font-medium text-slate-100 ${item.done ? 'line-through text-slate-500' : ''}">${item.title}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  ${item.time ? `<span class="text-[10px] sm:text-xs text-indigo-400 flex items-center gap-0.5"><i data-lucide="clock" class="w-3 h-3"></i> ${item.time}</span>` : ''}
+                  <span class="text-[10px] sm:text-xs text-slate-500">${item.date || ''}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button onclick="openDealModalFromTask('${item.id}')" title="簽單成功！自動歸檔並排定11個月檢視" class="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 rounded-lg text-[10px] sm:text-xs font-bold flex items-center gap-1 transition-all active:scale-95">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i> 簽單
+              </button>
+              <button onclick="openIncompleteModal('${item.id}')" title="填寫未完成原因" class="p-1.5 text-slate-500 hover:text-amber-400">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+              </button>
+              <button onclick="deleteTodo('${item.id}')" class="p-1.5 text-slate-600 hover:text-red-400">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          ${item.incompleteReason ? `
+            <div class="bg-slate-950/70 border border-amber-500/20 rounded-xl px-3 py-1.5 text-[11px] sm:text-xs text-amber-300/90 flex items-start gap-1.5">
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0 text-amber-400 mt-0.5"></i>
+              <span>未完成覆盤：${item.incompleteReason}</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (isTop3) top3List.appendChild(card);
+        else if (isClientOrRecruit) clientList.appendChild(card);
+        else otherList.appendChild(card);
+      });
+
+      document.getElementById("top3-count").textContent = `${top3Count} / 3`;
+      lucide.createIcons();
+    }
+
+    function renderReviews() {
+      const list = document.getElementById("reviews-history-list");
+      list.innerHTML = "";
+
+      appData.reviews.slice().forEach(rev => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs sm:text-sm font-bold text-white">${rev.clientName}</span>
+              <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-md">${rev.temp}</span>
+            </div>
+            <span class="text-[10px] sm:text-xs text-slate-500">${rev.date}</span>
+          </div>
+
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs sm:text-sm space-y-2">
+            <div>
+              <span class="text-[10px] sm:text-xs text-slate-400 font-semibold block">【客人視角痛點】</span>
+              <p class="text-slate-200 mt-0.5">${rev.pain || '無記錄'}</p>
+            </div>
+            <div>
+              <span class="text-[10px] sm:text-xs text-amber-400 font-semibold block">【我自訂提供的價值】</span>
+              <p class="text-amber-200/90 mt-0.5">${rev.value || '無記錄'}</p>
+            </div>
+            <div>
+              <span class="text-[10px] sm:text-xs text-indigo-400 font-semibold block">【下次連繫鉤子 (Hook)】</span>
+              <p class="text-slate-300 mt-0.5">${rev.hook || '無記錄'} (${rev.followDate})</p>
+            </div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderRecruits() {
+      const list = document.getElementById("recruits-history-list");
+      if (!list) return;
+      list.innerHTML = "";
+
+      (appData.recruits || []).forEach(rec => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-purple-500/30 rounded-2xl p-4 space-y-2.5";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs sm:text-sm font-bold text-white">${rec.candidateName}</span>
+              <span class="text-[10px] sm:text-xs bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded-md">${rec.status}</span>
+            </div>
+            <span class="text-[10px] sm:text-xs text-slate-500">${rec.date}</span>
+          </div>
+
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs sm:text-sm space-y-2">
+            <div>
+              <span class="text-[10px] sm:text-xs text-purple-400 font-semibold block">【轉型動力 / 痛點 (Why Change)】</span>
+              <p class="text-slate-200 mt-0.5">${rec.pain || '無記錄'}</p>
+            </div>
+            <div>
+              <span class="text-[10px] sm:text-xs text-amber-400 font-semibold block">【團隊賦能 / 價值承諾】</span>
+              <p class="text-amber-200/90 mt-0.5">${rec.value || '無記錄'}</p>
+            </div>
+            <div>
+              <span class="text-[10px] sm:text-xs text-indigo-400 font-semibold block">【下次跟進承諾】</span>
+              <p class="text-slate-300 mt-0.5">${rec.hook || '無記錄'} (${rec.followDate})</p>
+            </div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderDeals() {
+      const container = document.getElementById("deals-by-month-container");
+      container.innerHTML = "";
+
+      const deals = appData.deals || [];
+      document.getElementById("total-deals-count").textContent = deals.length;
+
+      let pendingReviewsCount = 0;
+
+      if (deals.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 text-center space-y-2">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto text-xl">
+              📝
+            </div>
+            <h4 class="text-sm font-bold text-white">暫無簽單記錄</h4>
+            <p class="text-xs text-slate-400">在「每日待辦」點擊任務旁的【簽單】按鈕，即可自動歸檔並排定第11個月保單週年檢視！</p>
+          </div>
+        `;
+        document.getElementById("pending-reviews-count").textContent = "0";
+        return;
+      }
+
+      const groups = {};
+      deals.forEach(deal => {
+        const monthKey = deal.signDate ? deal.signDate.substring(0, 7) : "未歸類月份";
+        if (!groups[monthKey]) groups[monthKey] = [];
+        groups[monthKey].push(deal);
+
+        if (isReviewDue(deal.reviewDate) && !deal.reviewed) {
+          pendingReviewsCount++;
+        }
+      });
+
+      document.getElementById("pending-reviews-count").textContent = pendingReviewsCount;
+
+      const sortedMonths = Object.keys(groups).sort().reverse();
+
+      sortedMonths.forEach(month => {
+        const monthDeals = groups[month];
+        let monthTotalFYP = monthDeals.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+
+        const section = document.createElement("div");
+        section.className = "space-y-3";
+
+        section.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <h3 class="text-sm sm:text-base font-bold text-white font-mono">${month} 月簽單歸檔</h3>
+              <span class="text-[10px] sm:text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">${monthDeals.length} 宗</span>
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-amber-400 font-mono">
+              當月業績: HK$ ${monthTotalFYP.toLocaleString()}
+            </span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="month-list-${month}"></div>
+        `;
+
+        container.appendChild(section);
+
+        const listEl = section.querySelector(`#month-list-${month}`);
+
+        monthDeals.forEach(deal => {
+          const isDue = isReviewDue(deal.reviewDate) && !deal.reviewed;
+          const card = document.createElement("div");
+          card.className = `p-4 rounded-2xl border transition-all ${
+            isDue 
+              ? "bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 border-amber-500/60 shadow-lg shadow-amber-500/10"
+              : deal.reviewed 
+                ? "bg-slate-900/60 border-slate-800/80 opacity-80" 
+                : "bg-slate-900 border-slate-800"
+          }`;
+
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="text-sm sm:text-base font-bold text-white">${deal.clientName}</h4>
+                  ${isDue ? `
+                    <span class="text-[10px] bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full animate-pulse flex items-center gap-1">
+                      <i data-lucide="bell" class="w-3 h-3"></i> 第11個月Review
+                    </span>
+                  ` : ''}
+                  ${deal.reviewed ? `
+                    <span class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-full">
+                      已完成檢視
+                    </span>
+                  ` : ''}
+                </div>
+                <p class="text-xs text-indigo-400 font-medium mt-0.5">${deal.plan || '標準保障方案'}</p>
+              </div>
+
+              <div class="text-right">
+                <span class="text-xs sm:text-sm font-black text-emerald-400 font-mono block">
+                  ${deal.amount ? 'HK$ ' + Number(deal.amount).toLocaleString() : '已簽約'}
+                </span>
+                <span class="text-[10px] text-slate-400">簽單: ${deal.signDate}</span>
+              </div>
+            </div>
+
+            ${deal.notes ? `
+              <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 text-xs text-slate-300 mt-2.5">
+                <span class="text-[10px] text-slate-500 block font-semibold">【促成心法/筆記】</span>
+                ${deal.notes}
+              </div>
+            ` : ''}
+
+            <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span class="text-[11px] ${isDue ? 'text-amber-300 font-bold' : 'text-slate-400'} flex items-center gap-1">
+                <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
+                預計檢視日: <span class="font-mono">${deal.reviewDate}</span>
+              </span>
+
+              <button onclick="markDealReviewed('${deal.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                deal.reviewed 
+                  ? "bg-slate-800 text-slate-400 hover:text-white" 
+                  : isDue 
+                    ? "bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-500/30 active:scale-95" 
+                    : "bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600 hover:text-white"
+              }">
+                ${deal.reviewed ? '重置為待檢視' : '完成週年檢視'}
+              </button>
+            </div>
+          `;
+
+          listEl.appendChild(card);
+        });
+      });
+
+      lucide.createIcons();
+    }
+
+    // ===== ADMIN BACKEND SETTINGS =====
+    function loadAdminGoalData() {
+      const sel = document.getElementById("adm-goal-select").value;
+      const g = appData.goals[sel];
+      if (!g) return;
+
+      document.getElementById("adm-goal-title").value = g.title;
+      document.getElementById("adm-goal-current").value = g.currentVal;
+      document.getElementById("adm-goal-target").value = g.targetVal;
+      document.getElementById("adm-goal-unit").value = g.unit;
+      document.getElementById("adm-goal-why").value = g.why;
+      document.getElementById("adm-goal-effect").value = g.effect;
+      document.getElementById("adm-goal-deadline").value = g.deadline;
+      document.getElementById("adm-goal-timeline").value = g.timeline;
+      document.getElementById("adm-goal-img-url").value = g.imageUrl || "";
+      document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${g.imageUrl || ''}')`;
+
+      triggerAllTextareasResize();
+    }
+
+    async function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById("upload-status");
+      statusEl.textContent = "正在上傳至 Firebase...";
+      statusEl.className = "text-[10px] text-amber-400 animate-pulse";
+
+      try {
+        if (window.uploadFirebaseImage) {
+          const path = `goals/${Date.now()}_${file.name}`;
+          const downloadUrl = await window.uploadFirebaseImage(file, path);
+          document.getElementById("adm-goal-img-url").value = downloadUrl;
+          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${downloadUrl}')`;
+          statusEl.textContent = "✅ Firebase 上傳成功！";
+          statusEl.className = "text-[10px] text-emerald-400";
+        } else {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const base64 = evt.target.result;
+            document.getElementById("adm-goal-img-url").value = base64;
+            document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
+            statusEl.textContent = "✅ 本地預覽已就緒";
+          };
+          reader.readAsDataURL(file);
+        }
+      } catch (err) {
+        console.warn("Firebase upload error, fallback to local:", err);
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const base64 = evt.target.result;
+          document.getElementById("adm-goal-img-url").value = base64;
+          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
+          statusEl.textContent = "⚠️ 本地已儲存 (雲端上傳失敗)";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function saveAdminGoal(e) {
+      e.preventDefault();
+      const sel = document.getElementById("adm-goal-select").value;
+      const g = appData.goals[sel];
+
+      g.title = document.getElementById("adm-goal-title").value.trim();
+      g.currentVal = Number(document.getElementById("adm-goal-current").value);
+      g.targetVal = Number(document.getElementById("adm-goal-target").value);
+      g.unit = document.getElementById("adm-goal-unit").value.trim();
+      g.why = document.getElementById("adm-goal-why").value.trim();
+      g.effect = document.getElementById("adm-goal-effect").value.trim();
+      g.deadline = document.getElementById("adm-goal-deadline").value;
+      g.timeline = document.getElementById("adm-goal-timeline").value;
+      g.imageUrl = document.getElementById("adm-goal-img-url").value.trim();
+
+      saveLocalStorage();
+      renderHeroGoal();
+      showToast("本地後台目標已更新，正在同步 Google Sheet...");
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_goal",
+            data: {
+              id: g.id,
+              category: g.category,
+              title: g.title,
+              why: g.why,
+              effect: g.effect,
+              currentVal: g.currentVal,
+              targetVal: g.targetVal,
+              unit: g.unit,
+              timeline: g.timeline,
+              deadline: g.deadline,
+              imageUrl: g.imageUrl,
+              status: "進行中"
+            }
+          })
+        });
+        showToast("✅ Google Sheet 後台目標同步成功！");
+      } catch(err) {
+        console.warn("GAS Sync Error:", err);
+      }
+    }
+
+    // ===== AI 智能跟進點子生成器 =====
+    async function generateAiHookIdeas() {
+      const name = document.getElementById("rev-client-name").value.trim() || "客戶";
+      const pain = document.getElementById("rev-pain").value.trim();
+      const btn = document.getElementById("ai-gen-btn");
+
+      btn.classList.add("animate-pulse");
+
+      const suggestionsContainer = document.getElementById("ai-hook-suggestions");
+      suggestionsContainer.innerHTML = "";
+      suggestionsContainer.classList.remove("hidden");
+
+      let ideas = [
+        {
+          type: "💡 方案與流動性",
+          hook: `提供 1 頁紙【資金靈活提取對比圖】，特別標註應對資金周轉的保單質押/提取條款`
+        },
+        {
+          type: "🎁 增值健康服務",
+          hook: `為 ${name} 預留合作體檢中心 VIP 專屬預約名額，附上健康檢測重點項目清單`
+        },
+        {
+          type: "🤝 跨界與生活關懷",
+          hook: `引薦熟悉稅務/留學規劃的專業顧問朋友，為其解答上次會面提及的延伸問題`
+        }
+      ];
+
+      if (pain.includes("現金") || pain.includes("供款") || pain.includes("生意")) {
+        ideas[0].hook = `發送為其量身訂做的【短期供款 vs 長期複利流動性分析】，消除資金鎖死顧慮`;
+      } else if (pain.includes("子女") || pain.includes("留學") || pain.includes("教育")) {
+        ideas[0].hook = `整理一份【海外留學教育基金提領架構表】，配合專屬信託條款解讀`;
+      }
+
+      ideas.forEach(idea => {
+        const item = document.createElement("div");
+        item.className = "p-3 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/40 rounded-xl cursor-pointer text-left transition-all active:scale-[0.98]";
+        item.onclick = () => applyAiHook(idea.hook);
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] sm:text-xs font-bold text-amber-300">${idea.type}</span>
+            <span class="text-[10px] sm:text-xs text-indigo-400">點擊套用 ➔</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-200 mt-1">${idea.hook}</p>
+        `;
+        suggestionsContainer.appendChild(item);
+      });
+
+      btn.classList.remove("animate-pulse");
+      showToast("已為你生成 3 套高價值連繫點子！");
+      lucide.createIcons();
+    }
+
+    function applyAiHook(text) {
+      document.getElementById("rev-hook").value = text;
+      showToast("已套用連繫理由！");
+    }
+
+    // ===== ACTIONS =====
+    function addManualTodo() {
+      const name = document.getElementById("new-task-name").value.trim();
+      const cat = document.getElementById("new-task-cat").value;
+      const date = document.getElementById("new-task-date").value;
+      const time = document.getElementById("new-task-time").value.trim();
+
+      if (!name) return showToast("請輸入任務內容！");
+
+      const newTodo = {
+        id: "T_" + Date.now(),
+        title: name,
+        cat: cat,
+        date: date,
+        time: time,
+        done: false,
+        incompleteReason: ""
+      };
+
+      appData.todos.unshift(newTodo);
+      saveLocalStorage();
+      renderTodos();
+      document.getElementById("new-task-name").value = "";
+      document.getElementById("new-task-time").value = "";
+      showToast("待辦任務已加入！");
+
+      syncSingleTodoToGAS(newTodo);
+    }
+
+    function toggleTodo(id) {
+      const item = appData.todos.find(t => t.id === id);
+      if (item) {
+        item.done = !item.done;
+        saveLocalStorage();
+        renderTodos();
+        updateTodoStatusToGAS(item);
+      }
+    }
+
+    function deleteTodo(id) {
+      appData.todos = appData.todos.filter(t => t.id !== id);
+      saveLocalStorage();
+      renderTodos();
+    }
+
+    function openIncompleteModal(taskId) {
+      activeIncompleteTaskId = taskId;
+      const item = appData.todos.find(t => t.id === taskId);
+      document.getElementById("incomp-task-title").textContent = item ? item.title : "";
+      document.getElementById("incomp-reason-text").value = item ? (item.incompleteReason || "") : "";
+      document.getElementById("incomplete-modal").classList.remove("hidden");
+      triggerAllTextareasResize();
+    }
+
+    function closeIncompleteModal(save) {
+      document.getElementById("incomplete-modal").classList.add("hidden");
+    }
+
+    function saveIncompleteReason() {
+      const reason = document.getElementById("incomp-reason-text").value.trim();
+      if (activeIncompleteTaskId) {
+        const item = appData.todos.find(t => t.id === activeIncompleteTaskId);
+        if (item) {
+          item.incompleteReason = reason;
+          saveLocalStorage();
+          renderTodos();
+          updateTodoStatusToGAS(item);
+        }
+      }
+      closeIncompleteModal();
+      showToast("未完成原因覆盤已保存！");
+    }
+
+    async function saveReview(e) {
+      e.preventDefault();
+      const clientName = document.getElementById("rev-client-name").value.trim();
+      const date = document.getElementById("rev-date").value;
+      const temp = document.getElementById("rev-temp").value;
+      const pain = document.getElementById("rev-pain").value.trim();
+      const value = document.getElementById("rev-value").value.trim();
+      const hook = document.getElementById("rev-hook").value.trim();
+      const followDate = document.getElementById("rev-follow-date").value;
+      const goalId = document.getElementById("rev-goal-select").value;
+
+      const reviewId = "R_" + Date.now();
+
+      const newReview = {
+        id: reviewId,
+        clientName,
+        date,
+        temp,
+        pain,
+        value,
+        hook,
+        followDate,
+        goalId
+      };
+
+      appData.reviews.unshift(newReview);
+
+      if (hook) {
+        appData.todos.unshift({
+          id: "T_" + Date.now(),
+          title: `【跟進】${clientName}：${hook}`,
+          cat: "👥 客戶銷售跟進",
+          date: followDate,
+          time: "14:30 - 15:00",
+          done: false,
+          incompleteReason: "",
+          reviewId: reviewId,
+          goalId: goalId
+        });
+      }
+
+      saveLocalStorage();
+      renderAll();
+      showToast("見客覆盤已保存，跟進任務已排入待辦！");
+      document.getElementById("review-form").reset();
+      document.getElementById("ai-hook-suggestions").classList.add("hidden");
+      initDate();
+      switchTab('todos');
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "save_review",
+            data: newReview
+          })
+        });
+      } catch(err) { console.warn("GAS save review error:", err); }
+    }
+
+    function copyScript(text) {
+      navigator.clipboard.writeText(text).then(() => showToast("話術已複製到剪貼簿！"));
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0");
+      }, 2500);
+    }
+
+    // ===== GAS BACKEND API CALLS =====
+    async function syncSingleTodoToGAS(todo) {
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "add_todo", data: todo })
+        });
+      } catch(err) { console.warn("GAS Todo Sync error:", err); }
+    }
+
+    async function updateTodoStatusToGAS(todo) {
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_todo_status",
+            taskId: todo.id,
+            isDone: todo.done,
+            incompleteReason: todo.incompleteReason || ""
+          })
+        });
+      } catch(err) { console.warn("GAS Status update error:", err); }
+    }
+
+    async function triggerCalendarSync() {
+      showToast("正在觸發 Google 日曆同步...");
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "sync_calendar" })
+        });
+        showToast("✅ Google 日曆同步完成！");
+      } catch(err) {
+        showToast("日曆同步指令已發送");
+      }
+    }
+
+    async function fetchCloudData() {
+      const btn = document.getElementById("sync-btn");
+      btn.classList.add("animate-spin");
+      showToast("正在雙向同步雲端數據...");
+
+      try {
+        const res = await fetch(GAS_API_URL);
+        const json = await res.json();
+        if (json.status === "success") {
+          showToast("✅ 雲端最新數據已同步！");
+        }
+      } catch(err) {
+        showToast("本地模式運作中 (已就緒)");
+      } finally {
+        btn.classList.remove("animate-spin");
+      }
+    }
+  </script>
+</body>
+</html>
