@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Ivan Performance & Client OS v2.7.0</title>
+  <title>Ivan Performance & Client OS v2.8.0</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#090d16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -59,7 +59,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-24 flex flex-col items-center">
 
-  <!-- Top App Header: Ivan Performance & Client OS 旁並排加入 v2.7.0 -->
+  <!-- Top App Header: Ivan Performance & Client OS 旁並排加入 v2.8.0 -->
   <header class="w-full bg-slate-900/95 backdrop-blur-md sticky top-0 z-40 border-b border-slate-800 px-4 py-3 flex items-center justify-center">
     <div class="w-full max-w-md md:max-w-4xl lg:max-w-6xl flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
@@ -69,7 +69,7 @@
         <div>
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-xs sm:text-sm font-black text-amber-400 tracking-wider font-mono">Ivan Performance & Client OS</span>
-            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v2.7.0</span>
+            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v2.8.0</span>
           </div>
           <div class="flex items-center gap-2 mt-0.5">
             <h1 class="text-sm font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
@@ -98,18 +98,10 @@
     <!-- ================= TAB 1: 目標儀表板 (GOALS - 主頁) ================= -->
     <section id="tab-goals" class="space-y-4">
       
-      <div class="grid grid-cols-3 gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl max-w-lg mx-auto md:max-w-none">
-        <button onclick="switchGoalCategory('performance')" id="cat-btn-performance" class="py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
-          💰 業績目標
-        </button>
-        <button onclick="switchGoalCategory('recruitment')" id="cat-btn-recruitment" class="py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
-          👥 招募增員
-        </button>
-        <button onclick="switchGoalCategory('vision')" id="cat-btn-vision" class="py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all">
-          🌟 長遠願景
-        </button>
-      </div>
+      <!-- 動態目標類別切換條（支援任意新增的自訂長/短期目標） -->
+      <div class="flex items-center gap-1.5 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl overflow-x-auto hide-scrollbar" id="goal-tabs-container"></div>
 
+      <!-- 核心目標主卡片：Honor V5 展開雙欄並排 -->
       <div id="main-goal-hero" class="bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10">
         <div class="grid grid-cols-1 md:grid-cols-12">
           
@@ -118,7 +110,7 @@
             
             <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/85 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-lg" id="hero-tag">
-                2026 年度業績核心
+                年度核心
               </span>
               <span class="text-xs text-slate-200 font-mono bg-slate-950/85 px-2.5 py-1 rounded-full border border-slate-700/80 backdrop-blur-md shadow-lg" id="hero-deadline">
                 截止: 2026-12-31
@@ -310,10 +302,7 @@
               </div>
               <div>
                 <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">關聯目標</label>
-                <select id="rev-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
-                  <option value="G2026_01">業績目標 (COT)</option>
-                  <option value="G2026_03">長遠願景 (100家庭)</option>
-                </select>
+                <select id="rev-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white"></select>
               </div>
             </div>
           </div>
@@ -394,10 +383,7 @@
               </div>
               <div>
                 <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">關聯招募目標</label>
-                <select id="rec-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
-                  <option value="G2026_02">招募增員 (引進4位新核心)</option>
-                  <option value="G2026_03">長遠願景 (團隊可持續繁榮)</option>
-                </select>
+                <select id="rec-goal-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white"></select>
               </div>
             </div>
           </div>
@@ -441,24 +427,79 @@
       <div id="deals-by-month-container" class="space-y-6"></div>
     </section>
 
-    <!-- ================= TAB 6: 管理後台 (ADMIN SETTINGS) ================= -->
+    <!-- ================= TAB 6: 管理後台 (ADMIN SETTINGS - 支援新增自訂長短期目標) ================= -->
     <section id="tab-admin" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與願景圖片更換
+            <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與自訂新增
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v2.7.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-800 font-mono">Build v2.8.0</span>
         </div>
 
         <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
+          
+          <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-slate-300">選擇目標或新增全新目標</label>
+              <button type="button" onclick="startNewGoalCreation()" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 px-3 py-1 rounded-xl font-bold flex items-center gap-1 transition-all active:scale-95">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增全新自訂目標
+              </button>
+            </div>
+            <select id="adm-goal-select" onchange="loadAdminGoalData()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500"></select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">目標識別代碼 (ID)</label>
+              <input type="text" id="adm-goal-id" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">目標所屬類別</label>
+              <select id="adm-goal-category" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white">
+                <option value="業績目標">💰 業績目標</option>
+                <option value="招募增員">👥 招募增員</option>
+                <option value="長遠願景">🌟 長遠願景</option>
+                <option value="個人成長">⚡ 個人成長</option>
+                <option value="自訂維度">🎯 自訂維度</option>
+              </select>
+            </div>
+          </div>
+
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">選擇編輯目標類別</label>
-            <select id="adm-goal-select" onchange="loadAdminGoalData()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500">
-              <option value="performance">💰 業績目標 (Performance)</option>
-              <option value="recruitment">👥 招募增員 (Recruitment)</option>
-              <option value="vision">🌟 長遠願景 (Vision)</option>
-            </select>
+            <label class="block text-xs font-medium text-slate-400 mb-1">目標名稱 (具體成果)</label>
+            <input type="text" id="adm-goal-title" required placeholder="例如：2週內完成 5 份高淨值客戶資產全景圖" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white" />
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5">
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">目前進度數值</label>
+              <input type="number" id="adm-goal-current" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">目標設定數值</label>
+              <input type="number" id="adm-goal-target" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">計量單位</label>
+              <input type="text" id="adm-goal-unit" placeholder="如 HK$ / 份 / 人" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">週期維度 (長/短目標)</label>
+              <select id="adm-goal-timeline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
+                <option value="短期 (2週/月度)">短期 (2週 / 月度)</option>
+                <option value="中期 (季度)">中期 (季度)</option>
+                <option value="長期 (年度)">長期 (年度)</option>
+                <option value="長遠願景 (3-5年)">長遠願景 (3-5年)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">自設截止時間點</label>
+              <input type="date" id="adm-goal-deadline" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
+            </div>
           </div>
 
           <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
@@ -481,54 +522,23 @@
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">目標名稱</label>
-            <input type="text" id="adm-goal-title" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white" />
-          </div>
-
-          <div class="grid grid-cols-3 gap-2.5">
-            <div>
-              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">目前進度數值</label>
-              <input type="number" id="adm-goal-current" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono" />
-            </div>
-            <div>
-              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">目標設定數值</label>
-              <input type="number" id="adm-goal-target" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono" />
-            </div>
-            <div>
-              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">計量單位</label>
-              <input type="text" id="adm-goal-unit" placeholder="如 HK$ / 人" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" />
-            </div>
-          </div>
-
-          <div>
             <label class="block text-xs font-medium text-indigo-300 mb-1">📌 設定此目標的原因 (Why)</label>
-            <textarea id="adm-goal-why" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white auto-expand"></textarea>
+            <textarea id="adm-goal-why" rows="2" placeholder="為什麼設定這個目標？對事業有什麼決定性意義？" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white auto-expand"></textarea>
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect)</label>
-            <textarea id="adm-goal-effect" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white auto-expand"></textarea>
+            <label class="block text-xs font-medium text-amber-300 mb-1">🏆 達成後的效果與滿足感 (Effect / 成就感畫面)</label>
+            <textarea id="adm-goal-effect" rows="2" placeholder="達成時會看到什麼畫面？會有什麼具體的喜悅心得與感受？" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white auto-expand"></textarea>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">截止日期</label>
-              <input type="date" id="adm-goal-deadline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] sm:text-xs text-slate-400 mb-1">週期維度</label>
-              <select id="adm-goal-timeline" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
-                <option value="年度">年度</option>
-                <option value="季度">季度</option>
-                <option value="月度">月度</option>
-                <option value="長遠">長遠</option>
-              </select>
-            </div>
+          <div class="flex gap-2.5">
+            <button type="button" onclick="deleteCurrentGoal()" id="adm-delete-goal-btn" class="hidden px-4 bg-red-950/40 hover:bg-red-900 text-red-300 border border-red-800/60 rounded-xl py-3 text-xs sm:text-sm font-bold active:scale-95 transition-all">
+              刪除
+            </button>
+            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
+              <i data-lucide="cloud-upload" class="w-4 h-4"></i> 保存目標並同步至 Google Sheet
+            </button>
           </div>
-
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-indigo-600/30">
-            <i data-lucide="cloud-upload" class="w-4 h-4"></i> 保存並同步至 Google Sheet 後端
-          </button>
         </form>
       </div>
     </section>
@@ -668,11 +678,12 @@
 
   <script>
     // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
-    const APP_VERSION = "v2.7.0";
+    const APP_VERSION = "v2.8.0";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
     const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
-    let currentGoalCategory = 'performance';
+    let currentGoalKey = 'performance';
+    let isCreatingNewGoal = false;
     let activeIncompleteTaskId = null;
     let activeDealSourceTask = null;
 
@@ -681,7 +692,7 @@
         performance: {
           id: "G2026_01",
           category: "業績目標",
-          tag: "2026 年度業績核心",
+          tag: "年度業績核心",
           title: "COT 超級會員榮譽指標",
           imageUrl: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=1000",
           why: "證明個人與團隊專業高度，在市場競爭中建立無可取代的專業資產架構護城河。",
@@ -689,7 +700,7 @@
           currentVal: 1680000,
           targetVal: 2400000,
           unit: "HK$",
-          timeline: "年度",
+          timeline: "長期 (年度)",
           deadline: "2026-12-31",
           deliverables: [
             { name: "達成 COT 官方業績確認函", done: false },
@@ -699,7 +710,7 @@
         recruitment: {
           id: "G2026_02",
           category: "招募增員",
-          tag: "Q3 團隊增員擴展",
+          tag: "季度團隊增員",
           title: "成功招募引進 4 位高素質新核心",
           imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000",
           why: "建立團隊階梯式人才庫，複製高效銷售系統與方法論，推動組織可持續繁榮。",
@@ -707,7 +718,7 @@
           currentVal: 2,
           targetVal: 4,
           unit: "人",
-          timeline: "季度",
+          timeline: "中期 (季度)",
           deadline: "2026-09-30",
           deliverables: [
             { name: "舉辦 3 場專屬事業說明會", done: true },
@@ -717,7 +728,7 @@
         vision: {
           id: "G2026_03",
           category: "長遠願景",
-          tag: "2026-2027 長遠發展",
+          tag: "長遠發展願景",
           title: "打造全港最具聲譽的家庭資產架構顧問團隊",
           imageUrl: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000",
           why: "為更多中產與高淨值家庭建立長遠穩健保障，守護世代財富與健康。",
@@ -725,7 +736,7 @@
           currentVal: 60,
           targetVal: 100,
           unit: "家庭",
-          timeline: "長遠",
+          timeline: "長遠願景 (3-5年)",
           deadline: "2027-12-31",
           deliverables: [
             { name: "建立標準化提案工具庫", done: true },
@@ -744,8 +755,10 @@
       loadLocalStorage();
       lucide.createIcons();
       initDate();
+      renderGoalTabs();
       renderHeroGoal();
       renderAll();
+      loadAdminGoalSelectOptions();
       loadAdminGoalData();
       registerSW();
       setupAutoExpandTextareas();
@@ -796,7 +809,7 @@
     function registerSW() {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker v2.7.0 註冊成功:', reg.scope))
+          .then((reg) => console.log('Service Worker v2.8.0 註冊成功:', reg.scope))
           .catch((err) => console.error('Service Worker 註冊失敗:', err));
       }
     }
@@ -819,7 +832,7 @@
 
     // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
-      const saved = localStorage.getItem("ivan_os_master_v27");
+      const saved = localStorage.getItem("ivan_os_master_v28");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -893,37 +906,83 @@
     }
 
     function saveLocalStorage() {
-      localStorage.setItem("ivan_os_master_v27", JSON.stringify(appData));
+      localStorage.setItem("ivan_os_master_v28", JSON.stringify(appData));
     }
 
-    // ===== GOAL CATEGORY SWITCHER =====
-    function switchGoalCategory(cat) {
-      currentGoalCategory = cat;
-      ['performance', 'recruitment', 'vision'].forEach(c => {
-        const btn = document.getElementById(`cat-btn-${c}`);
-        if (c === cat) {
-          btn.className = "py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
-        } else {
-          btn.className = "py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
-        }
+    // ===== DYNAMIC GOAL TABS =====
+    function renderGoalTabs() {
+      const container = document.getElementById("goal-tabs-container");
+      container.innerHTML = "";
+      const goalKeys = Object.keys(appData.goals);
+
+      if (!goalKeys.includes(currentGoalKey) && goalKeys.length > 0) {
+        currentGoalKey = goalKeys[0];
+      }
+
+      goalKeys.forEach(key => {
+        const g = appData.goals[key];
+        const isActive = (key === currentGoalKey);
+        const btn = document.createElement("button");
+        btn.onclick = () => switchGoalTab(key);
+        btn.className = `px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all whitespace-nowrap ${
+          isActive 
+            ? "bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md" 
+            : "text-slate-400 hover:text-white"
+        }`;
+        btn.textContent = `${g.category === '業績目標' ? '💰 ' : g.category === '招募增員' ? '👥 ' : g.category === '長遠願景' ? '🌟 ' : '🎯 '}${g.title.slice(0, 10)}`;
+        container.appendChild(btn);
       });
+
+      populateGoalSelectDropdowns();
+    }
+
+    function switchGoalTab(key) {
+      currentGoalKey = key;
+      renderGoalTabs();
       renderHeroGoal();
     }
 
+    function populateGoalSelectDropdowns() {
+      const revGoalSel = document.getElementById("rev-goal-select");
+      const recGoalSel = document.getElementById("rec-goal-select");
+      
+      if (revGoalSel) {
+        revGoalSel.innerHTML = "";
+        Object.keys(appData.goals).forEach(k => {
+          const g = appData.goals[k];
+          const opt = document.createElement("option");
+          opt.value = g.id;
+          opt.textContent = `[${g.category}] ${g.title}`;
+          revGoalSel.appendChild(opt);
+        });
+      }
+
+      if (recGoalSel) {
+        recGoalSel.innerHTML = "";
+        Object.keys(appData.goals).forEach(k => {
+          const g = appData.goals[k];
+          const opt = document.createElement("option");
+          opt.value = g.id;
+          opt.textContent = `[${g.category}] ${g.title}`;
+          recGoalSel.appendChild(opt);
+        });
+      }
+    }
+
     function renderHeroGoal() {
-      const g = appData.goals[currentGoalCategory];
+      const g = appData.goals[currentGoalKey];
       if (!g) return;
 
       const pct = Math.min(100, Math.round((g.currentVal / g.targetVal) * 1000) / 10);
       
-      document.getElementById("hero-tag").textContent = g.tag;
+      document.getElementById("hero-tag").textContent = `${g.timeline || '目標'} • ${g.category}`;
       document.getElementById("hero-deadline").textContent = `截止: ${g.deadline}`;
       document.getElementById("hero-title").textContent = g.title;
-      document.getElementById("hero-numeric-display").innerHTML = `${g.unit === 'HK$' ? 'HK$ ' : ''}${g.currentVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''} <span class="text-sm font-normal text-slate-400">/ ${g.targetVal.toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}</span>`;
+      document.getElementById("hero-numeric-display").innerHTML = `${g.unit === 'HK$' ? 'HK$ ' : ''}${Number(g.currentVal).toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''} <span class="text-sm font-normal text-slate-400">/ ${Number(g.targetVal).toLocaleString()} ${g.unit !== 'HK$' ? g.unit : ''}</span>`;
       document.getElementById("hero-percent").textContent = `${pct}%`;
       document.getElementById("hero-progress-bar").style.width = `${pct}%`;
-      document.getElementById("hero-why").textContent = g.why;
-      document.getElementById("hero-effect").textContent = g.effect;
+      document.getElementById("hero-why").textContent = g.why || "未填寫設定原因";
+      document.getElementById("hero-effect").textContent = g.effect || "未填寫達成畫面心得";
 
       const imgEl = document.getElementById("hero-img-banner");
       if (g.imageUrl) {
@@ -933,11 +992,11 @@
 
       const delList = document.getElementById("hero-deliverables");
       delList.innerHTML = "";
-      g.deliverables.forEach((d, idx) => {
+      (g.deliverables || []).forEach((d, idx) => {
         const item = document.createElement("div");
         item.className = "flex items-center gap-2 text-xs sm:text-sm text-slate-300";
         item.innerHTML = `
-          <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleHeroDeliverable('${currentGoalCategory}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
+          <input type="checkbox" ${d.done ? 'checked' : ''} onchange="toggleHeroDeliverable('${currentGoalKey}', ${idx})" class="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
           <span class="${d.done ? 'line-through text-slate-500' : ''}">${d.name}</span>
         `;
         delList.appendChild(item);
@@ -945,9 +1004,9 @@
       lucide.createIcons();
     }
 
-    function toggleHeroDeliverable(cat, index) {
-      const g = appData.goals[cat];
-      if (g && g.deliverables[index]) {
+    function toggleHeroDeliverable(key, index) {
+      const g = appData.goals[key];
+      if (g && g.deliverables && g.deliverables[index]) {
         g.deliverables[index].done = !g.deliverables[index].done;
         saveLocalStorage();
         renderHeroGoal();
@@ -955,7 +1014,7 @@
     }
 
     function triggerHeroGoalCelebration() {
-      const g = appData.goals[currentGoalCategory];
+      const g = appData.goals[currentGoalKey];
       document.getElementById("celeb-goal-title").textContent = g.title;
       document.getElementById("celebration-modal").classList.remove("hidden");
       if (typeof confetti === "function") {
@@ -966,6 +1025,193 @@
     function closeCelebrationModal() {
       document.getElementById("celebration-modal").classList.add("hidden");
       showToast("成就感已沉澱！");
+    }
+
+    // ===== ADMIN BACKEND GOAL MANAGEMENT (CREATE & EDIT) =====
+    function loadAdminGoalSelectOptions() {
+      const sel = document.getElementById("adm-goal-select");
+      sel.innerHTML = "";
+
+      Object.keys(appData.goals).forEach(key => {
+        const g = appData.goals[key];
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = `[${g.timeline || '目標'}] ${g.category} - ${g.title}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function startNewGoalCreation() {
+      isCreatingNewGoal = true;
+      const newId = "G_" + Date.now();
+
+      document.getElementById("adm-goal-id").value = newId;
+      document.getElementById("adm-goal-category").value = "業績目標";
+      document.getElementById("adm-goal-title").value = "";
+      document.getElementById("adm-goal-current").value = "0";
+      document.getElementById("adm-goal-target").value = "100000";
+      document.getElementById("adm-goal-unit").value = "HK$";
+      document.getElementById("adm-goal-timeline").value = "短期 (2週/月度)";
+      
+      const defaultDl = new Date();
+      defaultDl.setDate(defaultDl.getDate() + 30);
+      document.getElementById("adm-goal-deadline").valueAsDate = defaultDl;
+      
+      document.getElementById("adm-goal-why").value = "";
+      document.getElementById("adm-goal-effect").value = "";
+      document.getElementById("adm-goal-img-url").value = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000";
+      document.getElementById("adm-img-preview-box").style.backgroundImage = "url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000')";
+
+      document.getElementById("adm-delete-goal-btn").classList.add("hidden");
+      showToast("請填寫全新目標詳細資訊，點擊保存即可建立！");
+      triggerAllTextareasResize();
+    }
+
+    function loadAdminGoalData() {
+      isCreatingNewGoal = false;
+      const selKey = document.getElementById("adm-goal-select").value;
+      const g = appData.goals[selKey];
+      if (!g) return;
+
+      document.getElementById("adm-goal-id").value = g.id || selKey;
+      document.getElementById("adm-goal-category").value = g.category || "業績目標";
+      document.getElementById("adm-goal-title").value = g.title || "";
+      document.getElementById("adm-goal-current").value = g.currentVal || 0;
+      document.getElementById("adm-goal-target").value = g.targetVal || 0;
+      document.getElementById("adm-goal-unit").value = g.unit || "";
+      document.getElementById("adm-goal-why").value = g.why || "";
+      document.getElementById("adm-goal-effect").value = g.effect || "";
+      document.getElementById("adm-goal-deadline").value = g.deadline || "";
+      document.getElementById("adm-goal-timeline").value = g.timeline || "長期 (年度)";
+      document.getElementById("adm-goal-img-url").value = g.imageUrl || "";
+      document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${g.imageUrl || ''}')`;
+
+      document.getElementById("adm-delete-goal-btn").classList.remove("hidden");
+      triggerAllTextareasResize();
+    }
+
+    async function saveAdminGoal(e) {
+      e.preventDefault();
+      const goalId = document.getElementById("adm-goal-id").value.trim();
+      const category = document.getElementById("adm-goal-category").value;
+      const title = document.getElementById("adm-goal-title").value.trim();
+      const currentVal = Number(document.getElementById("adm-goal-current").value) || 0;
+      const targetVal = Number(document.getElementById("adm-goal-target").value) || 1;
+      const unit = document.getElementById("adm-goal-unit").value.trim();
+      const timeline = document.getElementById("adm-goal-timeline").value;
+      const deadline = document.getElementById("adm-goal-deadline").value;
+      const why = document.getElementById("adm-goal-why").value.trim();
+      const effect = document.getElementById("adm-goal-effect").value.trim();
+      const imageUrl = document.getElementById("adm-goal-img-url").value.trim();
+
+      let targetKey = isCreatingNewGoal ? ("goal_" + Date.now()) : document.getElementById("adm-goal-select").value;
+
+      appData.goals[targetKey] = {
+        id: goalId,
+        category,
+        title,
+        currentVal,
+        targetVal,
+        unit,
+        timeline,
+        deadline,
+        why,
+        effect,
+        imageUrl,
+        deliverables: appData.goals[targetKey]?.deliverables || [
+          { name: `落實執行「${title}」核心里程碑`, done: false }
+        ]
+      };
+
+      currentGoalKey = targetKey;
+      isCreatingNewGoal = false;
+
+      saveLocalStorage();
+      renderGoalTabs();
+      renderHeroGoal();
+      loadAdminGoalSelectOptions();
+      document.getElementById("adm-goal-select").value = targetKey;
+      loadAdminGoalData();
+
+      showToast("目標已保存！正在同步至 Google Sheet 後端...");
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update_goal",
+            data: {
+              id: goalId,
+              timeline,
+              title,
+              vision: effect,
+              why,
+              deadline,
+              status: "進行中"
+            }
+          })
+        });
+        showToast("✅ Google Sheet 目標已同步更新！");
+      } catch(err) {
+        console.warn("GAS goal sync error:", err);
+      }
+    }
+
+    function deleteCurrentGoal() {
+      const selKey = document.getElementById("adm-goal-select").value;
+      if (Object.keys(appData.goals).length <= 1) {
+        return showToast("至少保留一個核心目標！");
+      }
+
+      if (confirm(`確定要刪除目標「${appData.goals[selKey].title}」嗎？`)) {
+        delete appData.goals[selKey];
+        currentGoalKey = Object.keys(appData.goals)[0];
+        saveLocalStorage();
+        renderGoalTabs();
+        renderHeroGoal();
+        loadAdminGoalSelectOptions();
+        loadAdminGoalData();
+        showToast("目標已成功刪除！");
+      }
+    }
+
+    async function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById("upload-status");
+      statusEl.textContent = "正在上傳至 Firebase...";
+      statusEl.className = "text-[10px] text-amber-400 animate-pulse";
+
+      try {
+        if (window.uploadFirebaseImage) {
+          const path = `goals/${Date.now()}_${file.name}`;
+          const downloadUrl = await window.uploadFirebaseImage(file, path);
+          document.getElementById("adm-goal-img-url").value = downloadUrl;
+          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${downloadUrl}')`;
+          statusEl.textContent = "✅ Firebase 上傳成功！";
+          statusEl.className = "text-[10px] text-emerald-400";
+        } else {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const base64 = evt.target.result;
+            document.getElementById("adm-goal-img-url").value = base64;
+            document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
+            statusEl.textContent = "✅ 本地預覽已就緒";
+          };
+          reader.readAsDataURL(file);
+        }
+      } catch (err) {
+        console.warn("Firebase upload error, fallback to local:", err);
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const base64 = evt.target.result;
+          document.getElementById("adm-goal-img-url").value = base64;
+          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
+          statusEl.textContent = "⚠️ 本地已儲存 (雲端上傳失敗)";
+        };
+        reader.readAsDataURL(file);
+      }
     }
 
     // ===== 簽單成功工作流 =====
@@ -1106,6 +1352,16 @@
       document.getElementById("recruit-form").reset();
       initDate();
       switchTab('todos');
+
+      try {
+        await fetch(GAS_API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "save_recruit",
+            data: newRecruit
+          })
+        });
+      } catch(err) { console.warn("GAS save recruit error:", err); }
     }
 
     // ===== TAB NAVIGATION =====
@@ -1421,316 +1677,6 @@
       });
 
       lucide.createIcons();
-    }
-
-    // ===== ADMIN BACKEND SETTINGS =====
-    function loadAdminGoalData() {
-      const sel = document.getElementById("adm-goal-select").value;
-      const g = appData.goals[sel];
-      if (!g) return;
-
-      document.getElementById("adm-goal-title").value = g.title;
-      document.getElementById("adm-goal-current").value = g.currentVal;
-      document.getElementById("adm-goal-target").value = g.targetVal;
-      document.getElementById("adm-goal-unit").value = g.unit;
-      document.getElementById("adm-goal-why").value = g.why;
-      document.getElementById("adm-goal-effect").value = g.effect;
-      document.getElementById("adm-goal-deadline").value = g.deadline;
-      document.getElementById("adm-goal-timeline").value = g.timeline;
-      document.getElementById("adm-goal-img-url").value = g.imageUrl || "";
-      document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${g.imageUrl || ''}')`;
-
-      triggerAllTextareasResize();
-    }
-
-    async function handleImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const statusEl = document.getElementById("upload-status");
-      statusEl.textContent = "正在上傳至 Firebase...";
-      statusEl.className = "text-[10px] text-amber-400 animate-pulse";
-
-      try {
-        if (window.uploadFirebaseImage) {
-          const path = `goals/${Date.now()}_${file.name}`;
-          const downloadUrl = await window.uploadFirebaseImage(file, path);
-          document.getElementById("adm-goal-img-url").value = downloadUrl;
-          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${downloadUrl}')`;
-          statusEl.textContent = "✅ Firebase 上傳成功！";
-          statusEl.className = "text-[10px] text-emerald-400";
-        } else {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            const base64 = evt.target.result;
-            document.getElementById("adm-goal-img-url").value = base64;
-            document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
-            statusEl.textContent = "✅ 本地預覽已就緒";
-          };
-          reader.readAsDataURL(file);
-        }
-      } catch (err) {
-        console.warn("Firebase upload error, fallback to local:", err);
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const base64 = evt.target.result;
-          document.getElementById("adm-goal-img-url").value = base64;
-          document.getElementById("adm-img-preview-box").style.backgroundImage = `url('${base64}')`;
-          statusEl.textContent = "⚠️ 本地已儲存 (雲端上傳失敗)";
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    async function saveAdminGoal(e) {
-      e.preventDefault();
-      const sel = document.getElementById("adm-goal-select").value;
-      const g = appData.goals[sel];
-
-      g.title = document.getElementById("adm-goal-title").value.trim();
-      g.currentVal = Number(document.getElementById("adm-goal-current").value);
-      g.targetVal = Number(document.getElementById("adm-goal-target").value);
-      g.unit = document.getElementById("adm-goal-unit").value.trim();
-      g.why = document.getElementById("adm-goal-why").value.trim();
-      g.effect = document.getElementById("adm-goal-effect").value.trim();
-      g.deadline = document.getElementById("adm-goal-deadline").value;
-      g.timeline = document.getElementById("adm-goal-timeline").value;
-      g.imageUrl = document.getElementById("adm-goal-img-url").value.trim();
-
-      saveLocalStorage();
-      renderHeroGoal();
-      showToast("本地後台目標已更新，正在同步 Google Sheet...");
-
-      try {
-        await fetch(GAS_API_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "update_goal",
-            data: {
-              id: g.id,
-              category: g.category,
-              title: g.title,
-              why: g.why,
-              effect: g.effect,
-              currentVal: g.currentVal,
-              targetVal: g.targetVal,
-              unit: g.unit,
-              timeline: g.timeline,
-              deadline: g.deadline,
-              imageUrl: g.imageUrl,
-              status: "進行中"
-            }
-          })
-        });
-        showToast("✅ Google Sheet 後台目標同步成功！");
-      } catch(err) {
-        console.warn("GAS Sync Error:", err);
-      }
-    }
-
-    // ===== AI 智能跟進點子生成器 =====
-    async function generateAiHookIdeas() {
-      const name = document.getElementById("rev-client-name").value.trim() || "客戶";
-      const pain = document.getElementById("rev-pain").value.trim();
-      const btn = document.getElementById("ai-gen-btn");
-
-      btn.classList.add("animate-pulse");
-
-      const suggestionsContainer = document.getElementById("ai-hook-suggestions");
-      suggestionsContainer.innerHTML = "";
-      suggestionsContainer.classList.remove("hidden");
-
-      let ideas = [
-        {
-          type: "💡 方案與流動性",
-          hook: `提供 1 頁紙【資金靈活提取對比圖】，特別標註應對資金周轉的保單質押/提取條款`
-        },
-        {
-          type: "🎁 增值健康服務",
-          hook: `為 ${name} 預留合作體檢中心 VIP 專屬預約名額，附上健康檢測重點項目清單`
-        },
-        {
-          type: "🤝 跨界與生活關懷",
-          hook: `引薦熟悉稅務/留學規劃的專業顧問朋友，為其解答上次會面提及的延伸問題`
-        }
-      ];
-
-      if (pain.includes("現金") || pain.includes("供款") || pain.includes("生意")) {
-        ideas[0].hook = `發送為其量身訂做的【短期供款 vs 長期複利流動性分析】，消除資金鎖死顧慮`;
-      } else if (pain.includes("子女") || pain.includes("留學") || pain.includes("教育")) {
-        ideas[0].hook = `整理一份【海外留學教育基金提領架構表】，配合專屬信託條款解讀`;
-      }
-
-      ideas.forEach(idea => {
-        const item = document.createElement("div");
-        item.className = "p-3 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/40 rounded-xl cursor-pointer text-left transition-all active:scale-[0.98]";
-        item.onclick = () => applyAiHook(idea.hook);
-        item.innerHTML = `
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] sm:text-xs font-bold text-amber-300">${idea.type}</span>
-            <span class="text-[10px] sm:text-xs text-indigo-400">點擊套用 ➔</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-200 mt-1">${idea.hook}</p>
-        `;
-        suggestionsContainer.appendChild(item);
-      });
-
-      btn.classList.remove("animate-pulse");
-      showToast("已為你生成 3 套高價值連繫點子！");
-      lucide.createIcons();
-    }
-
-    function applyAiHook(text) {
-      document.getElementById("rev-hook").value = text;
-      showToast("已套用連繫理由！");
-    }
-
-    // ===== ACTIONS =====
-    function addManualTodo() {
-      const name = document.getElementById("new-task-name").value.trim();
-      const cat = document.getElementById("new-task-cat").value;
-      const date = document.getElementById("new-task-date").value;
-      const time = document.getElementById("new-task-time").value.trim();
-
-      if (!name) return showToast("請輸入任務內容！");
-
-      const newTodo = {
-        id: "T_" + Date.now(),
-        title: name,
-        cat: cat,
-        date: date,
-        time: time,
-        done: false,
-        incompleteReason: ""
-      };
-
-      appData.todos.unshift(newTodo);
-      saveLocalStorage();
-      renderTodos();
-      document.getElementById("new-task-name").value = "";
-      document.getElementById("new-task-time").value = "";
-      showToast("待辦任務已加入！");
-
-      syncSingleTodoToGAS(newTodo);
-    }
-
-    function toggleTodo(id) {
-      const item = appData.todos.find(t => t.id === id);
-      if (item) {
-        item.done = !item.done;
-        saveLocalStorage();
-        renderTodos();
-        updateTodoStatusToGAS(item);
-      }
-    }
-
-    function deleteTodo(id) {
-      appData.todos = appData.todos.filter(t => t.id !== id);
-      saveLocalStorage();
-      renderTodos();
-    }
-
-    function openIncompleteModal(taskId) {
-      activeIncompleteTaskId = taskId;
-      const item = appData.todos.find(t => t.id === taskId);
-      document.getElementById("incomp-task-title").textContent = item ? item.title : "";
-      document.getElementById("incomp-reason-text").value = item ? (item.incompleteReason || "") : "";
-      document.getElementById("incomplete-modal").classList.remove("hidden");
-      triggerAllTextareasResize();
-    }
-
-    function closeIncompleteModal(save) {
-      document.getElementById("incomplete-modal").classList.add("hidden");
-    }
-
-    function saveIncompleteReason() {
-      const reason = document.getElementById("incomp-reason-text").value.trim();
-      if (activeIncompleteTaskId) {
-        const item = appData.todos.find(t => t.id === activeIncompleteTaskId);
-        if (item) {
-          item.incompleteReason = reason;
-          saveLocalStorage();
-          renderTodos();
-          updateTodoStatusToGAS(item);
-        }
-      }
-      closeIncompleteModal();
-      showToast("未完成原因覆盤已保存！");
-    }
-
-    async function saveReview(e) {
-      e.preventDefault();
-      const clientName = document.getElementById("rev-client-name").value.trim();
-      const date = document.getElementById("rev-date").value;
-      const temp = document.getElementById("rev-temp").value;
-      const pain = document.getElementById("rev-pain").value.trim();
-      const value = document.getElementById("rev-value").value.trim();
-      const hook = document.getElementById("rev-hook").value.trim();
-      const followDate = document.getElementById("rev-follow-date").value;
-      const goalId = document.getElementById("rev-goal-select").value;
-
-      const reviewId = "R_" + Date.now();
-
-      const newReview = {
-        id: reviewId,
-        clientName,
-        date,
-        temp,
-        pain,
-        value,
-        hook,
-        followDate,
-        goalId
-      };
-
-      appData.reviews.unshift(newReview);
-
-      if (hook) {
-        appData.todos.unshift({
-          id: "T_" + Date.now(),
-          title: `【跟進】${clientName}：${hook}`,
-          cat: "👥 客戶銷售跟進",
-          date: followDate,
-          time: "14:30 - 15:00",
-          done: false,
-          incompleteReason: "",
-          reviewId: reviewId,
-          goalId: goalId
-        });
-      }
-
-      saveLocalStorage();
-      renderAll();
-      showToast("見客覆盤已保存，跟進任務已排入待辦！");
-      document.getElementById("review-form").reset();
-      document.getElementById("ai-hook-suggestions").classList.add("hidden");
-      initDate();
-      switchTab('todos');
-
-      try {
-        await fetch(GAS_API_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "save_review",
-            data: newReview
-          })
-        });
-      } catch(err) { console.warn("GAS save review error:", err); }
-    }
-
-    function copyScript(text) {
-      navigator.clipboard.writeText(text).then(() => showToast("話術已複製到剪貼簿！"));
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.classList.remove("opacity-0");
-      toast.classList.add("opacity-100");
-      setTimeout(() => {
-        toast.classList.remove("opacity-100");
-        toast.classList.add("opacity-0");
-      }, 2500);
     }
 
     // ===== GAS BACKEND API CALLS =====
