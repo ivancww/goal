@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ivan-performance-os-v3.4.1';
-const APP_VERSION = 'v3.4.1';
+const CACHE_NAME = 'ivan-performance-os-v3.5.0';
+const APP_VERSION = 'v3.5.0';
 
 const STATIC_ASSETS = [
   './',
@@ -36,6 +36,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // 關鍵：對 Google Apps Script 與 Firebase 的所有 API 請求直接走網絡，徹底禁止 Service Worker 攔截快取
   if (event.request.url.includes('script.google.com') || event.request.url.includes('firebasestorage.googleapis.com')) {
     event.respondWith(fetch(event.request));
     return;
