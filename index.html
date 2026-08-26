@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Ivan Performance & Client OS v3.4.0</title>
+  <title>Ivan Performance & Client OS v3.4.1</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#090d16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -68,7 +68,7 @@
         <div>
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-xs sm:text-sm font-black text-amber-400 tracking-wider font-mono">Ivan Performance & Client OS</span>
-            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.4.0</span>
+            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.4.1</span>
           </div>
           <div class="flex items-center gap-2 mt-0.5">
             <h1 class="text-sm font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
@@ -330,7 +330,6 @@
         </form>
       </div>
 
-      <!-- 客戶銷售歷史卡片庫 (支援刪除功能) -->
       <div class="space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-2">
@@ -458,7 +457,6 @@
         </form>
       </div>
 
-      <!-- 準增員人才訪談歷史卡片庫 (支援刪除功能) -->
       <div class="space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-800 pb-2.5">
           <div class="flex items-center gap-2">
@@ -555,18 +553,28 @@
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與自訂交付成果
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full border border-indigo-800 font-mono">Build v3.4.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full font-mono">Build v3.4.1</span>
         </div>
 
-        <form id="admin-goal-form" class="space-y-4" onsubmit="saveAdminGoal(event)">
-          <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-slate-300">選擇現有目標或手動寫全新目標</label>
-              <button type="button" onclick="startNewGoalCreation()" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 px-3 py-1 rounded-xl font-bold flex items-center gap-1 transition-all active:scale-95">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i> 手動寫全新目標
-              </button>
-            </div>
-            <select id="adm-goal-select" onchange="loadAdminGoalData()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500"></select>
+        <!-- 1. 所有已儲存目標全覽清單 (修改與刪除) -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="list" class="w-4 h-4 text-amber-400"></i> 目前已有的所有目標清單
+            </span>
+            <button type="button" onclick="startNewGoalCreation()" class="text-xs bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 px-3 py-1 rounded-xl font-bold flex items-center gap-1 transition-all active:scale-95">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> 手動寫全新目標
+            </button>
+          </div>
+          
+          <div id="admin-goals-overview-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+        </div>
+
+        <!-- 2. 目標詳細資料編輯修改表單 -->
+        <form id="admin-goal-form" class="space-y-4 pt-3 border-t border-slate-800" onsubmit="saveAdminGoal(event)">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs sm:text-sm font-bold text-amber-400" id="adm-form-mode-title">✏️ 正在編輯目標</h3>
+            <span class="text-[10px] font-mono text-slate-500" id="adm-current-goal-id-display"></span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -600,7 +608,7 @@
             <input type="date" id="adm-goal-deadline" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white" />
           </div>
 
-          <!-- 可交付成果 (Deliverables) 自訂編輯區 -->
+          <!-- 可交付成果自訂編輯器 -->
           <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
               <label class="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
@@ -718,7 +726,7 @@
 
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">投保方案 / 險種與核心架構</label>
-          <input type="text" id="deal-plan" placeholder="例如：高端醫療 + 5年期傳承儲蓄計劃" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+          <input type="text" id="deal-plan" placeholder="例如：高端醫療 + 5年期傳承儲蓄計劃" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
         </div>
 
         <div>
@@ -792,13 +800,13 @@
   </div>
 
   <script>
-    // ===== CONFIG: GOOGLE APPS SCRIPT API URL =====
-    const APP_VERSION = "v3.4.0";
+    // ===== CONFIG =====
+    const APP_VERSION = "v3.4.1";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
-    const AI_GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPIlJHqcGWDMeJd_Tc_tpDz-r-vVW9lNXBiVXnD2o0ulVNoGkUHy-Ve3rAxnsWh9dhUQ/exec";
 
     let currentGoalKey = 'performance';
     let isCreatingNewGoal = false;
+    let editingGoalKey = 'performance';
     let activeIncompleteTaskId = null;
     let activeDealSourceTask = null;
     let currentContactView = 'sales';
@@ -824,38 +832,6 @@
             { name: "達成 COT 官方業績確認函", done: false },
             { name: "完成 30 位高淨值家庭資產全景圖交付", done: true }
           ]
-        },
-        recruitment: {
-          id: "G2026_02",
-          category: "👥 招募增員",
-          currentVal: 2,
-          targetVal: 4,
-          unit: "人",
-          timeline: "Q3 季度目標",
-          deadline: "2026-09-30",
-          why: "建立團隊階梯式人才庫，複製高效銷售系統與方法論，推動組織可持續繁榮。",
-          effect: "組建具備強大戰鬥力的核心小組，團隊月產能翻倍，享受身為導師與領袖的成就感。",
-          imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000",
-          deliverables: [
-            { name: "舉辦 3 場專屬事業說明會", done: true },
-            { name: "完成 4 份新人實戰入職手冊培訓", done: false }
-          ]
-        },
-        vision: {
-          id: "G2026_03",
-          category: "🌟 長遠願景",
-          currentVal: 60,
-          targetVal: 100,
-          unit: "家庭",
-          timeline: "3年長遠願景",
-          deadline: "2027-12-31",
-          why: "為更多中產與高淨值家庭建立長遠穩健保障，守護世代財富與健康。",
-          effect: "建立可自動運轉的品牌與系統，實現真正的時間自由與極致事業影響力。",
-          imageUrl: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000",
-          deliverables: [
-            { name: "建立標準化提案工具庫", done: true },
-            { name: "搭建團隊獨立獲客系統", done: false }
-          ]
         }
       },
       todos: [],
@@ -865,7 +841,6 @@
       contacts: []
     };
 
-    // ===== INIT =====
     document.addEventListener("DOMContentLoaded", () => {
       loadLocalStorage();
       lucide.createIcons();
@@ -873,26 +848,26 @@
       renderGoalTabs();
       renderHeroGoal();
       renderAll();
-      loadAdminGoalSelectOptions();
-      loadAdminGoalData();
+      renderAdminGoalsOverviewList();
+      loadAdminGoalData(currentGoalKey);
       registerSW();
       setupAutoExpandTextareas();
       setupDealDateListener();
       renderManualContactTagCheckboxes();
-      
-      // 開啟時自動向 Google Sheet 雲端拉取最新目標與數據
       fetchCloudData(false);
     });
 
     function setupDealDateListener() {
       const dealDateInput = document.getElementById("deal-date");
-      dealDateInput.addEventListener("change", () => {
-        const val = dealDateInput.value;
-        if (val) {
-          const revDate = calculate11thMonthDate(val);
-          document.getElementById("deal-review-preview").textContent = revDate;
-        }
-      });
+      if(dealDateInput) {
+        dealDateInput.addEventListener("change", () => {
+          const val = dealDateInput.value;
+          if (val) {
+            const revDate = calculate11thMonthDate(val);
+            document.getElementById("deal-review-preview").textContent = revDate;
+          }
+        });
+      }
     }
 
     function calculate11thMonthDate(dateStr) {
@@ -927,29 +902,20 @@
 
     function registerSW() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker v3.4.0 註冊成功:', reg.scope))
-          .catch((err) => console.error('Service Worker 註冊失敗:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.error(err));
       }
     }
 
     function initDate() {
       const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-      document.getElementById("current-date").textContent = new Date().toLocaleDateString('zh-HK', options);
-      document.getElementById("new-task-date").valueAsDate = new Date();
-      document.getElementById("rev-date").valueAsDate = new Date();
-      document.getElementById("rec-date").valueAsDate = new Date();
-      document.getElementById("deal-date").valueAsDate = new Date();
-      
-      const follow = new Date();
-      follow.setDate(follow.getDate() + 3);
-      document.getElementById("rev-follow-date").valueAsDate = follow;
-      document.getElementById("rec-follow-date").valueAsDate = follow;
-      
-      document.getElementById("deal-review-preview").textContent = calculate11thMonthDate(new Date().toISOString().split("T")[0]);
+      const dateEl = document.getElementById("current-date");
+      if(dateEl) dateEl.textContent = new Date().toLocaleDateString('zh-HK', options);
+      ['new-task-date', 'rev-date', 'rec-date', 'deal-date'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.valueAsDate = new Date();
+      });
     }
 
-    // ===== LOCAL STORAGE =====
     function loadLocalStorage() {
       const saved = localStorage.getItem("ivan_os_master_v34");
       if (saved) {
@@ -957,8 +923,6 @@
           const parsed = JSON.parse(saved);
           appData = { ...appData, ...parsed };
         } catch(e) { console.error(e); }
-      } else {
-        saveLocalStorage();
       }
     }
 
@@ -966,9 +930,9 @@
       localStorage.setItem("ivan_os_master_v34", JSON.stringify(appData));
     }
 
-    // ===== DYNAMIC GOAL TABS =====
     function renderGoalTabs() {
       const container = document.getElementById("goal-tabs-container");
+      if (!container) return;
       container.innerHTML = "";
       const goalKeys = Object.keys(appData.goals);
 
@@ -1075,23 +1039,62 @@
       showToast("成就感已沉澱！");
     }
 
-    // ===== ADMIN BACKEND (目標管理 + 可交付成果動態編輯) =====
-    function loadAdminGoalSelectOptions() {
-      const sel = document.getElementById("adm-goal-select");
-      if (!sel) return;
-      sel.innerHTML = "";
+    // ===== ADMIN BACKEND (目標全覽清單 + 載入修改 + 刪除) =====
+    function renderAdminGoalsOverviewList() {
+      const container = document.getElementById("admin-goals-overview-list");
+      if (!container) return;
+      container.innerHTML = "";
 
-      Object.keys(appData.goals).forEach(key => {
+      const keys = Object.keys(appData.goals);
+      keys.forEach(key => {
         const g = appData.goals[key];
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.textContent = `${g.category} (${g.timeline || '手動自設'})`;
-        sel.appendChild(opt);
+        const isEditing = (!isCreatingNewGoal && editingGoalKey === key);
+        const card = document.createElement("div");
+        card.className = `p-3 rounded-2xl border flex items-center justify-between transition-all ${
+          isEditing ? 'bg-indigo-950/40 border-indigo-500/80 shadow-lg shadow-indigo-500/10' : 'bg-slate-950 border-slate-800'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex-1 pr-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-bold text-white">${g.category}</span>
+              <span class="text-[9px] bg-slate-900 text-slate-400 border border-slate-700 px-1.5 py-0.2 rounded">${g.timeline || '自訂'}</span>
+            </div>
+            <div class="text-[10px] text-slate-400 font-mono mt-0.5">
+              進度: ${Number(g.currentVal).toLocaleString()} / ${Number(g.targetVal).toLocaleString()} ${g.unit || ''} (截止: ${g.deadline || '未定'})
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="selectGoalToEdit('${key}')" class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+              isEditing ? 'bg-amber-500 text-slate-950' : 'bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600 hover:text-white'
+            }">
+              ✏️ 編輯
+            </button>
+            <button type="button" onclick="deleteSpecificGoal('${key}')" class="p-1.5 text-slate-600 hover:text-red-400 active:scale-90" title="刪除此目標">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
       });
+      lucide.createIcons();
+    }
+
+    function selectGoalToEdit(key) {
+      isCreatingNewGoal = false;
+      editingGoalKey = key;
+      renderAdminGoalsOverviewList();
+      loadAdminGoalData(key);
+      showToast(`已載入目標【${appData.goals[key].category}】可直接修改！`);
     }
 
     function startNewGoalCreation() {
       isCreatingNewGoal = true;
+      editingGoalKey = null;
+      renderAdminGoalsOverviewList();
+
+      document.getElementById("adm-form-mode-title").textContent = "➕ 正在建立全新目標";
+      document.getElementById("adm-current-goal-id-display").textContent = "自動生成新ID";
 
       document.getElementById("adm-goal-category").value = "";
       document.getElementById("adm-goal-timeline").value = "";
@@ -1110,15 +1113,18 @@
 
       renderDeliverablesEditor([{ name: "新目標核心交付成果", done: false }]);
       document.getElementById("adm-delete-goal-btn").classList.add("hidden");
-      showToast("請手動填寫目標類別、週期與可交付成果！");
+      showToast("請填寫全新目標詳細資訊與可交付成果！");
       triggerAllTextareasResize();
     }
 
-    function loadAdminGoalData() {
+    function loadAdminGoalData(key) {
       isCreatingNewGoal = false;
-      const selKey = document.getElementById("adm-goal-select").value;
-      const g = appData.goals[selKey];
+      editingGoalKey = key || Object.keys(appData.goals)[0];
+      const g = appData.goals[editingGoalKey];
       if (!g) return;
+
+      document.getElementById("adm-form-mode-title").textContent = `✏️ 正在編輯：${g.category}`;
+      document.getElementById("adm-current-goal-id-display").textContent = `ID: ${g.id || editingGoalKey}`;
 
       document.getElementById("adm-goal-category").value = g.category || "";
       document.getElementById("adm-goal-timeline").value = g.timeline || "";
@@ -1187,7 +1193,7 @@
         done: false
       })).filter(d => d.name !== "");
 
-      let targetKey = isCreatingNewGoal ? ("goal_" + Date.now()) : document.getElementById("adm-goal-select").value;
+      let targetKey = isCreatingNewGoal ? ("goal_" + Date.now()) : editingGoalKey;
       const goalId = appData.goals[targetKey]?.id || ("G_" + Date.now());
 
       appData.goals[targetKey] = {
@@ -1205,16 +1211,16 @@
       };
 
       currentGoalKey = targetKey;
+      editingGoalKey = targetKey;
       isCreatingNewGoal = false;
 
       saveLocalStorage();
       renderGoalTabs();
       renderHeroGoal();
-      loadAdminGoalSelectOptions();
-      document.getElementById("adm-goal-select").value = targetKey;
-      loadAdminGoalData();
+      renderAdminGoalsOverviewList();
+      loadAdminGoalData(targetKey);
 
-      showToast("目標已保存！正在同步至 Google Sheet 後端...");
+      showToast("目標已修改保存！正在同步至 Google Sheet 後端...");
 
       try {
         await fetch(GAS_API_URL, {
@@ -1242,21 +1248,21 @@
       }
     }
 
-    async function deleteCurrentGoal() {
-      const selKey = document.getElementById("adm-goal-select").value;
+    async function deleteSpecificGoal(key) {
       if (Object.keys(appData.goals).length <= 1) {
         return showToast("至少保留一個核心目標！");
       }
 
-      if (confirm(`確定要刪除目標「${appData.goals[selKey].category}」嗎？`)) {
-        const goalId = appData.goals[selKey].id;
-        delete appData.goals[selKey];
+      if (confirm(`確定要刪除目標「${appData.goals[key].category}」嗎？`)) {
+        const goalId = appData.goals[key].id;
+        delete appData.goals[key];
         currentGoalKey = Object.keys(appData.goals)[0];
+        editingGoalKey = currentGoalKey;
         saveLocalStorage();
         renderGoalTabs();
         renderHeroGoal();
-        loadAdminGoalSelectOptions();
-        loadAdminGoalData();
+        renderAdminGoalsOverviewList();
+        loadAdminGoalData(currentGoalKey);
         showToast("目標已成功刪除！");
 
         try {
@@ -1265,6 +1271,12 @@
             body: JSON.stringify({ action: "delete_goal", goalId: goalId })
           });
         } catch(err) { console.warn("GAS delete goal error:", err); }
+      }
+    }
+
+    async function deleteCurrentGoal() {
+      if (editingGoalKey) {
+        deleteSpecificGoal(editingGoalKey);
       }
     }
 
@@ -1337,6 +1349,162 @@
             body: JSON.stringify({ action: "delete_recruit", recruitId: recruitId })
           });
         } catch(err) { console.warn("GAS delete recruit error:", err); }
+      }
+    }
+
+    // ===== 人物頁 (CONTACTS HUB) =====
+    function switchContactView(viewType) {
+      currentContactView = viewType;
+      selectedContactTagFilter = 'ALL';
+
+      const sBtn = document.getElementById("contact-tab-sales");
+      const rBtn = document.getElementById("contact-tab-recruit");
+      const lbl = document.getElementById("contact-type-label");
+
+      if (viewType === 'sales') {
+        sBtn.className = "py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md";
+        rBtn.className = "py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+        lbl.textContent = "銷售客戶";
+      } else {
+        rBtn.className = "py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md";
+        sBtn.className = "py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-400 hover:text-white transition-all";
+        lbl.textContent = "招募人才";
+      }
+
+      renderManualContactTagCheckboxes();
+      renderContactFilterTagButtons();
+      renderContacts();
+    }
+
+    function renderManualContactTagCheckboxes() {
+      const box = document.getElementById("manual-tags-container");
+      if (!box) return;
+      box.innerHTML = "";
+
+      const options = currentContactView === 'sales' ? SALES_TAG_OPTIONS : RECRUIT_TAG_OPTIONS;
+      options.forEach(tag => {
+        const label = document.createElement("label");
+        label.className = "inline-flex items-center gap-1 text-xs bg-slate-950 border border-slate-700 px-2.5 py-1 rounded-lg cursor-pointer hover:border-amber-500";
+        label.innerHTML = `
+          <input type="checkbox" name="manual_contact_tag" value="${tag}" class="rounded text-amber-500 focus:ring-0"> ${tag}
+        `;
+        box.appendChild(label);
+      });
+    }
+
+    function renderContactFilterTagButtons() {
+      const box = document.getElementById("contact-filter-tags");
+      if (!box) return;
+      box.innerHTML = "";
+
+      const options = currentContactView === 'sales' ? ['ALL', ...SALES_TAG_OPTIONS] : ['ALL', ...RECRUIT_TAG_OPTIONS];
+
+      options.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => {
+          selectedContactTagFilter = tag;
+          renderContactFilterTagButtons();
+          renderContacts();
+        };
+        const isActive = (selectedContactTagFilter === tag);
+        btn.className = `px-3 py-1 rounded-xl text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+          isActive 
+            ? "bg-amber-500 text-slate-950 shadow-md" 
+            : "bg-slate-950 text-slate-400 border border-slate-800 hover:text-white"
+        }`;
+        btn.textContent = tag === 'ALL' ? '全部人物' : tag;
+        box.appendChild(btn);
+      });
+    }
+
+    function addManualContact() {
+      const name = document.getElementById("manual-contact-name").value.trim();
+      const bg = document.getElementById("manual-contact-bg").value.trim();
+
+      if (!name) return showToast("請輸入姓名！");
+
+      const checkedTags = Array.from(document.querySelectorAll("input[name='manual_contact_tag']:checked")).map(c => c.value);
+
+      const newContact = {
+        id: "C_" + Date.now(),
+        name,
+        bg: bg || "無備註背景",
+        type: currentContactView,
+        tags: checkedTags,
+        lastContact: new Date().toISOString().split("T")[0],
+        notes: "手動建立檔案"
+      };
+
+      if (!appData.contacts) appData.contacts = [];
+      appData.contacts.unshift(newContact);
+      saveLocalStorage();
+
+      document.getElementById("manual-contact-name").value = "";
+      document.getElementById("manual-contact-bg").value = "";
+      renderManualContactTagCheckboxes();
+      renderContacts();
+      showToast("✅ 人物檔案已建立！");
+    }
+
+    function renderContacts() {
+      const list = document.getElementById("contacts-list");
+      if (!list) return;
+      list.innerHTML = "";
+
+      const contacts = appData.contacts || [];
+      const filtered = contacts.filter(c => {
+        const matchesType = c.type === currentContactView;
+        const matchesTag = selectedContactTagFilter === 'ALL' || (c.tags && c.tags.includes(selectedContactTagFilter));
+        return matchesType && matchesTag;
+      });
+
+      document.getElementById("contacts-count-display").textContent = `${filtered.length} 位`;
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="col-span-full bg-slate-900/40 border border-slate-800 rounded-2xl p-6 text-center text-slate-500 text-xs">
+            此標籤篩選條件下暫無人物資料
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(c => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5 transition-all hover:border-amber-500/40";
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm sm:text-base font-bold text-white">${c.name}</h4>
+                <span class="text-[10px] bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800">${c.bg}</span>
+              </div>
+              <p class="text-[10px] text-slate-500 font-mono mt-0.5">最近連繫：${c.lastContact || '無紀錄'}</p>
+            </div>
+            <button type="button" onclick="deleteContact('${c.id}')" title="刪除人物" class="p-1 text-slate-600 hover:text-red-400">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            ${(c.tags && c.tags.length > 0) 
+              ? c.tags.map(t => `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${c.type === 'sales' ? 'bg-indigo-950 text-indigo-300 border border-indigo-800' : 'bg-purple-950 text-purple-300 border border-purple-800'}">${t}</span>`).join('')
+              : '<span class="text-[10px] text-slate-600">無標籤</span>'
+            }
+          </div>
+          ${c.notes ? `<p class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 leading-relaxed">${c.notes}</p>` : ''}
+        `;
+        list.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function deleteContact(id) {
+      if (confirm("確定要刪除此人物檔案嗎？")) {
+        appData.contacts = (appData.contacts || []).filter(c => c.id !== id);
+        saveLocalStorage();
+        renderContacts();
+        showToast("人物已刪除");
       }
     }
 
@@ -1675,7 +1843,10 @@
       });
 
       document.getElementById('header-title').textContent = headers[tab] || '管理中心';
-      if (tab === 'admin') loadAdminGoalData();
+      if (tab === 'admin') {
+        renderAdminGoalsOverviewList();
+        loadAdminGoalData(editingGoalKey || currentGoalKey);
+      }
       if (tab === 'deals') renderDeals();
       if (tab === 'recruitment') renderRecruits();
       if (tab === 'reviews') renderReviews();
@@ -1816,7 +1987,6 @@
       }
     }
 
-    // ===== 銷售歷史卡片渲染 (支援刪除) =====
     function filterReviewsList() {
       renderReviews();
     }
@@ -2321,7 +2491,7 @@
       }, 2500);
     }
 
-    // ===== GAS BACKEND API CALLS =====
+    // ===== GAS API =====
     async function syncSingleTodoToGAS(todo) {
       try {
         await fetch(GAS_API_URL, {
@@ -2440,7 +2610,8 @@
           renderGoalTabs();
           renderHeroGoal();
           renderAll();
-          loadAdminGoalSelectOptions();
+          renderAdminGoalsOverviewList();
+          loadAdminGoalData(editingGoalKey || currentGoalKey);
 
           if (showFeedback) showToast("✅ 雲端最新數據已同步！");
         }
