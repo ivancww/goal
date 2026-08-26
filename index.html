@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Ivan Performance & Client OS v3.5.0</title>
+  <title>Ivan Performance & Client OS v3.5.1</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#090d16" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -68,7 +68,7 @@
         <div>
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-xs sm:text-sm font-black text-amber-400 tracking-wider font-mono">Ivan Performance & Client OS</span>
-            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.5.0</span>
+            <span class="text-[10px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.2 rounded-full">v3.5.1</span>
           </div>
           <div class="flex items-center gap-2 mt-0.5">
             <h1 class="text-sm font-bold tracking-tight text-white" id="header-title">目標儀表板 (首頁)</h1>
@@ -475,7 +475,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 5: 人物頁 (CONTACTS) ================= -->
+    <!-- ================= TAB 5: 人物檔案 (CONTACTS) ================= -->
     <section id="tab-contacts" class="space-y-4 hidden">
       <div class="grid grid-cols-2 gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl">
         <button type="button" onclick="switchContactView('sales')" id="contact-tab-sales" class="py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-md">
@@ -553,10 +553,9 @@
           <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i> 目標管理與自訂交付成果
           </h2>
-          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full font-mono">Build v3.5.0</span>
+          <span class="text-[10px] sm:text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full font-mono">Build v3.5.1</span>
         </div>
 
-        <!-- 1. 目標清單全覽 (編輯/刪除) -->
         <div class="space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
@@ -566,11 +565,9 @@
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> 手動寫全新目標
             </button>
           </div>
-          
           <div id="admin-goals-overview-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
         </div>
 
-        <!-- 2. 目標編輯表單 -->
         <form id="admin-goal-form" class="space-y-4 pt-3 border-t border-slate-800" onsubmit="saveAdminGoal(event)">
           <div class="flex items-center justify-between">
             <h3 class="text-xs sm:text-sm font-bold text-amber-400" id="adm-form-mode-title">✏️ 正在編輯目標</h3>
@@ -608,7 +605,6 @@
             <input type="date" id="adm-goal-deadline" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white" />
           </div>
 
-          <!-- 可交付成果自訂管理 -->
           <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
               <label class="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
@@ -664,8 +660,143 @@
 
   </main>
 
+  <!-- ================= 6 大底部導航列 ================= -->
+  <nav class="fixed bottom-0 left-0 right-0 w-full bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-2 py-2.5 z-50 flex justify-center">
+    <div class="w-full max-w-md md:max-w-2xl flex justify-around items-center">
+      <button type="button" onclick="switchTab('goals')" id="nav-goals" class="flex flex-col items-center gap-1 text-amber-400 transition-all">
+        <i data-lucide="target" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-bold">目標主頁</span>
+      </button>
+      <button type="button" onclick="switchTab('todos')" id="nav-todos" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="check-square" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">每日待辦</span>
+      </button>
+      <button type="button" onclick="switchTab('reviews')" id="nav-reviews" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="briefcase" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">客戶銷售</span>
+      </button>
+      <button type="button" onclick="switchTab('recruitment')" id="nav-recruitment" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="user-plus" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">招募增員</span>
+      </button>
+      <button type="button" onclick="switchTab('contacts')" id="nav-contacts" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="contact-2" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">人物檔案</span>
+      </button>
+      <button type="button" onclick="switchTab('deals')" id="nav-deals" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all">
+        <i data-lucide="badge-check" class="w-5 h-5"></i>
+        <span class="text-[10px] sm:text-xs font-medium">成功簽單</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 簽單成功登記彈窗 -->
+  <div id="deal-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="flex items-center gap-2.5 text-emerald-400">
+        <div class="p-2 bg-emerald-500/20 rounded-xl">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">🎉 恭喜簽單成功！</h3>
+          <p class="text-[11px] text-slate-400">自動歸檔至「成功簽單」並推算第11個月保單週年檢視</p>
+        </div>
+      </div>
+
+      <form id="deal-form" onsubmit="confirmDealSuccess(event)" class="space-y-3 pt-1">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">客戶姓名</label>
+          <input type="text" id="deal-client-name" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">簽單金額 / FYP (HK$)</label>
+            <input type="number" id="deal-amount" placeholder="例如：120000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">簽約生效日期</label>
+            <input type="date" id="deal-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">投保方案 / 險種與核心架構</label>
+          <input type="text" id="deal-plan" placeholder="例如：高端醫療 + 5年期傳承儲蓄計劃" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">簽單覆盤筆記 (客戶核心促成關鍵)</label>
+          <textarea id="deal-notes" rows="2" placeholder="記錄客人最終拍板的原因，沉澱成交心法..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500 auto-expand"></textarea>
+        </div>
+
+        <div class="p-3 bg-emerald-950/30 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300/90 flex items-center gap-2">
+          <i data-lucide="bell-ring" class="w-4 h-4 shrink-0 text-emerald-400"></i>
+          <span>系統將於第 11 個月（<span id="deal-review-preview" class="font-bold text-white"></span>）自動標註提醒週年檢視</span>
+        </div>
+
+        <div class="flex gap-2.5 pt-2">
+          <button type="button" onclick="closeDealModal()" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+            取消
+          </button>
+          <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all shadow-lg shadow-emerald-500/30">
+            確認簽單並歸檔
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Incomplete Reason Modal -->
+  <div id="incomplete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl">
+      <div class="flex items-center gap-2 text-amber-400">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+        <h3 class="text-sm font-bold text-white">記錄未完成原因 (覆盤迭代)</h3>
+      </div>
+      <p class="text-xs text-slate-300" id="incomp-task-title"></p>
+      <div>
+        <label class="block text-[11px] text-slate-400 mb-1">未完成原因 / 遇到的阻礙：</label>
+        <textarea id="incomp-reason-text" rows="3" placeholder="例如：客人臨時出差推遲通話 / 需先補查特定信託條款細節..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 auto-expand"></textarea>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" onclick="closeIncompleteModal(false)" class="flex-1 bg-slate-800 text-slate-300 py-2.5 rounded-xl text-xs font-semibold">
+          取消
+        </button>
+        <button type="button" onclick="saveIncompleteReason()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-all">
+          儲存覆盤原因
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div id="celebration-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-sm w-full p-5 text-center space-y-4 shadow-2xl relative">
+      <div class="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-amber-500/20">
+        🏆
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">恭喜達成階段性核心目標！</h3>
+        <p class="text-xs text-slate-300 mt-1" id="celeb-goal-title"></p>
+      </div>
+      <div class="text-left space-y-2 bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+        <label class="block text-xs font-semibold text-amber-400">📝 達標覆盤筆記與喜悅心得</label>
+        <textarea id="celeb-notes" rows="3" placeholder="記錄此時此刻的成就感，提煉可複製的成功關鍵..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none auto-expand"></textarea>
+      </div>
+      <button type="button" onclick="closeCelebrationModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl text-xs active:scale-95 transition-all shadow-lg shadow-amber-500/30">
+        沉澱喜悅感並同步後端
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed top-16 bg-indigo-600 text-white text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    提示訊息
+  </div>
+
   <script>
-    const APP_VERSION = "v3.5.0";
+    const APP_VERSION = "v3.5.1";
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxca00dHi2gZPIFFCdgfeLNdF4A_fKU_7Lr4RUAe4G6GBGYcmiI2fOJYWvM-KpJHvG1/exec";
 
     let currentGoalKey = 'performance';
@@ -718,12 +849,9 @@
       setupAutoExpandTextareas();
       setupDealDateListener();
       renderManualContactTagCheckboxes();
-      
-      // 開機自動強制向雲端拉取
       fetchCloudData(false);
     });
 
-    // 頁面重新喚醒/切換焦點時自動拉取雲端數據
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") fetchCloudData(false);
     });
@@ -911,7 +1039,7 @@
       showToast("成就感已沉澱！");
     }
 
-    // ===== ADMIN BACKEND =====
+    // ===== ADMIN BACKEND (目標全覽清單 + 載入修改 + 刪除) =====
     function renderAdminGoalsOverviewList() {
       const container = document.getElementById("admin-goals-overview-list");
       if (!container) return;
@@ -1221,7 +1349,7 @@
       }
     }
 
-    // ===== 人物頁 (CONTACTS HUB) =====
+    // ===== 人物檔案 (CONTACTS HUB) =====
     function switchContactView(viewType) {
       currentContactView = viewType;
       selectedContactTagFilter = 'ALL';
@@ -1686,7 +1814,7 @@
       } catch(err) { console.warn("GAS save recruit error:", err); }
     }
 
-    // ===== TAB NAVIGATION =====
+    // ===== TAB NAVIGATION (完整 6 大頁面 + 後台切換) =====
     function switchTab(tab) {
       const tabs = ['goals', 'todos', 'reviews', 'recruitment', 'contacts', 'deals', 'admin'];
       const headers = {
@@ -1703,15 +1831,17 @@
         const el = document.getElementById(`tab-${t}`);
         const nav = document.getElementById(`nav-${t}`);
         if (t === tab) {
-          el.classList.remove('hidden');
+          if (el) el.classList.remove('hidden');
           if (nav) nav.className = "flex flex-col items-center gap-1 text-amber-400 transition-all";
         } else {
-          el.classList.add('hidden');
+          if (el) el.classList.add('hidden');
           if (nav) nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200 transition-all";
         }
       });
 
-      document.getElementById('header-title').textContent = headers[tab] || '管理中心';
+      const titleEl = document.getElementById('header-title');
+      if (titleEl) titleEl.textContent = headers[tab] || '管理中心';
+      
       if (tab === 'admin') {
         renderAdminGoalsOverviewList();
         loadAdminGoalData(editingGoalKey || currentGoalKey);
@@ -1856,7 +1986,7 @@
       }
     }
 
-    // ===== 銷售歷史卡片渲染 =====
+    // ===== 銷售歷史卡片渲染 (支援刪除) =====
     function filterReviewsList() {
       renderReviews();
     }
@@ -2398,7 +2528,6 @@
       }
     }
 
-    // 終極全自動跨裝置雙向同步引擎
     async function fetchCloudData(showFeedback = true) {
       const btn = document.getElementById("sync-btn");
       if (btn) btn.classList.add("animate-spin");
@@ -2411,7 +2540,6 @@
 
         if (json.status === "success") {
           
-          // 1. 目標管理表 (Goals) 智能雙向對齊
           if (json.goals && Array.isArray(json.goals) && json.goals.length > 0) {
             let loadedGoals = {};
             json.goals.forEach((g, idx) => {
@@ -2441,7 +2569,6 @@
             appData.goals = loadedGoals;
           }
 
-          // 2. 每日待辦清單 (Todos) 智能對齊
           if (json.todos && Array.isArray(json.todos)) {
             appData.todos = json.todos.map((t, idx) => ({
               id: getProp(t, ["任務編號", "id"]) || ("T_" + idx),
@@ -2454,7 +2581,6 @@
             }));
           }
 
-          // 3. 見客覆盤 (Reviews) 智能對齊
           if (json.reviews && Array.isArray(json.reviews)) {
             appData.reviews = json.reviews.map((r, idx) => ({
               id: getProp(r, ["覆盤編號", "id"]) || ("R_" + idx),
@@ -2469,7 +2595,6 @@
             }));
           }
 
-          // 4. 招募增員人才庫 (Recruits) 智能對齊
           if (json.recruits && Array.isArray(json.recruits)) {
             appData.recruits = json.recruits.map((rc, idx) => ({
               id: getProp(rc, ["招募編號", "id"]) || ("REC_" + idx),
@@ -2484,7 +2609,6 @@
             }));
           }
 
-          // 5. 成功簽單庫 (Deals) 智能對齊
           if (json.deals && Array.isArray(json.deals)) {
             appData.deals = json.deals.map((d, idx) => ({
               id: getProp(d, ["簽單編號", "id"]) || ("D_" + idx),
