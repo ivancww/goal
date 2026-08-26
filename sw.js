@@ -1,5 +1,5 @@
-const CACHE_NAME = 'ivan-performance-os-v3.4.0';
-const APP_VERSION = 'v3.4.0';
+const CACHE_NAME = 'ivan-performance-os-v3.4.1';
+const APP_VERSION = 'v3.4.1';
 
 const STATIC_ASSETS = [
   './',
